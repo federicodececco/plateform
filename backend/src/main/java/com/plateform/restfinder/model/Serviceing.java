@@ -22,7 +22,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Service {
+public class Serviceing {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +34,7 @@ public class Service {
     @JsonBackReference
     private Set<Place> places;
 
-    public Service(Integer id, String name, Set<Place> places) {
+    public Serviceing(Integer id, String name, Set<Place> places) {
         this.id = id;
         this.name = name;
         this.places = places;
