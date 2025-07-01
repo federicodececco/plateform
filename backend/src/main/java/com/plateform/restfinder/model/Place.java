@@ -1,9 +1,17 @@
 package com.plateform.restfinder.model;
 
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,61 +20,93 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "places")
-@Getter @Setter @NoArgsConstructor @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@ToString
 public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    
-    String name;
+    private Long id;
 
-    String address;
+    private String name;
 
-    String city;
+    private String address;
 
-    Integer cap;
+    private String city;
 
-    String province;
+    private Integer cap;
 
-    String nation;
+    private String province;
 
-    String latitude;
+    private String nation;
 
-    String longitude;
+    private String latitude;
 
-    String mainCategoryId;
+    private String longitude;
 
-    String googlePlaceID;
+    private String mainCategoryId;
 
-    String image;
+    private String googlePlaceID;
+
+    private String image;
 
     /*
-    String menu link?? 
-    @Lob
-    String description???
-    */
-    
+     * String menu link??
+     * 
+     * @Lob
+     * String description???
+     */
 
-    String phoneNumber;
+    private String phoneNumber;
 
-    String priceRange;
+    private String priceRange;
 
-    String rank;
+    private String ranking;
 
-    Integer reviewNumber;
+    private Integer reviewNumber;
 
-    Integer reviewAverage;
+    private Integer reviewAverage;
 
-    String googleMapsURL;
+    private String googleMapsURL;
 
-    String webSiteURL;
+    private String webSiteURL;
 
-    String plateformID;
+    private String plateformID;
 
-    String plateformURL;
+    private String plateformURL;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "category_place", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    @JsonManagedReference
+    private Set<Category> categories;
 
-
-    
+    public Place(Long id, String name, String address, String city, Integer cap, String province,
+            String nation, String latitude, String longitude, String mainCategoryId, String googlePlaceID,
+            String image, String phoneNumber, String priceRange, String rank, Integer reviewNumber,
+            Integer reviewAverage,
+            String googleMapsURL, String webSiteURL, String plateformID, String plateformURL) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.city = city;
+        this.cap = cap;
+        this.province = province;
+        this.nation = nation;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.mainCategoryId = mainCategoryId;
+        this.googlePlaceID = googlePlaceID;
+        this.image = image;
+        this.phoneNumber = phoneNumber;
+        this.priceRange = priceRange;
+        this.rank = rank;
+        this.reviewNumber = reviewNumber;
+        this.reviewAverage = reviewAverage;
+        this.googleMapsURL = googleMapsURL;
+        this.webSiteURL = webSiteURL;
+        this.plateformID = plateformID;
+        this.plateformURL = plateformURL;
+    }
 }
