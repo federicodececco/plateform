@@ -1,5 +1,6 @@
 package com.plateform.restfinder.model;
 
+import java.security.Provider.Service;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -82,11 +83,17 @@ public class Place {
     @JsonManagedReference
     private Set<Category> categories;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
+    @JsonManagedReference
+    private Set<Service> services;
+
     public Place(Long id, String name, String address, String city, Integer cap, String province,
             String nation, String latitude, String longitude, String mainCategoryId, String googlePlaceID,
-            String image, String phoneNumber, String priceRange, String rank, Integer reviewNumber,
+            String image, String phoneNumber, String priceRange, String ranking, Integer reviewNumber,
             Integer reviewAverage,
-            String googleMapsURL, String webSiteURL, String plateformID, String plateformURL) {
+            String googleMapsURL, String webSiteURL, String plateformID, String plateformURL,
+            Set<Service> services, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -101,12 +108,14 @@ public class Place {
         this.image = image;
         this.phoneNumber = phoneNumber;
         this.priceRange = priceRange;
-        this.rank = rank;
+        this.ranking = ranking;
         this.reviewNumber = reviewNumber;
         this.reviewAverage = reviewAverage;
         this.googleMapsURL = googleMapsURL;
         this.webSiteURL = webSiteURL;
         this.plateformID = plateformID;
         this.plateformURL = plateformURL;
+        this.services = services;
+        this.categories = categories;
     }
 }
