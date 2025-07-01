@@ -1,0 +1,223 @@
+.hero-search-section-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 80px 20px;
+    /* Spazio sopra e sotto */
+    background-color: #f8f8f8;
+    /* Sfondo della sezione */
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.hero-title {
+    font-size: 42px;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+.hero-description {
+    font-size: 18px;
+    color: #555;
+    max-width: 600px;
+    text-align: center;
+    margin-bottom: 40px;
+    line-height: 1.5;
+}
+
+/* Search Box Container */
+.search-box {
+    display: flex;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    gap: 15px;
+    /* Spazio tra i campi di ricerca */
+    align-items: flex-end;
+    /* Allinea i campi in basso */
+    flex-wrap: wrap;
+    /* Permette agli elementi di andare a capo */
+    max-width: 900px;
+    /* Larghezza massima del box di ricerca */
+    width: 100%;
+    justify-content: center;
+    /* Centra gli elementi orizzontalmente */
+}
+
+.search-field {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 0;
+    /* Base flessibile per flex-grow */
+    flex-grow: 1;
+    /* Permette ai campi di espandersi */
+    min-width: 150px;
+    /* Larghezza minima per evitare compressione eccessiva */
+}
+
+.search-field label {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 10px 35px 10px 15px;
+    /* Spazio per testo e icona */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    background-color: #fcfcfc;
+}
+
+.input-with-icon input:focus {
+    border-color: #e64a19;
+    box-shadow: 0 0 0 2px rgba(230, 74, 25, 0.2);
+}
+
+.input-with-icon .icon {
+    position: absolute;
+    right: 10px;
+    color: #999;
+    font-size: 18px;
+}
+
+/* Stile per la select personalizzata */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 10px 35px 10px 15px;
+    /* Spazio per testo e freccia */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    color: #333;
+    background-color: #fcfcfc;
+    -webkit-appearance: none;
+    /* Rimuove lo stile predefinito */
+    -moz-appearance: none;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.custom-select select:focus {
+    border-color: #e64a19;
+    box-shadow: 0 0 0 2px rgba(230, 74, 25, 0.2);
+}
+
+.custom-select .select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    /* Crea una freccia con un bordo */
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #666;
+    border-bottom: 2px solid #666;
+    pointer-events: none;
+    /* Fa in modo che i click passino alla select */
+}
+
+/* Bottone Cerca Ristoranti */
+.search-restaurants-button {
+    background-color: #e64a19;
+    /* Arancione del bottone */
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    /* Impedisce al testo di andare a capo */
+    align-self: flex-end;
+    /* Allinea il bottone in basso con gli input */
+}
+
+.search-restaurants-button:hover {
+    background-color: #d84315;
+}
+
+/* Media Queries per la responsività */
+@media (max-width: 900px) {
+    .search-box {
+        padding: 15px;
+        gap: 10px;
+        flex-direction: column;
+        /* Impila tutti i campi su schermi più piccoli */
+        align-items: stretch;
+        /* Allunga gli elementi per occupare la larghezza */
+    }
+
+    .search-field {
+        width: 100%;
+        /* Ogni campo occupa tutta la larghezza */
+        min-width: unset;
+        /* Rimuove la larghezza minima */
+    }
+
+    .search-restaurants-button {
+        width: 100%;
+        /* Il bottone occupa tutta la larghezza */
+    }
+}
+
+@media (max-width: 600px) {
+    .hero-title {
+        font-size: 32px;
+    }
+
+    .hero-description {
+        font-size: 16px;
+        padding: 0 10px;
+    }
+
+    .hero-search-section-container {
+        padding: 60px 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero-title {
+        font-size: 28px;
+    }
+
+    .hero-description {
+        font-size: 14px;
+    }
+
+    .search-box {
+        padding: 10px;
+    }
+
+    .search-field label {
+        font-size: 13px;
+    }
+
+    .input-with-icon input,
+    .custom-select select,
+    .search-restaurants-button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}

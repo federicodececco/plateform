@@ -1,0 +1,242 @@
+.search-page {
+    font-family: Arial, sans-serif;
+    color: #333;
+    padding: 0 20px;
+    /* Un po' di padding laterale per i contenuti */
+    background-color: #f8f8f8;
+    /* Sfondo generale della pagina, leggermente grigio */
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    padding: 15px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumbs a {
+    text-decoration: none;
+    color: #666;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    font-weight: bold;
+    color: #333;
+    /* Il testo dell'ultima voce è più scuro */
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 40px 0 60px;
+    /* Spazio sopra e sotto il contenuto principale */
+    background-color: #fff;
+    /* Sfondo bianco per questa sezione */
+    border-radius: 8px;
+    /* Angoli leggermente arrotondati */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* Ombra leggera */
+    margin-bottom: 30px;
+    /* Spazio sotto questa sezione */
+}
+
+.hero-section h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.hero-section p {
+    font-size: 18px;
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto 30px;
+    /* Centra il paragrafo e aggiunge spazio sotto */
+    line-height: 1.5;
+}
+
+/* Search Bar Container */
+.search-bar-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    /* Spazio tra input e bottone */
+    margin-top: 30px;
+}
+
+.location-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    /* Permette all'input di occupare spazio */
+    max-width: 400px;
+    /* Larghezza massima per l'input */
+}
+
+.location-input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    /* Spazio per testo e icona */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    /* Rimuove il contorno blu al focus */
+}
+
+.location-input:focus {
+    border-color: #e64a19;
+    /* Bordo arancione al focus */
+}
+
+.location-icon {
+    position: absolute;
+    right: 15px;
+    color: #999;
+    font-size: 20px;
+}
+
+.search-button {
+    background-color: #e64a19;
+    /* Arancione del bottone */
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+    /* Impedisce al testo di andare a capo */
+}
+
+.search-button:hover {
+    background-color: #d84315;
+    /* Un arancione più scuro all'hover */
+}
+
+/* Filters and Sort Section */
+.filters-sort-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 20px;
+    /* Spazio sotto questa sezione */
+    border-bottom: 1px solid #eee;
+    /* Bordo inferiore leggero */
+    flex-wrap: wrap;
+    /* Permette agli elementi di andare a capo su schermi piccoli */
+    gap: 15px;
+    /* Spazio tra i blocchi filtri/ordina */
+}
+
+.filters,
+.sort-by {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filters span,
+.sort-by span {
+    font-size: 15px;
+    color: #555;
+    font-weight: 600;
+    /* Leggermente in grassetto */
+}
+
+.filter-dropdown,
+.sort-dropdown {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 15px;
+    color: #333;
+    -webkit-appearance: none;
+    /* Rimuove lo stile predefinito delle select su Chrome/Safari */
+    -moz-appearance: none;
+    /* Rimuove lo stile predefinito delle select su Firefox */
+    appearance: none;
+    /* Rimuove lo stile predefinito delle select */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    /* Freccetta personalizzata */
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 12px;
+    cursor: pointer;
+}
+
+.filter-dropdown:focus,
+.sort-dropdown:focus {
+    outline: none;
+    border-color: #e64a19;
+}
+
+/* Media Queries per responsività */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 28px;
+    }
+
+    .hero-section p {
+        font-size: 16px;
+        padding: 0 15px;
+    }
+
+    .search-bar-container {
+        flex-direction: column;
+        /* Impila input e bottone */
+        align-items: center;
+        padding: 0 15px;
+    }
+
+    .location-input-wrapper {
+        width: 100%;
+        max-width: none;
+        /* Rimuove la larghezza massima per schermi piccoli */
+        margin-bottom: 10px;
+        /* Spazio tra input e bottone */
+    }
+
+    .search-button {
+        width: 100%;
+    }
+
+    .filters-sort-section {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 15px 0;
+    }
+
+    .filters,
+    .sort-by {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .filter-dropdown,
+    .sort-dropdown {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section h1 {
+        font-size: 24px;
+    }
+
+    .hero-section p {
+        font-size: 14px;
+    }
+}
