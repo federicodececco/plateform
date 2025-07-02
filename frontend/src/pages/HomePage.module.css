@@ -65,6 +65,7 @@
 }
 
 .input-with-icon {
+
     position: relative;
     display: flex;
     align-items: center;
@@ -73,13 +74,14 @@
 
 .input-with-icon input {
     width: 100%;
-    padding: 10px 35px 10px 15px;
+    padding: 10px 15px;
     /* Spazio per testo e icona */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
     outline: none;
     background-color: #fcfcfc;
+    color: #000;
 }
 
 .input-with-icon input:focus {
@@ -92,6 +94,7 @@
     right: 10px;
     color: #999;
     font-size: 18px;
+    pointer-events: none;
 }
 
 /* Stile per la select personalizzata */
@@ -103,14 +106,12 @@
 .custom-select select {
     width: 100%;
     padding: 10px 35px 10px 15px;
-    /* Spazio per testo e freccia */
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
     color: #333;
     background-color: #fcfcfc;
     -webkit-appearance: none;
-    /* Rimuove lo stile predefinito */
     -moz-appearance: none;
     appearance: none;
     outline: none;
@@ -127,19 +128,15 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%) rotate(45deg);
-    /* Crea una freccia con un bordo */
     width: 8px;
     height: 8px;
     border-right: 2px solid #666;
     border-bottom: 2px solid #666;
     pointer-events: none;
-    /* Fa in modo che i click passino alla select */
 }
 
-/* Bottone Cerca Ristoranti */
 .search-restaurants-button {
     background-color: #e64a19;
-    /* Arancione del bottone */
     color: #fff;
     padding: 12px 25px;
     border: none;
@@ -149,36 +146,72 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     white-space: nowrap;
-    /* Impedisce al testo di andare a capo */
     align-self: flex-end;
-    /* Allinea il bottone in basso con gli input */
 }
 
 .search-restaurants-button:hover {
     background-color: #d84315;
 }
 
-/* Media Queries per la responsività */
+
+.explore-by-region-section {
+    padding: 40px 0;
+    background-color: #f8f8f8;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    text-align: center;
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.region-cards-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
 @media (max-width: 900px) {
     .search-box {
         padding: 15px;
         gap: 10px;
         flex-direction: column;
-        /* Impila tutti i campi su schermi più piccoli */
         align-items: stretch;
-        /* Allunga gli elementi per occupare la larghezza */
     }
 
     .search-field {
         width: 100%;
-        /* Ogni campo occupa tutta la larghezza */
         min-width: unset;
-        /* Rimuove la larghezza minima */
     }
 
     .search-restaurants-button {
         width: 100%;
-        /* Il bottone occupa tutta la larghezza */
+    }
+}
+
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.8em;
+    }
+
+    .section-description {
+        font-size: 1em;
     }
 }
 

@@ -11,6 +11,7 @@ export default function AppNavbar() {
                 <li><a href="/regioni">Regioni</a></li>
                 <li><a href="/recensioni">Recensioni</a></li>
                 <li><a href="/blog">Blog</a></li>
+                <li><a href="/Search">Search</a></li>
             </ul>
             <div className={styles["navbar-search"]}>
                 <input type="text" placeholder="Cerca ristorante..." />
