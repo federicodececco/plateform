@@ -1,6 +1,5 @@
 package com.plateform.restfinder.model;
 
-import java.security.Provider.Service;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -86,14 +85,14 @@ public class Place {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
     @JsonManagedReference
-    private Set<Service> services;
+    private Set<Serviceing> services;
 
     public Place(Long id, String name, String address, String city, Integer cap, String province,
             String nation, String latitude, String longitude, String mainCategoryId, String googlePlaceID,
             String image, String phoneNumber, String priceRange, String ranking, Integer reviewNumber,
             Integer reviewAverage,
             String googleMapsURL, String webSiteURL, String plateformID, String plateformURL,
-            Set<Service> services, Set<Category> categories) {
+            Set<Serviceing> services, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.address = address;

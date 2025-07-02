@@ -2,11 +2,11 @@ package com.plateform.restfinder.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Locale.Category;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.plateform.restfinder.model.Category;
 import com.plateform.restfinder.repository.CategoryRepository;
 
 @Service
