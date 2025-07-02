@@ -1,6 +1,7 @@
 package com.plateform.restfinder.services;
 
-import org.springframework.http.HttpHeaders;
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,6 +11,7 @@ import com.plateform.restfinder.dto.request.Circle;
 import com.plateform.restfinder.dto.request.Coordinates;
 import com.plateform.restfinder.dto.request.LocationBias;
 import com.plateform.restfinder.dto.request.TextRequest;
+import com.plateform.restfinder.dto.response.PlaceResponse;
 import com.plateform.restfinder.dto.response.PlacesResponseList;
 
 import reactor.core.publisher.Mono;
@@ -63,6 +65,32 @@ public class GooglePlacesService {
                 .bodyValue(req)
                 .retrieve()
                 .bodyToMono(PlacesResponseList.class);
+
+    }
+
+    public Mono<PlaceResponse> getPlaceDetails(String placeId, List<String> fieldMask) {
+        return webClient.get()
+                .uri("/places/{placeId}", placeId)
+                .headers(headers -> {
+                    if (fieldMask != null && !fieldMask.isEmpty()) {
+                        headers.set("X-Goog-FieldMask", String.join(",", fieldMask));
+                    }
+                })
+                .retrieve()
+                .bodyToMono(PlaceResponse.class);
+
+    }
+
+    public Mono<String> getPlaceDetailsDebug(String placeId, List<String> fieldMask) {
+        return webClient.get()
+                .uri("/places/{placeId}", placeId)
+                .headers(headers -> {
+                    if (fieldMask != null && !fieldMask.isEmpty()) {
+                        headers.set("X-Goog-FieldMask", String.join(",", fieldMask));
+                    }
+                })
+                .retrieve()
+                .bodyToMono(String.class);
 
     }
 

@@ -5,35 +5,35 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.plateform.restfinder.model.Serviceing;
+import com.plateform.restfinder.model.Tags;
 import org.springframework.stereotype.Service;
-import com.plateform.restfinder.repository.ServiceingRepository;
+import com.plateform.restfinder.repository.TagsRepository;
 
 @Service
 public class ServiceingService {
 
     @Autowired
-    ServiceingRepository serviceRepository;
+    TagsRepository tagsRepository;
 
-    public List<Serviceing> findAll() {
-        return serviceRepository.findAll();
+    public List<Tags> findAll() {
+        return tagsRepository.findAll();
     }
 
-    public Optional<Serviceing> findById(Integer id) {
-        return serviceRepository.findById(id);
+    public Optional<Tags> findById(Integer id) {
+        return tagsRepository.findById(id);
 
     }
 
-    public Serviceing create(Serviceing service) {
-        return serviceRepository.save(service);
+    public Tags create(Tags service) {
+        return tagsRepository.save(service);
     }
 
-    public Serviceing edit(Serviceing service) {
-        return serviceRepository.save(service);
+    public Tags edit(Tags service) {
+        return tagsRepository.save(service);
     }
 
     public void deleteByID(Integer id) {
-        serviceRepository.deleteById(id);
+        tagsRepository.deleteById(id);
     }
 
 }

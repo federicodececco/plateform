@@ -6,8 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
@@ -26,13 +25,15 @@ import lombok.ToString;
 @ToString
 public class Place {
 
+    // googel place id
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String name;
 
     private String address;
+
+    private String adressNumber;
 
     private String city;
 
@@ -42,15 +43,13 @@ public class Place {
 
     private String nation;
 
-    private String latitude;
+    private Double latitude;
 
-    private String longitude;
+    private Double longitude;
 
-    private String mainCategoryId;
+    private String mainCategory;
 
-    private String googlePlaceID;
-
-    private String image;
+    private String coverImageName;
 
     /*
      * String menu link??
@@ -63,11 +62,11 @@ public class Place {
 
     private String priceRange;
 
-    private String ranking;
+    private Double rating;
 
     private Integer reviewNumber;
 
-    private Integer reviewAverage;
+    // private Integer reviewAverage;
 
     private String googleMapsURL;
 
@@ -77,22 +76,28 @@ public class Place {
 
     private String plateformURL;
 
+    private Boolean blacklist;
+
+    private Boolean isEdited; // edited by user, not to update with google
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "category_place", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonManagedReference
     private Set<Category> categories;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
+    @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
     @JsonManagedReference
-    private Set<Serviceing> services;
+    private Set<Tags> tags;
 
-    public Place(Long id, String name, String address, String city, Integer cap, String province,
-            String nation, String latitude, String longitude, String mainCategoryId, String googlePlaceID,
-            String image, String phoneNumber, String priceRange, String ranking, Integer reviewNumber,
-            Integer reviewAverage,
+    private Integer ratingClassId;
+
+    public Place(String id, String name, String address, String city, Integer cap, String province,
+            String nation, Double latitude, Double longitude, String mainCategory,
+            String image, String phoneNumber, String priceRange, Double rating, Integer reviewNumber,
+
             String googleMapsURL, String webSiteURL, String plateformID, String plateformURL,
-            Set<Serviceing> services, Set<Category> categories) {
+            Set<Tags> tags, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -102,19 +107,19 @@ public class Place {
         this.nation = nation;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.mainCategoryId = mainCategoryId;
-        this.googlePlaceID = googlePlaceID;
-        this.image = image;
+        this.mainCategory = mainCategory;
+
+        // this.image = image;
         this.phoneNumber = phoneNumber;
         this.priceRange = priceRange;
-        this.ranking = ranking;
+        this.rating = rating;
         this.reviewNumber = reviewNumber;
-        this.reviewAverage = reviewAverage;
+
         this.googleMapsURL = googleMapsURL;
         this.webSiteURL = webSiteURL;
         this.plateformID = plateformID;
         this.plateformURL = plateformURL;
-        this.services = services;
+        this.tags = tags;
         this.categories = categories;
     }
 }

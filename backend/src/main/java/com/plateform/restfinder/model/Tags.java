@@ -17,27 +17,34 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "servicies")
+@Table(name = "tags")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class Serviceing {
+public class Tags {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String en_name;
 
-    @ManyToMany(mappedBy = "services", fetch = FetchType.LAZY)
+    private String it_name;
+
+    // do we care about this tag?
+    private Boolean isVisible;
+
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @JsonBackReference
     private Set<Place> places;
 
-    public Serviceing(Integer id, String name, Set<Place> places) {
+    public Tags(Integer id, Set<Place> places, String en_name, String it_name, Boolean isVisible) {
         this.id = id;
-        this.name = name;
+        this.en_name = en_name;
+        this.it_name = it_name;
         this.places = places;
+        this.isVisible = isVisible;
 
     }
 }
