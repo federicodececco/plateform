@@ -4,56 +4,42 @@
     align-items: center;
     padding: 10px 20px;
     background-color: #fff;
-    /* Sfondo bianco come nell'immagine */
     border-bottom: 1px solid #eee;
-    /* Leggero bordo inferiore, se presente */
     font-family: Arial, sans-serif;
-    /* Un font comune simile */
 }
 
-/* Stile del logo */
 .navbar-logo a {
     background-color: #e64a19;
-    /* Arancione del logo */
     color: #fff;
     padding: 8px 15px;
     text-decoration: none;
     font-weight: bold;
     font-size: 16px;
-    /* Dimensione del testo del logo */
     border-radius: 3px;
-    /* Leggera curvatura, se visibile */
     white-space: nowrap;
-    /* Impedisce al testo di andare a capo */
 }
 
-/* Stile dei link di navigazione */
 .navbar-links {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
     gap: 25px;
-    /* Spazio tra i link */
 }
 
 .navbar-links li a {
     text-decoration: none;
     color: #333;
-    /* Colore del testo dei link */
     font-size: 15px;
     font-weight: 500;
-    /* Leggermente in grassetto */
     padding: 5px 0;
     transition: color 0.3s ease;
 }
 
 .navbar-links li a:hover {
     color: #e64a19;
-    /* Colore all'hover, puoi scegliere tu */
 }
 
-/* Stile della barra di ricerca */
 .navbar-search {
     display: flex;
     align-items: center;
@@ -70,6 +56,7 @@
     padding: 5px;
     font-size: 14px;
     width: 200px;
+    color: #333;
     /* Larghezza della barra di ricerca */
     background-color: transparent;
     /* Rende lo sfondo dell'input trasparente */
@@ -91,10 +78,8 @@
     width: 18px;
     height: 18px;
     color: #999;
-    /* Colore dell'icona di ricerca */
 }
 
-/* Media Queries per la responsività (opzionale ma consigliato) */
 @media (max-width: 768px) {
     .navbar {
         flex-direction: column;
@@ -116,6 +101,5 @@
 
     .navbar-search input {
         width: calc(100% - 30px);
-        /* Larghezza dinamica */
     }
 }

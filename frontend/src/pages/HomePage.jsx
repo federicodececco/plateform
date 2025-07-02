@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import styles from './HomePage.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
+import debounce from 'lodash/debounce';
 
 const regionsData = [
     {
@@ -29,26 +30,29 @@ const regionsData = [
         description: 'Pesto, focaccia, cucina marinara',
         restaurantCount: '423',
     },
-    // Aggiungi altre regioni qui se necessario
 ];
 
 export default function HomePage() {
-    const [location, setLocation] = useState('')
-    const [selectedDate, setSelectedDate] = useState('');
-    const [people, setPeople] = useState('')
     const { navSearchBar, setNavSearchBar } = useGlobalContext()
+    const [formData, setFormData] = useState({ location: '', date: '', people: '' })
 
-    const handleDateChange = (event) => {
-        const newDateValue = event.target.value; // Questo sarà "YYYY-MM-DD" o ""
-        setSelectedDate(newDateValue);
-        console.log("Nuova data selezionata (YYYY-MM-DD):", newDateValue);
+    const handleFormData = e => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    }
 
-        if (newDateValue) {
-            const dateObj = new Date(newDateValue + 'T00:00:00'); // 'T00:00:00' per evitare problemi di fuso orario
-            const formattedForDisplay = dateObj.toLocaleDateString('it-IT'); // Es: "01/07/2025"
-            console.log("Data formattata per display (it-IT):", formattedForDisplay);
+    const handleDebouncedSearchRestaurant = useCallback(debounce(chiamataApi, 300), [])
+
+    function chiamataApi() {
+        console.log("Funzione di stampa chiamata");
+    }
+
+    const handleEnterUp = e => {
+        if (e.key === 'Enter') {
+            // effettuare la chiamata api qui
+            handleDebouncedSearchRestaurant();
         }
-    };
+    }
 
     return (
         <div className={styles["hero-search-section-container"]}>
@@ -61,7 +65,7 @@ export default function HomePage() {
                 <div className={styles["search-field"]}>
                     <label htmlFor="location">Dove</label>
                     <div className={styles["input-with-icon"]}>
-                        <input value={location} onChange={e => setLocation(e.target.value)} type="text" id="location" placeholder="Città o regione..." />
+                        <input name='location' onKeyUp={handleEnterUp} value={formData.location} onChange={handleFormData} type="text" id="location" placeholder="Città o regione..." />
                         <span className={styles["icon"]}>📍</span>
                     </div>
                 </div>
@@ -70,10 +74,12 @@ export default function HomePage() {
                     <label htmlFor="date">Data</label>
                     <div className={styles["input-with-icon"]}>
                         <input
+                            onKeyUp={handleEnterUp}
+                            name='date'
                             type="date"
                             id="date"
-                            value={selectedDate}
-                            onChange={handleDateChange}
+                            value={formData.date}
+                            onChange={handleFormData}
                         />
                         <span className={styles["icon"]}>🗓️</span> {/* Icona a fianco */}
                     </div>
@@ -82,7 +88,7 @@ export default function HomePage() {
                 <div className={styles["search-field"]}>
                     <label htmlFor="people">Persone</label>
                     <div className={styles["custom-select"]}>
-                        <select id="people" defaultValue="2">
+                        <select id="people" defaultValue="2" name='people' onChange={handleFormData}>
                             <option value="1">1 persona</option>
                             <option value="2">2 persone</option>
                             <option value="3">3 persone</option>
@@ -98,7 +104,7 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                <button className={styles["search-restaurants-button"]}>Cerca Ristoranti</button>
+                <button onClick={handleDebouncedSearchRestaurant} className={styles["search-restaurants-button"]}>Cerca Ristoranti</button>
             </div>
 
             <section className={styles["explore-by-region-section"]}>

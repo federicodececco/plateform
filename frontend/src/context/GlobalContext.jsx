@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
-    const [navSearchBar, setNavSearchBar] = useState();
+    const [navSearchBar, setNavSearchBar] = useState('');
 
     const globalProviderValue = {
         navSearchBar, setNavSearchBar
