@@ -1,0 +1,475 @@
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+    /* Spazio tra la sezione sinistra e destra */
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* --- Sezione Superiore: Dettagli Ristorante, Galleria e Modulo di Prenotazione--- */
+
+.upperSection {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px;
+}
+
+/* --- Sezione Sinistra: Dettagli Ristorante e Galleria --- */
+.leftSection {
+    flex: 2;
+    min-width: 600px;
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: repeat(2, 150px);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mainPhoto {
+    grid-column: 1 / 2;
+    /* Si estende sulla prima colonna */
+    grid-row: 1 / 3;
+    /* Si estende su entrambe le righe */
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 1.2em;
+}
+
+.thumbnailPhoto {
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.9em;
+}
+
+.thumbnailPhoto:nth-child(4) {
+    /* Stile specifico per il "+12 foto" */
+    background-color: #d0d0d0;
+    cursor: pointer;
+}
+
+.tagsContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tag {
+    background-color: #e6f7ed;
+    color: #28a745;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.restaurantName {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.stars {
+    color: #ffc107;
+    margin-right: 5px;
+    font-size: 1.2em;
+}
+
+.reviewsCount {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.address {
+    margin-bottom: 15px;
+    font-size: 0.95em;
+    color: #666;
+}
+
+.description {
+    line-height: 1.6;
+    color: #444;
+}
+
+/* --- Sezione Destra: Modulo di Prenotazione --- */
+.rightSection {
+    flex: 1;
+    max-width: 350px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: fit-content;
+}
+
+.bookingTitle {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.formGroup {
+    margin-bottom: 15px;
+}
+
+.formGroup input,
+.formGroup select {
+    color: #333;
+}
+
+.formLabel {
+    display: block;
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.formInput,
+.formSelect {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    appearance: none;
+    /* Rimuove lo stile predefinito per i select */
+    background-color: white;
+}
+
+.dateInput {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.submitButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #e64a19;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.submitButton:hover {
+    background-color: #d84315;
+}
+
+.priceInfo {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+}
+
+.contactInfo {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+}
+
+.contactValue {
+    color: #e64a19;
+    font-weight: bold;
+}
+
+/* Sezione Descrizione e Orari (sotto la galleria) */
+.bottomSection {
+    padding: 0 40px;
+}
+
+.detailsSection {
+    background-color: #F7F5F3;
+    display: flex;
+    gap: 30px;
+}
+
+.descriptionSection {
+    flex: 2;
+}
+
+.descriptionSectionHeading,
+.openingHoursSection,
+.servicesSection,
+.mapSection {
+    background-color: #fff;
+    padding: 12px 24px;
+}
+
+.sectionHeading {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+.descriptionParagraph {
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #444;
+}
+
+.openingHoursSection {
+    margin-top: 30px;
+}
+
+.openingHoursList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.openingHourItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.openingHourItem:last-child {
+    border-bottom: none;
+}
+
+.closedLabel {
+    color: #e64a19;
+    /* Rosso per "Chiuso" */
+    font-weight: bold;
+}
+
+.openingTime {
+    font-weight: bold;
+    color: #333;
+}
+
+.servicesSection {
+    margin-top: 30px;
+}
+
+.servicesGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Due colonne */
+    gap: 15px;
+}
+
+.serviceItem {
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.serviceIcon {
+    color: #28a745;
+    /* Colore verde per le icone dei servizi */
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+
+/* Sezione Mappa e Contatti (lato destro, sotto il modulo di prenotazione) */
+.mapAndContactSection {
+    flex: 1;
+    /* Prende la stessa proporzione della sezione di booking */
+    max-width: 350px;
+}
+
+.mapContainer {
+    background-color: #e0e0e0;
+    height: 180px;
+    /* Altezza fissa per la mappa placeholder */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 1em;
+}
+
+.getDirectionsButton {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #f0f0f0;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.getDirectionsButton:hover {
+    background-color: #e6f2ff;
+}
+
+.contactInfoBlock {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.contactItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+.contactItem:last-child {
+    margin-bottom: 0;
+}
+
+.contactIcon {
+    color: #555;
+    margin-right: 10px;
+    font-size: 1.1em;
+}
+
+.contactLink {
+    color: #e64a19;
+    /* Arancione come prima */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.contactLink:hover {
+    text-decoration: underline;
+}
+
+/* --- Sezione Recensioni --- */
+.reviewsSection {
+    background-color: white;
+    margin-top: 40px;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+}
+
+.reviewsHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.reviewsCountText {
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #333;
+}
+
+.writeReviewButton {
+    background-color: #e64a19;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.writeReviewButton:hover {
+    background-color: #d84315;
+}
+
+.reviewsContent {
+    display: flex;
+    gap: 30px;
+}
+
+.overallRating {
+    flex: 0 0 200px;
+    /* Larghezza fissa per il blocco del rating */
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.overallScore {
+    font-size: 3em;
+    font-weight: bold;
+    color: #ffc107;
+    margin-bottom: 5px;
+}
+
+.overallRatingStars {
+    margin-bottom: 10px;
+    color: #ffc107;
+    font-size: 1.3em;
+}
+
+.overallReviewsCount {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.individualReviews {
+    flex: 1;
+    /* Prende lo spazio restante */
+}
+
+.viewAllReviewsButton {
+    display: block;
+    width: 100%;
+    margin: 30px auto 0;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    color: #e64a19;
+    border: 1px solid #e64a19;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease;
+}
+
+.viewAllReviewsButton:hover {
+    background-color: #fcece7;
+}
