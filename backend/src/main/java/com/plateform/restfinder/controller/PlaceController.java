@@ -1,33 +1,42 @@
 package com.plateform.restfinder.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plateform.restfinder.dto.response.PlaceResponse;
 import com.plateform.restfinder.dto.response.PlacesResponseList;
+import com.plateform.restfinder.model.Category;
 import com.plateform.restfinder.model.Place;
+import com.plateform.restfinder.model.Tag;
+import com.plateform.restfinder.repository.CategoryRepository;
+import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.GooglePlacesService;
 import com.plateform.restfinder.services.PlaceService;
 import com.plateform.restfinder.services.TagService;
 
-import jakarta.validation.constraints.Null;
 import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/places")
 public class PlaceController {
+
+    private final CategoryRepository categoryRepository;
 
     @Autowired
     private PlaceService placeService;
@@ -36,23 +45,57 @@ public class PlaceController {
     private TagService tagService;
 
     @Autowired
+    private CategoryService categoryService;
+
+    @Autowired
     private GooglePlacesService googlePlacesService;
+
+    PlaceController(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     // frontend view
 
     @GetMapping("/search-text")
-    public Mono<PlacesResponseList> searchText(@RequestParam String query,
+    public Mono<ResponseEntity<PlacesResponseList>> searchText(@RequestParam String query,
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
             @RequestParam(required = false) Integer maxResults) {
-        return googlePlacesService.searchText(query, latitude, longitude, radius, maxResults);
+
+        try {
+            if (query == null || query.trim().isEmpty()) {
+                return Mono.just(ResponseEntity.badRequest().build());
+            }
+            if (latitude != null && (latitude < -90 || latitude > 90)) {
+                return Mono.just(ResponseEntity.badRequest().build());
+            }
+            if (longitude != null && (longitude < -180 || longitude > 180)) {
+                return Mono.just(ResponseEntity.badRequest().build());
+            }
+            return googlePlacesService.searchText(query, latitude, longitude, radius, maxResults)
+                    .map(result -> new ResponseEntity<>(result, HttpStatus.OK));
+
+        } catch (Exception e) {
+
+            return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+        }
     }
 
     @GetMapping("/details/{id}")
-    public Mono<PlaceResponse> getDetails(@PathVariable String id,
+    public Mono<ResponseEntity<PlaceResponse>> getDetails(@PathVariable String id,
             @RequestParam(required = false) List<String> masks) {
+        try {
+            if (id == null || id.trim().isEmpty()) {
+                return Mono.just(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+            }
 
-        return googlePlacesService.getPlaceDetails(id, masks);
+            return googlePlacesService.getPlaceDetails(id, masks)
+                    .map(result -> new ResponseEntity<>(result, HttpStatus.OK));
+
+        } catch (Exception e) {
+
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
     }
 
     @GetMapping("/details-debug/{id}")
@@ -71,12 +114,12 @@ public class PlaceController {
         Place placetoSave = new Place();
         placetoSave.setId(googleResponse.getId());
         placetoSave.setName(googleResponse.getDisplayName().getText());
-        placetoSave.setAddress(googleResponse.getAddressComponents().get(2).getLongText());
-        placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(1).getLongText());
-        placetoSave.setCity(googleResponse.getAddressComponents().get(3).getShortText());
-        placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(8).getLongText()));
-        placetoSave.setProvince(googleResponse.getAddressComponents().get(5).getShortText());
-        placetoSave.setNation(googleResponse.getAddressComponents().get(7).getLongText());
+        placetoSave.setAddress(googleResponse.getAddressComponents().get(1).getLongText());
+        placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(0).getLongText());
+        placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
+        placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
+        placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
+        placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
         placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
         placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
         placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
@@ -100,73 +143,112 @@ public class PlaceController {
         placetoSave.setBlacklist(false);
         placetoSave.setIsEdited(false);
 
-        Set<String> tags = new HashSet<>();
+        // setting tags
+
+        Set<String> tagsTmp = new HashSet<>();
         if (googleResponse.getTakeout() != null && googleResponse.getTakeout() != false) {
-            tags.add("Takeout");
+            tagsTmp.add("takeout");
         }
         if (googleResponse.getDineIn() != null && googleResponse.getDineIn() != false) {
-            tags.add("DineIn");
+            tagsTmp.add("dineIn");
         }
         if (googleResponse.getReservable() != null && googleResponse.getReservable() != false) {
-            tags.add("Reservable");
+            tagsTmp.add("reservable");
         }
         if (googleResponse.getServesLunch() != null && googleResponse.getServesLunch() != false) {
-            tags.add("servesLunch");
+            tagsTmp.add("servesLunch");
         }
         if (googleResponse.getServesDinner() != null && googleResponse.getServesDinner() != false) {
-            tags.add("servesDinner");
+            tagsTmp.add("servesDinner");
         }
         if (googleResponse.getServesBeer() != null && googleResponse.getServesBeer() != false) {
-            tags.add("ServesBeer");
+            tagsTmp.add("ServesBeer");
         }
         if (googleResponse.getServesWine() != null && googleResponse.getServesWine() != false) {
-            tags.add("ServesWine");
+            tagsTmp.add("ServesWine");
         }
         if (googleResponse.getOutdoorSeating() != null && googleResponse.getOutdoorSeating() != false) {
-            tags.add("OutdoorSeating");
+            tagsTmp.add("outdoorSeating");
         }
         if (googleResponse.getMenuForChildren() != null && googleResponse.getMenuForChildren() != false) {
-            tags.add("MenuForChildren");
+            tagsTmp.add("menuForChildren");
         }
         if (googleResponse.getServesDessert() != null && googleResponse.getServesDessert() != false) {
-            tags.add("ServesDessert");
+            tagsTmp.add("servesDessert");
         }
         if (googleResponse.getServesCoffee() != null && googleResponse.getServesCoffee() != false) {
-            tags.add("ServesCoffee");
+            tagsTmp.add("servesCoffee");
         }
         if (googleResponse.getRestroom() != null && googleResponse.getRestroom() != false) {
-            tags.add("Restroom");
+            tagsTmp.add("restroom");
         }
         if (googleResponse.getAccessibilityOptions() != null
                 && googleResponse.getAccessibilityOptions().getWheelchairAccessibleRestroom() != false) {
-            tags.add("wheelchairAccessibleRestroom");
+            tagsTmp.add("wheelchairAccessibleRestroom");
         }
         if (googleResponse.getAccessibilityOptions() != null
                 && googleResponse.getAccessibilityOptions().getWheelchairAccessibleSeating() != false) {
-            tags.add("wheelchairAccessibleSeating");
+            tagsTmp.add("wheelchairAccessibleSeating");
         }
         if (googleResponse.getPaymentOptions() != null
+                && googleResponse.getPaymentOptions().getAcceptCashOnly() != null
                 && googleResponse.getPaymentOptions().getAcceptCashOnly() != false) {
-            tags.add("acceptCashOnly");
+            tagsTmp.add("acceptCashOnly");
         }
         if (googleResponse.getPaymentOptions() != null
+                && googleResponse.getPaymentOptions().getAcceptsDebitCards() != null
                 && googleResponse.getPaymentOptions().getAcceptsDebitCards() != false) {
-            tags.add("acceptsDebitCards");
+            tagsTmp.add("acceptsDebitCards");
         }
         if (googleResponse.getPaymentOptions() != null
+                && googleResponse.getPaymentOptions().getAcceptsNfc() != null
                 && googleResponse.getPaymentOptions().getAcceptsNfc() != false) {
-            tags.add("acceptsNfc");
+            tagsTmp.add("acceptsNfc");
         }
         if (googleResponse.getParkingOptions() != null
+                && googleResponse.getParkingOptions().getPaidParkingLot() != null
                 && googleResponse.getParkingOptions().getPaidParkingLot() != false) {
-            tags.add("paidParkingLot");
+            tagsTmp.add("paidParkingLot");
         }
         if (googleResponse.getParkingOptions() != null
+                && googleResponse.getParkingOptions().getPaidStreetParking() != null
                 && googleResponse.getParkingOptions().getPaidStreetParking() != false) {
-            tags.add("paidStreetParking");
+            tagsTmp.add("paidStreetParking");
         }
 
-        // placetoSave.setTags(tags);
+        Set<Tag> tagsFinal = new HashSet<>();
+        for (String name : tagsTmp) {
+            Optional<Tag> optTag = tagService.findByGLName(name);
+            if (!optTag.isEmpty()) {
+                tagsFinal.add(optTag.get());
+            }
+        }
+        placetoSave.setTags(tagsFinal);
+
+        // setting categories
+
+        List<Category> existingCategories = categoryService.findAll();
+        Map<String, Category> categoryMap = new HashMap<>();
+
+        for (Category cat : existingCategories) {
+            categoryMap.put(cat.getGoogleName(), cat);
+        }
+
+        Set<Category> categoryTmp = new HashSet<>();
+
+        for (String googleType : googleResponse.getTypes()) {
+            if (categoryMap.containsKey(googleType)) {
+                categoryTmp.add(categoryMap.get(googleType));
+            } else {
+                Category newCat = new Category();
+                newCat.setGoogleName(googleType);
+                Category saved = categoryRepository.save(newCat);
+                categoryTmp.add(saved);
+            }
+        }
+
+        placetoSave.setCategories(categoryTmp);
+
         return placeService.create(placetoSave);
     }
 

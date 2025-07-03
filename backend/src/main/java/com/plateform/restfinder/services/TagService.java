@@ -34,4 +34,8 @@ public class TagService {
     public void delete(Integer id) {
         tagRepository.deleteById(id);
     }
+
+    public Optional<Tag> findByGLName(String name) {
+        return tagRepository.findByGoogleName(name);
+    }
 }

@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 
@@ -48,7 +49,7 @@ public class Place {
     private Double longitude;
 
     private String mainCategory;
-
+    @Column(name = "cover_image_name", length = 500)
     private String coverImageName;
 
     /*

@@ -28,11 +28,11 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String google_name;
+    private String googleName;
 
-    private String en_name;
+    private String enName;
 
-    private String it_name;
+    private String itName;
 
     // do we care about this tag?
     private Boolean isVisible;
@@ -41,12 +41,12 @@ public class Tag {
     @JsonBackReference
     private Set<Place> places;
 
-    public Tag(Integer id, String google_name, Set<Place> places, String en_name, String it_name, Boolean isVisible) {
+    public Tag(Integer id, String googleName, Set<Place> places, String enName, String itName, Boolean isVisible) {
         this.id = id;
-        this.en_name = en_name;
-        this.it_name = it_name;
+        this.enName = enName;
+        this.itName = itName;
         this.places = places;
         this.isVisible = isVisible;
-        this.google_name = google_name;
+        this.googleName = googleName;
     }
 }

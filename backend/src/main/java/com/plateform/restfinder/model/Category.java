@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,22 +23,21 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+@AllArgsConstructor
 public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
+    private String googleName;
+
+    private String en_name;
+
+    private String it_name;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     @JsonBackReference
     private Set<Place> places;
-
-    public Category(Integer id, String name, Set<Place> places) {
-        this.id = id;
-        this.name = name;
-        this.places = places;
-    }
 
 }
