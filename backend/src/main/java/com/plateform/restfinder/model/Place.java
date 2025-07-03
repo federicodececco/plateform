@@ -88,7 +88,7 @@ public class Place {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
     @JsonManagedReference
-    private Set<Tags> tags;
+    private Set<Tag> tags;
 
     private Integer ratingClassId;
 
@@ -97,7 +97,7 @@ public class Place {
             String image, String phoneNumber, String priceRange, Double rating, Integer reviewNumber,
 
             String googleMapsURL, String webSiteURL, String plateformID, String plateformURL,
-            Set<Tags> tags, Set<Category> categories) {
+            Set<Tag> tags, Set<Category> categories) {
         this.id = id;
         this.name = name;
         this.address = address;

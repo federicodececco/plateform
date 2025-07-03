@@ -22,11 +22,13 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class Tags {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private String google_name;
 
     private String en_name;
 
@@ -39,12 +41,12 @@ public class Tags {
     @JsonBackReference
     private Set<Place> places;
 
-    public Tags(Integer id, Set<Place> places, String en_name, String it_name, Boolean isVisible) {
+    public Tag(Integer id, String google_name, Set<Place> places, String en_name, String it_name, Boolean isVisible) {
         this.id = id;
         this.en_name = en_name;
         this.it_name = it_name;
         this.places = places;
         this.isVisible = isVisible;
-
+        this.google_name = google_name;
     }
 }

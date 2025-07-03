@@ -19,7 +19,7 @@ public class PlaceService {
         return placeRepository.findAll();
     }
 
-    public Optional<Place> findById(Long id) {
+    public Optional<Place> findById(String id) {
         return placeRepository.findById(id);
     }
 
@@ -31,7 +31,7 @@ public class PlaceService {
         return placeRepository.save(place);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
         placeRepository.deleteById(id);
     }
 }

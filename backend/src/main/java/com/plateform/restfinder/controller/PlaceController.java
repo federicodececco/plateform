@@ -14,6 +14,7 @@ import com.plateform.restfinder.dto.response.PlacesResponseList;
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.services.GooglePlacesService;
 import com.plateform.restfinder.services.PlaceService;
+import com.plateform.restfinder.services.TagService;
 
 import jakarta.validation.constraints.Null;
 import reactor.core.publisher.Mono;
@@ -30,6 +31,9 @@ public class PlaceController {
 
     @Autowired
     private PlaceService placeService;
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private GooglePlacesService googlePlacesService;
@@ -162,7 +166,7 @@ public class PlaceController {
             tags.add("paidStreetParking");
         }
 
-        placetoSave.setTags(tags);
+        // placetoSave.setTags(tags);
         return placeService.create(placetoSave);
     }
 
