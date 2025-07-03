@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import styles from './DetailPage.module.css';
+import ReviewCard from '../components/ReviewCard';
 import {
     FaWifi,
     FaParking,
@@ -12,9 +13,23 @@ import {
     FaGlobe,
     FaFacebookF,
     FaInstagram,
-    FaTripadvisor // Ho usato Tripadvisor per l'ultima icona basandomi sul logo comune per le recensioni
+    FaTripadvisor
 } from 'react-icons/fa'; // Assicurati di aver installato 'react-icons'
-import ReviewCard from '../components/ReviewCard';
+
+const reviewsData = [
+    {
+        reviewerName: "Marco R.",
+        reviewDate: "15 gennaio 2025",
+        rating: 5,
+        reviewText: "Esperienza fantastica! Il pesce era freschissimo e la vista dalla terrazza mozzafiato. Servizio impeccabile e atmosfera molto accogliente. Torneremo sicuramente!"
+    },
+    {
+        reviewerName: "Giulia M.",
+        reviewDate: "12 gennaio 2025",
+        rating: 4,
+        reviewText: "Ottimo ristorante di pesce nel centro di Napoli. Piatti tradizionali preparati con cura e ingredienti di qualità. Prezzo giusto per la qualità offerta."
+    }
+];
 
 export default function DetailPage() {
     const { renderStars } = useGlobalContext()
@@ -22,13 +37,13 @@ export default function DetailPage() {
     const [selectedTime, setSelectedTime] = useState('19:30');
     const [selectedPeople, setSelectedPeople] = useState('2 persone');
 
+
+
     const handleSubmitBooking = (e) => {
         e.preventDefault();
         alert(`Prenotazione per il ${selectedDate} alle ${selectedTime} per ${selectedPeople}.`);
         console.log('Dettagli prenotazione:', { selectedDate, selectedTime, selectedPeople });
     };
-
-
 
     return (
         <div className={styles.pageContainer}>
@@ -228,10 +243,15 @@ export default function DetailPage() {
                         </div>
 
                         <div className={styles.individualReviews}>
-                            {/* fare ciclo per mosstrare tutte le recensioni */}
-                            <ReviewCard review={'a'} />
-                            <ReviewCard review={'a'} />
-
+                            {reviewsData.map((rev, index) => (
+                                <ReviewCard
+                                    key={index}
+                                    reviewerName={rev.reviewerName}
+                                    reviewDate={rev.reviewDate}
+                                    rating={rev.rating}
+                                    reviewText={rev.reviewText}
+                                />
+                            ))}
                             <a href="/tutte-le-recensioni" className={styles.viewAllReviewsButton}>
                                 Mostra tutte le recensioni
                             </a>
