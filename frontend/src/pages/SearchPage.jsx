@@ -1,8 +1,10 @@
 import RestaurantCard from '../components/RestaurantCard';
 import styles from './SearchPage.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function SearchPage() {
 
+    const { t } = useTranslation();
     const restaurantsData = [
         {
             name: "Osteria del Mare Amalfi",
@@ -33,42 +35,42 @@ export default function SearchPage() {
 
             {/* Da riprodurre dinamicamente con i link delle pagine precedenti */}
             <div className={styles["breadcrumbs"]}>
-                <a href="/">Home</a> &gt; <a href="/ristoranti">Ristoranti</a> &gt; <span>Costiera Amalfitana</span>
+                <a href="/">{t('homeBreadcrumb')}</a> &gt; <a href="/ristoranti">{t('restaurants')}</a> &gt; <span>{t('amalfiCoastTitle').split(' ')[1]}</span>
             </div>
 
             {/* Hero Section / Header */}
             <div className={styles["hero-section"]}>
-                <h1>Ristoranti Costiera Amalfitana</h1>
-                <p>Scopri i migliori ristoranti lungo la splendida Costiera Amalfitana. Prenota il tuo tavolo per un'esperienza culinaria indimenticabile.</p>
+                <h1>{t('amalfiCoastTitle')}</h1>
+                <p>{t('amalfiCoastDescription')}</p>
 
                 {/* Search Bar */}
                 <div className={styles["search-bar-container"]}>
                     <div className={styles["location-input-wrapper"]}>
-                        <input type="text" placeholder="Cerca per località..." className={styles["location-input"]} />
+                        <input type="text" placeholder={t('searchByLocationPlaceholder')} className={styles["location-input"]} />
                         <span className={styles["location-icon"]}>📍</span>
                     </div>
-                    <button className={styles["search-button"]}>Cerca Ristoranti</button>
+                    <button className={styles["search-button"]}>{t('searchRestaurants')}</button>
                 </div>
             </div>
 
             {/* Filters and Sort */}
             <div className={styles["filters-sort-section"]}>
                 <div className={styles["filters"]}>
-                    <span>Filtri:</span>
+                    <span>{t('filtersLabel')}</span>
                     <select className={styles["filter-dropdown"]}>
-                        <option>Tutte le località</option>
+                        <option>{t('allLocationsOption')}</option>
                     </select>
                     <select className={styles["filter-dropdown"]}>
-                        <option>Fascia di prezzo</option>
+                        <option>{t('priceRangeOption')}</option>
                     </select>
                     <select className={styles["filter-dropdown"]}>
-                        <option>Cucina</option>
+                        <option>{t('cuisineOption')}</option>
                     </select>
                 </div>
                 <div className={styles["sort-by"]}>
-                    <span>Ordina per:</span>
+                    <span>{t('sortByLabel')}</span>
                     <select className={styles["sort-dropdown"]}>
-                        <option>Più popolari</option>
+                        <option>{t('mostPopularOption')}</option>
                     </select>
                 </div>
             </div>

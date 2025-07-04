@@ -1,6 +1,8 @@
 import styles from './AppFooter.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function AppFooter() {
+    const { t } = useTranslation();
     return (
         <footer className={styles["footer"]}>
             <div className={styles["footer-content"]}>
@@ -8,43 +10,43 @@ export default function AppFooter() {
                     <div className={styles["footer-logo"]}>
                         <a href="/">Ristorant.it</a>
                     </div>
-                    <p className={styles["footer-description"]}>La tua guida completa per i migliori ristoranti d'Italia.</p>
+                    <p className={styles["footer-description"]}>{t('footerDescription')}</p>
                 </div>
                 <div className={styles["footer-column"]}>
-                    <h3 className={styles["footer-heading"]}>Regioni</h3>
+                    <h3 className={styles["footer-heading"]}>{t('regions')}</h3>
                     <ul className={styles["footer-links"]}>
-                        <li><a href="/regioni/campania">Campania</a></li>
-                        <li><a href="/regioni/liguria">Liguria</a></li>
-                        <li><a href="/regioni/toscana">Toscana</a></li>
-                        <li><a href="/regioni/sicilia">Sicilia</a></li>
+                        <li><a href="/regioni/campania">{t('campania')}</a></li>
+                        <li><a href="/regioni/liguria">{t('liguria')}</a></li>
+                        <li><a href="/regioni/toscana">{t('toscana')}</a></li>
+                        <li><a href="/regioni/sicilia">{t('sicilia')}</a></li>
                     </ul>
                 </div>
 
                 <div className={styles["footer-column"]}>
-                    <h3 className={styles["footer-heading"]}>Servizi</h3>
+                    <h3 className={styles["footer-heading"]}>{t('services')}</h3>
                     <ul className={styles["footer-links"]}>
-                        <li><a href="/prenotazioni">Prenotazioni</a></li>
-                        <li><a href="/recensioni">Recensioni</a></li>
-                        <li><a href="/guide">Guide</a></li>
-                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/prenotazioni">{t('reservations')}</a></li>
+                        <li><a href="/recensioni">{t('reviews')}</a></li>
+                        <li><a href="/guide">{t('guides')}</a></li>
+                        <li><a href="/blog">{t('blog')}</a></li>
                     </ul>
                 </div>
 
                 <div className={styles["footer-column"]}>
-                    <h3 className={styles["footer-heading"]}>Contatti</h3>
+                    <h3 className={styles["footer-heading"]}>{t('contacts')}</h3>
                     <ul className={styles["footer-contact"]}>
                         <li><a href="mailto:info@ristocosa.it">info@ristocosa.it</a></li>
                         <li><a href="tel:+394441234567">+39 444 123 4567</a></li>
-                        <li>Via del Mare, 123</li>
-                        <li>80100 sss</li>
+                        <li>{t('address')}</li>
+                        <li>{t('postalCodeCity')}</li>
                     </ul>
                 </div>
             </div>
 
             <div className={styles["footer-bottom"]}>
-                <p>&copy; 2025 ristorisportali.it. Tutti i diritti riservati.</p>
+                <p>{t('copyright')}</p>
                 <div className={styles["footer-social"]}>
-                    <a href="#" aria-label="Facebook"><img src="/path/to/facebook-icon.svg" alt="Facebook" /></a> {/* Sostituisci con le tue icone SVG o font awesome */}
+                    <a href="#" aria-label="Facebook"><img src="/path/to/facebook-icon.svg" alt="Facebook" /></a>
                     <a href="#" aria-label="Instagram"><img src="/path/to/instagram-icon.svg" alt="Instagram" /></a>
                     <a href="#" aria-label="Twitter"><img src="/path/to/twitter-icon.svg" alt="Twitter" /></a>
                 </div>

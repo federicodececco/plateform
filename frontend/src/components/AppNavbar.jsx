@@ -2,11 +2,12 @@ import { useGlobalContext } from '../context/GlobalContext';
 import styles from './AppNavbar.module.css';
 import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
+import { useTranslation } from 'react-i18next';
 
 export default function AppNavbar() {
 
     const { navSearchBar, setNavSearchBar } = useGlobalContext();
-
+    const { i18n, t } = useTranslation();
     // passare la chiamata api dentro la callback del debounce
     const handleDebouncedSearch = useCallback(debounce(chiamataApi, 300), [])
 
@@ -32,13 +33,17 @@ export default function AppNavbar() {
                 <a href="/">RestFinder.it</a>
             </div>
             <ul className={styles["navbar-links"]}>
-                <li><a href="/ristoranti">Ristoranti</a></li>
-                <li><a href="/regioni">Regioni</a></li>
-                <li><a href="/recensioni">Recensioni</a></li>
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/Search">Search</a></li>
+                <li><a href="/ristoranti">{t('restaurants')}</a></li>
+                <li><a href="/regioni">{t('regions')}</a></li>
+                <li><a href="/recensioni">{t('reviews')}</a></li>
+                <li><a href="/blog">{t('blog')}</a></li>
+                <li><a href="/Search">{t('search')}</a></li>
                 <li><a href="/detail">Detail</a></li>
             </ul>
+            <select onChange={e => i18n.changeLanguage(e.target.value)} value={i18n.language}>
+                <option value="it">IT</option>
+                <option value="en">EN</option>
+            </select>
             <div className={styles["navbar-search"]}>
                 <input type="text" placeholder="Cerca ristorante..." value={navSearchBar} onKeyUp={handleEnterUp} onChange={e => setNavSearchBar(e.target.value)} />
                 <button type="submit" aria-label="Cerca" onClick={handleSearchClick}>

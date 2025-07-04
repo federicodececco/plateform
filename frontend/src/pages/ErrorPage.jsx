@@ -1,19 +1,20 @@
 // import styles from './styles/ErrorPage.module.css'; 
 import styles from './ErrorPage.module.css';
+import { useTranslation } from 'react-i18next';
 
 const ErrorPage = () => {
+    const { t } = useTranslation();
     return (
         <div className={styles["error-page-container"]}>
             <div className={styles["error-content"]}>
                 <h1 className={styles["error-code"]}>404</h1>
-                <h2 className={styles["error-title"]}>Ops! Pagina Non Trovata</h2>
+                <h2 className={styles["error-title"]}>{t('errorTitle')}</h2>
                 <p className={styles["error-description"]}>
-                    Sembra che tu abbia preso una strada sbagliata. La pagina che stai cercando potrebbe non esistere
-                    o essere stata spostata.
+                    {t('errorDescription')}
                 </p>
-                <a href="/" className={styles["error-home-button"]}>Torna alla Home Page</a>
+                <a href="/" className={styles["error-home-button"]}>{t('errorHomeButton')}</a>
                 <p className={styles["error-contact-suggestion"]}>
-                    Se pensi ci sia un errore, <a href="/contatti" className={styles["error-contact-link"]}>contattaci</a>.
+                    {t('errorContactSuggestion')}
                 </p>
             </div>
         </div>
