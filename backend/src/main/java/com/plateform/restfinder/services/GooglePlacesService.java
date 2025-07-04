@@ -81,6 +81,40 @@ public class GooglePlacesService {
 
     }
 
+    // debug
+    public Mono<String> searchTextDebug(String query, Double latitude, Double longitude, Double radius,
+            Integer maxResults) {
+        TextRequest req = new TextRequest();
+        req.setTextQuery(query);
+        req.setMaxResultCount(maxResults != null ? maxResults : 5);
+        req.setLanguageCode("en");
+
+        if (latitude != null && longitude != null) {
+            Coordinates center = new Coordinates();
+            center.setLatitude(latitude);
+            center.setLongitude(longitude);
+
+            Circle circle = new Circle();
+            circle.setCenter(center);
+            circle.setRadius(radius != null ? radius : 5000.0);
+
+            LocationBias locationBias = new LocationBias();
+            locationBias.setCircle(circle);
+
+            req.setLocationBias(locationBias);
+        }
+
+        return webClient.post()
+                .uri("/places:searchText")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .bodyValue(req)
+                .retrieve()
+                .bodyToMono(String.class);
+
+    }
+
+    // debug
     public Mono<String> getPlaceDetailsDebug(String placeId, List<String> fieldMask) {
         return webClient.get()
                 .uri("/places/{placeId}", placeId)

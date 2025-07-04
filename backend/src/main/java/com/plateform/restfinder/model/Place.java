@@ -87,7 +87,7 @@ public class Place {
     private Set<Category> categories;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "place_service", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
+    @JoinTable(name = "place_tag", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
     @JsonManagedReference
     private Set<Tag> tags;
 

@@ -24,6 +24,7 @@ import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.GooglePlacesService;
 import com.plateform.restfinder.services.PlaceService;
 import com.plateform.restfinder.services.TagService;
+import com.plateform.restfinder.services.TagServiceMapping;
 
 import reactor.core.publisher.Mono;
 
@@ -43,6 +44,9 @@ public class PlaceController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private TagServiceMapping tagServiceMapping;
 
     @Autowired
     private CategoryService categoryService;
@@ -79,6 +83,14 @@ public class PlaceController {
 
             return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         }
+    }
+
+    @GetMapping("/search-text-debug")
+    public Mono<String> searchTextDebug(@RequestParam String query,
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
+            @RequestParam(required = false) Integer maxResults) {
+        return googlePlacesService.searchTextDebug(query, latitude, longitude, radius, maxResults);
     }
 
     @GetMapping("/details/{id}")
@@ -145,84 +157,115 @@ public class PlaceController {
 
         // setting tags
 
-        Set<String> tagsTmp = new HashSet<>();
-        if (googleResponse.getTakeout() != null && googleResponse.getTakeout() != false) {
-            tagsTmp.add("takeout");
-        }
-        if (googleResponse.getDineIn() != null && googleResponse.getDineIn() != false) {
-            tagsTmp.add("dineIn");
-        }
-        if (googleResponse.getReservable() != null && googleResponse.getReservable() != false) {
-            tagsTmp.add("reservable");
-        }
-        if (googleResponse.getServesLunch() != null && googleResponse.getServesLunch() != false) {
-            tagsTmp.add("servesLunch");
-        }
-        if (googleResponse.getServesDinner() != null && googleResponse.getServesDinner() != false) {
-            tagsTmp.add("servesDinner");
-        }
-        if (googleResponse.getServesBeer() != null && googleResponse.getServesBeer() != false) {
-            tagsTmp.add("ServesBeer");
-        }
-        if (googleResponse.getServesWine() != null && googleResponse.getServesWine() != false) {
-            tagsTmp.add("ServesWine");
-        }
-        if (googleResponse.getOutdoorSeating() != null && googleResponse.getOutdoorSeating() != false) {
-            tagsTmp.add("outdoorSeating");
-        }
-        if (googleResponse.getMenuForChildren() != null && googleResponse.getMenuForChildren() != false) {
-            tagsTmp.add("menuForChildren");
-        }
-        if (googleResponse.getServesDessert() != null && googleResponse.getServesDessert() != false) {
-            tagsTmp.add("servesDessert");
-        }
-        if (googleResponse.getServesCoffee() != null && googleResponse.getServesCoffee() != false) {
-            tagsTmp.add("servesCoffee");
-        }
-        if (googleResponse.getRestroom() != null && googleResponse.getRestroom() != false) {
-            tagsTmp.add("restroom");
-        }
-        if (googleResponse.getAccessibilityOptions() != null
-                && googleResponse.getAccessibilityOptions().getWheelchairAccessibleRestroom() != false) {
-            tagsTmp.add("wheelchairAccessibleRestroom");
-        }
-        if (googleResponse.getAccessibilityOptions() != null
-                && googleResponse.getAccessibilityOptions().getWheelchairAccessibleSeating() != false) {
-            tagsTmp.add("wheelchairAccessibleSeating");
-        }
-        if (googleResponse.getPaymentOptions() != null
-                && googleResponse.getPaymentOptions().getAcceptCashOnly() != null
-                && googleResponse.getPaymentOptions().getAcceptCashOnly() != false) {
-            tagsTmp.add("acceptCashOnly");
-        }
-        if (googleResponse.getPaymentOptions() != null
-                && googleResponse.getPaymentOptions().getAcceptsDebitCards() != null
-                && googleResponse.getPaymentOptions().getAcceptsDebitCards() != false) {
-            tagsTmp.add("acceptsDebitCards");
-        }
-        if (googleResponse.getPaymentOptions() != null
-                && googleResponse.getPaymentOptions().getAcceptsNfc() != null
-                && googleResponse.getPaymentOptions().getAcceptsNfc() != false) {
-            tagsTmp.add("acceptsNfc");
-        }
-        if (googleResponse.getParkingOptions() != null
-                && googleResponse.getParkingOptions().getPaidParkingLot() != null
-                && googleResponse.getParkingOptions().getPaidParkingLot() != false) {
-            tagsTmp.add("paidParkingLot");
-        }
-        if (googleResponse.getParkingOptions() != null
-                && googleResponse.getParkingOptions().getPaidStreetParking() != null
-                && googleResponse.getParkingOptions().getPaidStreetParking() != false) {
-            tagsTmp.add("paidStreetParking");
-        }
+        Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
 
-        Set<Tag> tagsFinal = new HashSet<>();
-        for (String name : tagsTmp) {
-            Optional<Tag> optTag = tagService.findByGLName(name);
-            if (!optTag.isEmpty()) {
-                tagsFinal.add(optTag.get());
-            }
-        }
+        // Set<String> tagsTmp = new HashSet<>();
+        // if (googleResponse.getTakeout() != null && googleResponse.getTakeout() !=
+        // false) {
+        // tagsTmp.add("takeout");
+        // }
+        // if (googleResponse.getDineIn() != null && googleResponse.getDineIn() !=
+        // false) {
+        // tagsTmp.add("dineIn");
+        // }
+        // if (googleResponse.getCurbsidePickup() != null &&
+        // googleResponse.getCurbsidePickup() != false) {
+        // tagsTmp.add("curbsidePickup");
+        // }
+        // if (googleResponse.getReservable() != null && googleResponse.getReservable()
+        // != false) {
+        // tagsTmp.add("reservable");
+        // }
+        // if (googleResponse.getServesLunch() != null &&
+        // googleResponse.getServesLunch() != false) {
+        // tagsTmp.add("servesLunch");
+        // }
+        // if (googleResponse.getServesDinner() != null &&
+        // googleResponse.getServesDinner() != false) {
+        // tagsTmp.add("servesDinner");
+        // }
+        // if (googleResponse.getServesBeer() != null && googleResponse.getServesBeer()
+        // != false) {
+        // tagsTmp.add("ServesBeer");
+        // }
+        // if (googleResponse.getServesWine() != null && googleResponse.getServesWine()
+        // != false) {
+        // tagsTmp.add("ServesWine");
+        // }
+        // if (googleResponse.getOutdoorSeating() != null &&
+        // googleResponse.getOutdoorSeating() != false) {
+        // tagsTmp.add("outdoorSeating");
+        // }
+        // if (googleResponse.getMenuForChildren() != null &&
+        // googleResponse.getMenuForChildren() != false) {
+        // tagsTmp.add("menuForChildren");
+        // }
+        // if (googleResponse.getServesDessert() != null &&
+        // googleResponse.getServesDessert() != false) {
+        // tagsTmp.add("servesDessert");
+        // }
+        // if (googleResponse.getServesCoffee() != null &&
+        // googleResponse.getServesCoffee() != false) {
+        // tagsTmp.add("servesCoffee");
+        // }
+        // if (googleResponse.getRestroom() != null && googleResponse.getRestroom() !=
+        // false) {
+        // tagsTmp.add("restroom");
+        // }
+        // if (googleResponse.getAccessibilityOptions() != null
+        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleRestroom()
+        // != false) {
+        // tagsTmp.add("wheelchairAccessibleRestroom");
+        // }
+        // if (googleResponse.getAccessibilityOptions() != null
+        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleSeating()
+        // != false) {
+        // tagsTmp.add("wheelchairAccessibleSeating");
+        // }
+        // if (googleResponse.getAccessibilityOptions() != null
+        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleEntrance()
+        // != false) {
+        // tagsTmp.add("wheelchairAccessibleEntrance");
+        // }
+        // if (googleResponse.getAccessibilityOptions() != null
+        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleParking()
+        // != false) {
+        // tagsTmp.add("wheelchairAccessibleParking");
+        // }
+
+        // if (googleResponse.getPaymentOptions() != null
+        // && googleResponse.getPaymentOptions().getAcceptCashOnly() != null
+        // && googleResponse.getPaymentOptions().getAcceptCashOnly() != false) {
+        // tagsTmp.add("acceptCashOnly");
+        // }
+        // if (googleResponse.getPaymentOptions() != null
+        // && googleResponse.getPaymentOptions().getAcceptsDebitCards() != null
+        // && googleResponse.getPaymentOptions().getAcceptsDebitCards() != false) {
+        // tagsTmp.add("acceptsDebitCards");
+        // }
+        // if (googleResponse.getPaymentOptions() != null
+        // && googleResponse.getPaymentOptions().getAcceptsNfc() != null
+        // && googleResponse.getPaymentOptions().getAcceptsNfc() != false) {
+        // tagsTmp.add("acceptsNfc");
+        // }
+        // if (googleResponse.getParkingOptions() != null
+        // && googleResponse.getParkingOptions().getPaidParkingLot() != null
+        // && googleResponse.getParkingOptions().getPaidParkingLot() != false) {
+        // tagsTmp.add("paidParkingLot");
+        // }
+        // if (googleResponse.getParkingOptions() != null
+        // && googleResponse.getParkingOptions().getPaidStreetParking() != null
+        // && googleResponse.getParkingOptions().getPaidStreetParking() != false) {
+        // tagsTmp.add("paidStreetParking");
+        // }
+
+        // Set<Tag> tagsFinal = new HashSet<>();
+        // for (String name : tagsTmp) {
+        // Optional<Tag> optTag = tagService.findByGLName(name);
+        // if (!optTag.isEmpty()) {
+        // tagsFinal.add(optTag.get());
+        // }
+        // }
         placetoSave.setTags(tagsFinal);
 
         // setting categories

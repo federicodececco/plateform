@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 public class AccessibilityOptions {
 
     private Boolean wheelchairAccessibleRestroom;
-
+    private Boolean wheelchairAccessibleEntrance;
     private Boolean wheelchairAccessibleSeating;
+    private Boolean wheelchairAccessibleParking;
 
 }

@@ -43,8 +43,18 @@ public class PlaceResponse {
     private Boolean servesDessert;
     private Boolean servesCoffee;
     private Boolean restroom;
+    private Boolean curbsidePickup;
     private AccessibilityOptions accessibilityOptions;
     private PaymentOptions paymentOptions;
     private ParkingOptions parkingOptions;
+
+    private Boolean liveMusic;
+    private Boolean allowsDogs;
+    private Boolean goodForGroups;
+    private Boolean goodForWatchingSports;
+    private Boolean goodForChildren;
+    private Boolean servesBreakfast;
+    private Boolean servesBrunch;
+    private Boolean servesVegetarianFood;
 
 }
