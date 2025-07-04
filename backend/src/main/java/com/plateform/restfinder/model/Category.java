@@ -23,7 +23,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-@AllArgsConstructor
+
 public class Category {
 
     @Id
@@ -32,12 +32,22 @@ public class Category {
 
     private String googleName;
 
-    private String en_name;
+    private String enName;
 
-    private String it_name;
+    private String itName;
+
+    private Boolean isVisible;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     @JsonBackReference
     private Set<Place> places;
+
+    public Category(Integer id, String googleName, String enName, String itName) {
+        this.id = id;
+        this.googleName = googleName;
+        this.enName = enName;
+        this.itName = itName;
+        this.isVisible = true;
+    }
 
 }
