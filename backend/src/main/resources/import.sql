@@ -20,21 +20,30 @@ INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (16, 'ac
 INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (17, 'acceptsNfc', 'Accepts NFC', 'Pagamenti NFC', true);
 INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (18, 'paidParkingLot', 'Paid Parking Lot', 'Parcheggio a pagamento', true);
 INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (19, 'paidStreetParking', 'Paid Street Parking', 'Parcheggio su strada a pagamento', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (20, 'liveMusic', 'Live Music', 'Musica dal vivo', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (21, 'allowsDogs', 'Allows Dogs', 'Cani ammessi', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (22, 'goodForGroups', 'Good for Groups', 'Adatto a gruppi', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (23, 'goodForWatchingSports', 'Good for Watching Sports', 'Adatto per guardare lo sport', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (24, 'goodForChildren', 'Good for Children', 'Adatto ai bambini', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (25, 'servesBreakfast', 'Serves Breakfast', 'Colazione disponibile', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (26, 'servesBrunch', 'Serves Brunch', 'Brunch disponibile', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (27, 'servesVegetarianFood', 'Serves Vegetarian Food', 'Cibo vegetariano disponibile', true);
+INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (28, 'curbsidePickup', 'Curbside Pickup', 'Ritiro al marciapiede', true);
 
 --inserimento categories
 
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (1, "Italian Restaurant", "italian_restaurant", "Cucina Italiana");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (2, "Pizza Restaurant", "pizza_restaurant", "Pizzeria");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (3, "Seafood Restaurant", "seafood_restaurant", "Ristorante di Pesce");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (4, "Food", "food", "Cibo");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (5, "Point of Interest", "point_of_interest", "Punto di Interesse");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (6, "Establishment", "establishment", "Struttura");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (7, "Bar", "bar", "Bar");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (8, "Night Club", "night_club", "Discoteca");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (9, "Mediterranean Restaurant", "mediterranean_restaurant", "Cucina Mediterranea");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (10, "Meal Takeaway", "meal_takeaway", "Cibo da Asporto");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (11, "Hotel", "hotel", "Hotel");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (12, "Lodging", "lodging", "Alloggio");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (13, "Wine Bar", "wine_bar", "Enoteca");
-INSERT INTO categories (id, en_name, google_name, it_name) VALUES (14, "Restaurant", "restaurant", "Ristorante");
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (1, "Italian Restaurant", "italian_restaurant", "Cucina Italiana", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (2, "Pizza Restaurant", "pizza_restaurant", "Pizzeria", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (3, "Seafood Restaurant", "seafood_restaurant", "Ristorante di Pesce", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (4, "Food", "food", "Cibo", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (5, "Point of Interest", "point_of_interest", "Punto di Interesse", false);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (6, "Establishment", "establishment", "Struttura", false);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (7, "Bar", "bar", "Bar", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (8, "Night Club", "night_club", "Discoteca", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (9, "Mediterranean Restaurant", "mediterranean_restaurant", "Cucina Mediterranea", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (10, "Meal Takeaway", "meal_takeaway", "Cibo da Asporto", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (11, "Hotel", "hotel", "Hotel", false);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (12, "Lodging", "lodging", "Alloggio", false);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (13, "Wine Bar", "wine_bar", "Enoteca", true);
+INSERT INTO categories (id, en_name, google_name, it_name, is_visible) VALUES (14, "Restaurant", "restaurant", "Ristorante", true);
 

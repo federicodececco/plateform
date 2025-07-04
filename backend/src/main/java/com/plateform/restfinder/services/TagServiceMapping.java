@@ -51,6 +51,7 @@ public class TagServiceMapping {
         addIfTrue(tagNames, "servesBreakfast", googleResponse.getServesBreakfast());
         addIfTrue(tagNames, "servesBrunch", googleResponse.getServesBrunch());
         addIfTrue(tagNames, "servesVegetarianFood", googleResponse.getServesVegetarianFood());
+        addIfTrue(tagNames, "curbsidePickup", googleResponse.getCurbsidePickup());
 
         if (googleResponse.getAccessibilityOptions() != null) {
             AccessibilityOptions accessibility = googleResponse.getAccessibilityOptions();
