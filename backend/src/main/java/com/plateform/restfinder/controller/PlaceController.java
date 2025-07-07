@@ -1,6 +1,8 @@
 package com.plateform.restfinder.controller;
 
+import java.lang.classfile.ClassFile.Option;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +63,7 @@ public class PlaceController {
 
     // frontend view
 
-    @GetMapping("/search-text")
+    @GetMapping("/google-search-text")
     public Mono<ResponseEntity<PlacesResponseList>> searchText(@RequestParam String query,
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
@@ -85,7 +88,7 @@ public class PlaceController {
         }
     }
 
-    @GetMapping("/search-text-debug")
+    @GetMapping("/google-search-text-debug")
     public Mono<String> searchTextDebug(@RequestParam String query,
             @RequestParam(required = false) Double latitude,
             @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
@@ -93,7 +96,7 @@ public class PlaceController {
         return googlePlacesService.searchTextDebug(query, latitude, longitude, radius, maxResults);
     }
 
-    @GetMapping("/details/{id}")
+    @GetMapping("/google-details/{id}")
     public Mono<ResponseEntity<PlaceResponse>> getDetails(@PathVariable String id,
             @RequestParam(required = false) List<String> masks) {
         try {
@@ -110,7 +113,7 @@ public class PlaceController {
         }
     }
 
-    @GetMapping("/details-debug/{id}")
+    @GetMapping("/google-details-debug/{id}")
     public Mono<String> getDetailsDebug(@PathVariable String id,
             @RequestParam(required = false) List<String> masks) {
 
@@ -295,4 +298,27 @@ public class PlaceController {
         return placeService.create(placetoSave);
     }
 
+    @GetMapping("/details/{id}")
+    public ResponseEntity<Place> getPlaceDetails(@PathVariable String id) {
+        Optional<Place> optPlace = placeService.findById(id);
+        if (optPlace.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
+    }
+
+    @GetMapping("/photo")
+    public Mono<ResponseEntity<String>> downloadPlacePhoto(
+            @RequestParam String photoReference,
+            @RequestParam(defaultValue = "800") int maxWidth) {
+
+        String safeFileName = Base64.getUrlEncoder().encodeToString(photoReference.getBytes());
+        String fullPath = "downloaded/" + safeFileName;
+
+        return googlePlacesService
+                .downloadPlacePhoto(photoReference, maxWidth, fullPath)
+                .then(Mono.just(ResponseEntity.ok("Foto scaricata con successo.")))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Errore durante il download della foto: " + e.getMessage())));
+    }
 }

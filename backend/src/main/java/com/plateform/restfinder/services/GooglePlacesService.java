@@ -1,7 +1,14 @@
 package com.plateform.restfinder.services;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -79,6 +86,46 @@ public class GooglePlacesService {
                 .retrieve()
                 .bodyToMono(PlaceResponse.class);
 
+    }
+
+    public Mono<Void> downloadPlacePhoto(String photoReference, int maxWidth, String basePath) {
+        String url = String.format(
+                "https://maps.googleapis.com/maps/api/place/photo?maxwidth=%d&photo_reference=%s&key=%s",
+                maxWidth, photoReference, config.getApiKey());
+
+        return webClient.get()
+                .uri(url)
+                .exchangeToMono(response -> {
+                    HttpHeaders headers = response.headers().asHttpHeaders();
+                    String contentType = headers.getContentType() != null ? headers.getContentType().toString()
+                            : "image/jpeg";
+
+                    // Estensione dal content-type
+                    Map<String, String> extMap = Map.of(
+                            "image/jpeg", ".jpg",
+                            "image/png", ".png",
+                            "image/webp", ".webp");
+                    String extension = extMap.getOrDefault(contentType, ".jpg");
+                    String fullPath = basePath + extension;
+
+                    return response.bodyToFlux(DataBuffer.class)
+                            .reduce(DataBuffer::write)
+                            .flatMap(dataBuffer -> {
+                                try {
+                                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                                    dataBuffer.read(bytes);
+                                    DataBufferUtils.release(dataBuffer);
+
+                                    Path path = Path.of(fullPath);
+                                    Files.write(path, bytes, StandardOpenOption.CREATE,
+                                            StandardOpenOption.TRUNCATE_EXISTING);
+
+                                    return Mono.empty();
+                                } catch (Exception e) {
+                                    return Mono.error(e);
+                                }
+                            });
+                });
     }
 
     // debug
