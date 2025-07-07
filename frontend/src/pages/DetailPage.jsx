@@ -35,17 +35,25 @@ const reviewsData = [
 export default function DetailPage() {
     const { t } = useTranslation();
     const { renderStars } = useGlobalContext()
-    const [selectedDate, setSelectedDate] = useState('');
-    const [selectedTime, setSelectedTime] = useState('19:30');
-    const [selectedPeople, setSelectedPeople] = useState('2 persone');
+    const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
 
+    const handleFormData = e => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    }
 
 
     const handleSubmitBooking = (e) => {
         e.preventDefault();
-        alert(`Prenotazione per il ${selectedDate} alle ${selectedTime} per ${selectedPeople}.`);
-        console.log('Dettagli prenotazione:', { selectedDate, selectedTime, selectedPeople });
+        // alert(`Prenotazione per il ${selectedDate} alle ${selectedTime} per ${selectedPeople}.`);
+        // console.log('Dettagli prenotazione:', { selectedDate, selectedTime, selectedPeople });
     };
+
+    const handleFormSubmit = e => {
+        e.preventDefault();
+        console.log(formData);
+
+    }
 
     return (
         <div className={styles.pageContainer}>
@@ -82,24 +90,28 @@ export default function DetailPage() {
 
                     <form onSubmit={handleSubmitBooking}>
                         <div className={styles.formGroup}>
-                            <label htmlFor="bookingDate" className={styles.formLabel}>{t('bookingDateLabel')}</label>
-                            <input
-                                type="text"
-                                id="bookingDate"
-                                className={`${styles.formInput} ${styles.dateInput}`}
-                                placeholder={t('datePlaceholder')}
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                            />
+                            <label htmlFor="date">{t('bookingDateLabel')}</label>
+                            <div className={styles["input-with-icon"]}>
+                                <input
+                                    // placeholder={t('datePlaceholder')}
+                                    name='date'
+                                    type="date"
+                                    id="date"
+                                    value={formData.date}
+                                    onChange={handleFormData}
+                                />
+                                <span className={styles["icon"]}>🗓️</span> {/* Icona a fianco */}
+                            </div>
                         </div>
 
                         <div className={styles.formGroup}>
                             <label htmlFor="bookingTime" className={styles.formLabel}>{t('bookingTimeLabel')}</label>
                             <select
                                 id="bookingTime"
+                                name='time'
                                 className={styles.formSelect}
-                                value={selectedTime}
-                                onChange={(e) => setSelectedTime(e.target.value)}
+                                value={formData.time}
+                                onChange={handleFormData}
                             >
                                 <option value="19:30">19:30</option>
                                 <option value="20:00">20:00</option>
@@ -112,9 +124,10 @@ export default function DetailPage() {
                             <label htmlFor="bookingPeople" className={styles.formLabel}>{t('bookingPeopleLabel')}</label>
                             <select
                                 id="bookingPeople"
+                                name="people"
                                 className={styles.formSelect}
-                                value={selectedPeople}
-                                onChange={(e) => setSelectedPeople(e.target.value)}
+                                value={formData.people}
+                                onChange={handleFormData}
                             >
                                 <option value="1 persona">{t('onePerson')}</option>
                                 <option value="2 persone">{t('twoPeople')}</option>
@@ -125,7 +138,7 @@ export default function DetailPage() {
                             </select>
                         </div>
 
-                        <button type="submit" className={styles.submitButton}>
+                        <button onClick={handleFormSubmit} type="submit" className={styles.submitButton}>
                             {t('reserveNow')}
                         </button>
                     </form>
@@ -206,7 +219,7 @@ export default function DetailPage() {
                         </div>
 
                         <div className={styles.contactInfoBlock}>
-                            <h2 className={styles.sectionHeading}>{t('contactInfoHeading')}</h2>
+                            <h2 className={styles.sectionHeading}>{t('contacts')}</h2>
                             <div className={styles.contactItem}>
                                 <FaPhoneAlt className={styles.contactIcon} />
                                 <a href="tel:0811234567" className={styles.contactLink}>{t('phoneNumber')}</a>

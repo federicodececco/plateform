@@ -9,7 +9,7 @@
 }
 
 .navbar-logo a {
-    background-color: #e64a19;
+    background-color: var(--primary-color);
     color: #fff;
     padding: 8px 15px;
     text-decoration: none;
@@ -37,7 +37,7 @@
 }
 
 .navbar-links li a:hover {
-    color: #e64a19;
+    color: var(--primary-color);
 }
 
 .navbar-search {

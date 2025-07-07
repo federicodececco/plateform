@@ -55,7 +55,7 @@
 
 .restaurant-count {
     font-size: 0.9em;
-    color: #e44d26;
+    color: var(--primary-color);
     font-weight: bold;
     margin-top: auto;
 }

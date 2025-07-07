@@ -75,7 +75,7 @@
 
 .tag {
     background-color: #e6f7ed;
-    color: #28a745;
+    color: var(--tag-color);
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.9em;
@@ -152,8 +152,13 @@
 
 .formInput,
 .formSelect {
-    width: 100%;
     padding: 10px;
+}
+
+.formInput,
+.formSelect,
+.input-with-icon {
+    width: 100%;
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
@@ -161,6 +166,37 @@
     appearance: none;
     /* Rimuove lo stile predefinito per i select */
     background-color: white;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 10px 15px;
+    /* Spazio per testo e icona */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    background-color: #fcfcfc;
+    color: #000;
+}
+
+.input-with-icon input:focus {
+    border-color: #e64a19;
+    box-shadow: 0 0 0 2px rgba(230, 74, 25, 0.2);
+}
+
+.input-with-icon .icon {
+    position: absolute;
+    right: 10px;
+    color: #999;
+    font-size: 18px;
+    pointer-events: none;
 }
 
 .dateInput {
@@ -174,7 +210,7 @@
 .submitButton {
     width: 100%;
     padding: 12px;
-    background-color: #e64a19;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     border-radius: 5px;
@@ -186,7 +222,7 @@
 }
 
 .submitButton:hover {
-    background-color: #d84315;
+    background-color: var(--primary-color-hover)
 }
 
 .priceInfo {
@@ -206,7 +242,7 @@
 }
 
 .contactValue {
-    color: #e64a19;
+    color: var(--primary-color);
     font-weight: bold;
 }
 
@@ -270,7 +306,7 @@
 }
 
 .closedLabel {
-    color: #e64a19;
+    color: var(--primary-color);
     /* Rosso per "Chiuso" */
     font-weight: bold;
 }
@@ -299,7 +335,7 @@
 }
 
 .serviceIcon {
-    color: #28a745;
+    color: var(--tag-color);
     /* Colore verde per le icone dei servizi */
     margin-right: 8px;
     font-size: 1.1em;
@@ -370,7 +406,7 @@
 }
 
 .contactLink {
-    color: #e64a19;
+    color: var(--primary-color);
     /* Arancione come prima */
     text-decoration: none;
     font-weight: bold;
@@ -402,7 +438,7 @@
 }
 
 .writeReviewButton {
-    background-color: #e64a19;
+    background-color: var(--primary-color);
     color: white;
     padding: 10px 20px;
     border: none;
@@ -414,7 +450,7 @@
 }
 
 .writeReviewButton:hover {
-    background-color: #d84315;
+    background-color: var(--primary-color-hover);
 }
 
 .reviewsContent {
@@ -461,8 +497,8 @@
     margin: 30px auto 0;
     padding: 10px 20px;
     background-color: #f0f0f0;
-    color: #e64a19;
-    border: 1px solid #e64a19;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
     border-radius: 5px;
     text-align: center;
     text-decoration: none;

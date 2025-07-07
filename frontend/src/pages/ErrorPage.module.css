@@ -20,7 +20,7 @@
 .error-code {
     font-size: 8em;
     margin-bottom: 0px;
-    color: #ffd700;
+    color: var(--primary-color);
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
@@ -40,7 +40,7 @@
 
 .error-home-button {
     display: inline-block;
-    background-color: #ffd700;
+    background-color: var(--primary-color);
     color: #1a1a1a;
     padding: 12px 25px;
     border-radius: 5px;
@@ -52,7 +52,7 @@
 }
 
 .error-home-button:hover {
-    background-color: #e6c200;
+    background-color: var(--primary-color-hover);
     color: #000;
 }
 

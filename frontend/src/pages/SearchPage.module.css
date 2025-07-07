@@ -102,7 +102,7 @@
 }
 
 .search-button {
-    background-color: #e64a19;
+    background-color: var(--primary-color);
     /* Arancione del bottone */
     color: #fff;
     padding: 12px 25px;
@@ -117,8 +117,7 @@
 }
 
 .search-button:hover {
-    background-color: #d84315;
-    /* Un arancione più scuro all'hover */
+    background-color: var(--primary-color-hover);
 }
 
 /* Filters and Sort Section */
