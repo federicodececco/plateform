@@ -1,8 +1,7 @@
 package com.plateform.restfinder.controller;
 
-import java.lang.classfile.ClassFile.Option;
-import java.util.ArrayList;
-import java.util.Base64;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,11 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.plateform.restfinder.dto.response.PlaceResponse;
 import com.plateform.restfinder.dto.response.PlacesResponseList;
 import com.plateform.restfinder.model.Category;
+import com.plateform.restfinder.model.Photo;
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.model.Tag;
 import com.plateform.restfinder.repository.CategoryRepository;
 import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.GooglePlacesService;
+import com.plateform.restfinder.services.PhotoService;
 import com.plateform.restfinder.services.PlaceService;
 import com.plateform.restfinder.services.TagService;
 import com.plateform.restfinder.services.TagServiceMapping;
@@ -56,6 +56,9 @@ public class PlaceController {
 
     @Autowired
     private GooglePlacesService googlePlacesService;
+
+    @Autowired
+    private PhotoService photoService;
 
     PlaceController(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
@@ -162,113 +165,6 @@ public class PlaceController {
 
         Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
 
-        // Set<String> tagsTmp = new HashSet<>();
-        // if (googleResponse.getTakeout() != null && googleResponse.getTakeout() !=
-        // false) {
-        // tagsTmp.add("takeout");
-        // }
-        // if (googleResponse.getDineIn() != null && googleResponse.getDineIn() !=
-        // false) {
-        // tagsTmp.add("dineIn");
-        // }
-        // if (googleResponse.getCurbsidePickup() != null &&
-        // googleResponse.getCurbsidePickup() != false) {
-        // tagsTmp.add("curbsidePickup");
-        // }
-        // if (googleResponse.getReservable() != null && googleResponse.getReservable()
-        // != false) {
-        // tagsTmp.add("reservable");
-        // }
-        // if (googleResponse.getServesLunch() != null &&
-        // googleResponse.getServesLunch() != false) {
-        // tagsTmp.add("servesLunch");
-        // }
-        // if (googleResponse.getServesDinner() != null &&
-        // googleResponse.getServesDinner() != false) {
-        // tagsTmp.add("servesDinner");
-        // }
-        // if (googleResponse.getServesBeer() != null && googleResponse.getServesBeer()
-        // != false) {
-        // tagsTmp.add("ServesBeer");
-        // }
-        // if (googleResponse.getServesWine() != null && googleResponse.getServesWine()
-        // != false) {
-        // tagsTmp.add("ServesWine");
-        // }
-        // if (googleResponse.getOutdoorSeating() != null &&
-        // googleResponse.getOutdoorSeating() != false) {
-        // tagsTmp.add("outdoorSeating");
-        // }
-        // if (googleResponse.getMenuForChildren() != null &&
-        // googleResponse.getMenuForChildren() != false) {
-        // tagsTmp.add("menuForChildren");
-        // }
-        // if (googleResponse.getServesDessert() != null &&
-        // googleResponse.getServesDessert() != false) {
-        // tagsTmp.add("servesDessert");
-        // }
-        // if (googleResponse.getServesCoffee() != null &&
-        // googleResponse.getServesCoffee() != false) {
-        // tagsTmp.add("servesCoffee");
-        // }
-        // if (googleResponse.getRestroom() != null && googleResponse.getRestroom() !=
-        // false) {
-        // tagsTmp.add("restroom");
-        // }
-        // if (googleResponse.getAccessibilityOptions() != null
-        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleRestroom()
-        // != false) {
-        // tagsTmp.add("wheelchairAccessibleRestroom");
-        // }
-        // if (googleResponse.getAccessibilityOptions() != null
-        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleSeating()
-        // != false) {
-        // tagsTmp.add("wheelchairAccessibleSeating");
-        // }
-        // if (googleResponse.getAccessibilityOptions() != null
-        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleEntrance()
-        // != false) {
-        // tagsTmp.add("wheelchairAccessibleEntrance");
-        // }
-        // if (googleResponse.getAccessibilityOptions() != null
-        // && googleResponse.getAccessibilityOptions().getWheelchairAccessibleParking()
-        // != false) {
-        // tagsTmp.add("wheelchairAccessibleParking");
-        // }
-
-        // if (googleResponse.getPaymentOptions() != null
-        // && googleResponse.getPaymentOptions().getAcceptCashOnly() != null
-        // && googleResponse.getPaymentOptions().getAcceptCashOnly() != false) {
-        // tagsTmp.add("acceptCashOnly");
-        // }
-        // if (googleResponse.getPaymentOptions() != null
-        // && googleResponse.getPaymentOptions().getAcceptsDebitCards() != null
-        // && googleResponse.getPaymentOptions().getAcceptsDebitCards() != false) {
-        // tagsTmp.add("acceptsDebitCards");
-        // }
-        // if (googleResponse.getPaymentOptions() != null
-        // && googleResponse.getPaymentOptions().getAcceptsNfc() != null
-        // && googleResponse.getPaymentOptions().getAcceptsNfc() != false) {
-        // tagsTmp.add("acceptsNfc");
-        // }
-        // if (googleResponse.getParkingOptions() != null
-        // && googleResponse.getParkingOptions().getPaidParkingLot() != null
-        // && googleResponse.getParkingOptions().getPaidParkingLot() != false) {
-        // tagsTmp.add("paidParkingLot");
-        // }
-        // if (googleResponse.getParkingOptions() != null
-        // && googleResponse.getParkingOptions().getPaidStreetParking() != null
-        // && googleResponse.getParkingOptions().getPaidStreetParking() != false) {
-        // tagsTmp.add("paidStreetParking");
-        // }
-
-        // Set<Tag> tagsFinal = new HashSet<>();
-        // for (String name : tagsTmp) {
-        // Optional<Tag> optTag = tagService.findByGLName(name);
-        // if (!optTag.isEmpty()) {
-        // tagsFinal.add(optTag.get());
-        // }
-        // }
         placetoSave.setTags(tagsFinal);
 
         // setting categories
@@ -307,18 +203,86 @@ public class PlaceController {
         return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
     }
 
-    @GetMapping("/photo")
+    @GetMapping("/{placeId}/photos/{photoReference}")
     public Mono<ResponseEntity<String>> downloadPlacePhoto(
-            @RequestParam String photoReference,
-            @RequestParam(defaultValue = "800") int maxWidth) {
+            @PathVariable String photoReference,
+            @PathVariable String placeId) {
 
-        String safeFileName = Base64.getUrlEncoder().encodeToString(photoReference.getBytes());
-        String fullPath = "downloaded/" + safeFileName;
+        if (photoReference == null || photoReference.trim().isEmpty()) {
+            return Mono.just(ResponseEntity.badRequest()
+                    .body("Photo reference cannot be empty"));
+        }
 
-        return googlePlacesService
-                .downloadPlacePhoto(photoReference, maxWidth, fullPath)
-                .then(Mono.just(ResponseEntity.ok("Foto scaricata con successo.")))
-                .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Errore durante il download della foto: " + e.getMessage())));
+        int width = 500;
+        int height = 500;
+
+        try {
+            // Check if already downloaded
+            Optional<Photo> existing = photoService.findByPhotoReference(placeId, photoReference);
+            if (existing.isPresent()) {
+                return Mono.just(ResponseEntity.ok("Foto già scaricata: " + existing.get().getFilePath()));
+            }
+
+            Path downloadDir = Path.of("downloaded");
+            if (!Files.exists(downloadDir)) {
+                Files.createDirectories(downloadDir);
+            }
+
+            return photoService.downloadAndSavePhoto(placeId, photoReference, width, height)
+                    .map((Photo photo) -> ResponseEntity.ok(
+                            "Foto scaricata con successo! " +
+                                    "Filename: " + photo.getFileName() +
+                                    ", Path: " + photo.getFilePath()))
+                    .onErrorResume(e -> {
+                        System.err.println("Error downloading photo: " + e.getMessage());
+                        e.printStackTrace();
+
+                        if (e.getMessage().contains("404") || e.getMessage().contains("NOT_FOUND")) {
+                            return Mono.just(ResponseEntity.notFound().build());
+                        } else if (e.getMessage().contains("403") || e.getMessage().contains("FORBIDDEN")) {
+                            return Mono.just(ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                    .body("API key non valida o quota superata"));
+                        } else {
+                            return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                    .body("Errore durante il download della foto: " + e.getMessage()));
+                        }
+                    });
+
+        } catch (Exception e) {
+            return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Errore nella preparazione del download: " + e.getMessage()));
+        }
     }
+
+    @GetMapping("/{placeId}/photos")
+    public ResponseEntity<List<Photo>> getDownloadedPhotos(@PathVariable String placeId) {
+        List<Photo> downloads = photoService.getDownloadsByPlaceId(placeId);
+        return ResponseEntity.ok(downloads);
+    }
+
+    // @GetMapping("/photos/file/{filename}")
+    // public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String
+    // filename) {
+    // return photoService.findByFileName(filename)
+    // .map(photoDownload -> {
+    // try {
+    // Path filePath = Path.of(photoDownload.getFilePath());
+    // Resource resource = new FileSystemResource(filePath);
+    // if (resource.exists()) {
+    // return ResponseEntity.ok()
+    // .contentType(MediaType.parseMediaType(
+    // photoDownload.getContentType() != null ? photoDownload.getContentType()
+    // : "image/jpeg"))
+    // .body(resource);
+    // } else {
+    // return ResponseEntity.<Resource>notFound().build();
+    // }
+    // } catch (Exception e) {
+    // return
+    // ResponseEntity.<Resource>status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    // }
+    // })
+    // .map(Mono::just)
+    // .orElse(Mono.just(ResponseEntity.notFound().build()));
+    // }
 }

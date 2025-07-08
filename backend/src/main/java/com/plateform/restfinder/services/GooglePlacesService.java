@@ -88,44 +88,90 @@ public class GooglePlacesService {
 
     }
 
-    public Mono<Void> downloadPlacePhoto(String photoReference, int maxWidth, String basePath) {
+    public Mono<Void> downloadPlacePhoto(String placeId, String photoReference, int maxWidth, int maxHeight,
+            String basePath) {
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/photo?maxwidth=%d&photo_reference=%s&key=%s",
-                maxWidth, photoReference, config.getApiKey());
+                "https://places.googleapis.com/v1/places/%s/photos/%s/media?maxHeightPx=%d&maxWidthPx=%d&key=%s",
+                placeId, photoReference, maxHeight, maxWidth, config.getApiKey());
+
+        System.out.println("Requesting URL: " + url);
 
         return webClient.get()
                 .uri(url)
                 .exchangeToMono(response -> {
+                    System.out.println("Response status: " + response.statusCode());
+
+                    if (!response.statusCode().is2xxSuccessful()) {
+
+                        return response.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    System.err.println("Error response body: " + errorBody);
+                                    return Mono.error(new RuntimeException(
+                                            "Failed to download photo: " + response.statusCode() + " - " + errorBody));
+                                });
+                    }
+
                     HttpHeaders headers = response.headers().asHttpHeaders();
                     String contentType = headers.getContentType() != null ? headers.getContentType().toString()
                             : "image/jpeg";
 
-                    // Estensione dal content-type
+                    System.out.println("Content-Type: " + contentType);
+
                     Map<String, String> extMap = Map.of(
                             "image/jpeg", ".jpg",
                             "image/png", ".png",
-                            "image/webp", ".webp");
+                            "image/webp", ".webp",
+                            "image/gif", ".gif");
                     String extension = extMap.getOrDefault(contentType, ".jpg");
                     String fullPath = basePath + extension;
 
+                    System.out.println("Saving to: " + fullPath);
                     return response.bodyToFlux(DataBuffer.class)
-                            .reduce(DataBuffer::write)
-                            .flatMap(dataBuffer -> {
+                            .collectList()
+                            .flatMap(dataBuffers -> {
                                 try {
-                                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                                    dataBuffer.read(bytes);
-                                    DataBufferUtils.release(dataBuffer);
+
+                                    int totalSize = dataBuffers.stream()
+                                            .mapToInt(DataBuffer::readableByteCount)
+                                            .sum();
+
+                                    System.out.println("Total size: " + totalSize + " bytes");
+
+                                    byte[] bytes = new byte[totalSize];
+                                    int position = 0;
+
+                                    for (DataBuffer buffer : dataBuffers) {
+                                        int bufferSize = buffer.readableByteCount();
+                                        buffer.read(bytes, position, bufferSize);
+                                        position += bufferSize;
+                                        DataBufferUtils.release(buffer);
+                                    }
 
                                     Path path = Path.of(fullPath);
-                                    Files.write(path, bytes, StandardOpenOption.CREATE,
+                                    Files.createDirectories(path.getParent());
+
+                                    Files.write(path, bytes,
+                                            StandardOpenOption.CREATE,
                                             StandardOpenOption.TRUNCATE_EXISTING);
 
-                                    return Mono.empty();
+                                    System.out.println("File saved successfully: " + fullPath);
+                                    return Mono.<Void>empty();
                                 } catch (Exception e) {
-                                    return Mono.error(e);
+
+                                    dataBuffers.forEach(DataBufferUtils::release);
+                                    System.err.println("File write error: " + e.getMessage());
+                                    e.printStackTrace();
+                                    return Mono.error(
+                                            new RuntimeException("Failed to write photo to file: " + fullPath, e));
                                 }
                             });
-                });
+                })
+                .doOnError(error -> {
+                    System.err.println("Download error: " + error.getMessage());
+                    error.printStackTrace();
+                })
+                .onErrorMap(Exception.class,
+                        ex -> new RuntimeException("Error downloading photo with reference: " + photoReference, ex));
     }
 
     // debug

@@ -1,0 +1,91 @@
+package com.plateform.restfinder.services;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.plateform.restfinder.model.Photo;
+import com.plateform.restfinder.repository.PhotoRepository;
+
+import reactor.core.publisher.Mono;
+
+@Service
+public class PhotoService {
+
+    @Autowired
+    private PhotoRepository photoRepository;
+
+    @Autowired
+    private GooglePlacesService googlePlacesService;
+
+    public Optional<Photo> findByPhotoReference(String placeId, String photoReference) {
+        return photoRepository.findByPlaceIdAndPhotoReference(placeId, photoReference);
+    }
+
+    public Optional<Photo> findByFileName(String filname) {
+        return photoRepository.findByFileName(filname);
+    }
+
+    public List<Photo> getDownloadsByPlaceId(String placeId) {
+        return photoRepository.findByPlaceId(placeId);
+    }
+
+    public Mono<Photo> downloadAndSavePhoto(String placeId, String photoReference, int width, int height) {
+
+        Optional<Photo> existing = photoRepository.findByPlaceIdAndPhotoReference(placeId, photoReference);
+        if (existing.isPresent()) {
+            return Mono.just(existing.get());
+        }
+
+        String safeFilename = createSafeFilename(photoReference);
+
+        Photo photo = new Photo(placeId, photoReference, safeFilename);
+        String basePath = "backend/downloaded/photos/" + safeFilename;
+        return googlePlacesService.downloadPlacePhoto(placeId, photoReference, width, height, basePath)
+                .then(Mono.fromCallable(() -> {
+
+                    try {
+                        Path path = Path.of(basePath);
+                        if (Files.exists(path)) {
+                            String contentType = Files.probeContentType(path);
+                            photo.setContentType(contentType);
+                        }
+                    } catch (IOException e) {
+
+                        System.err.println("Error getting file info: " + e.getMessage());
+                    }
+
+                    return photoRepository.save(photo);
+                }));
+    }
+
+    private String createSafeFilename(String photoReference) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(photoReference.getBytes());
+
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            String timestamp = String.valueOf(System.currentTimeMillis());
+            return hexString.substring(0, 16) + "_" + timestamp;
+
+        } catch (NoSuchAlgorithmException e) {
+            return "photo_" + System.currentTimeMillis();
+        }
+    }
+
+}
