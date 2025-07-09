@@ -1,7 +1,9 @@
 package com.plateform.restfinder.controller;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +12,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +32,7 @@ import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.GooglePlacesService;
 import com.plateform.restfinder.services.PhotoService;
 import com.plateform.restfinder.services.PlaceService;
-import com.plateform.restfinder.services.TagService;
+
 import com.plateform.restfinder.services.TagServiceMapping;
 
 import reactor.core.publisher.Mono;
@@ -44,9 +50,6 @@ public class PlaceController {
 
     @Autowired
     private PlaceService placeService;
-
-    @Autowired
-    private TagService tagService;
 
     @Autowired
     private TagServiceMapping tagServiceMapping;
@@ -189,6 +192,13 @@ public class PlaceController {
             }
         }
 
+        Set<Photo> photoSet = new HashSet<>();
+        int i = 0;
+        while (i < googleResponse.getPhotos().size() && i < 4) {
+            photoSet.add(null);
+
+        }
+
         placetoSave.setCategories(categoryTmp);
 
         return placeService.create(placetoSave);
@@ -260,29 +270,47 @@ public class PlaceController {
         return ResponseEntity.ok(downloads);
     }
 
-    // @GetMapping("/photos/file/{filename}")
-    // public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String
-    // filename) {
-    // return photoService.findByFileName(filename)
-    // .map(photoDownload -> {
-    // try {
-    // Path filePath = Path.of(photoDownload.getFilePath());
-    // Resource resource = new FileSystemResource(filePath);
-    // if (resource.exists()) {
-    // return ResponseEntity.ok()
-    // .contentType(MediaType.parseMediaType(
-    // photoDownload.getContentType() != null ? photoDownload.getContentType()
-    // : "image/jpeg"))
-    // .body(resource);
-    // } else {
-    // return ResponseEntity.<Resource>notFound().build();
-    // }
-    // } catch (Exception e) {
-    // return
-    // ResponseEntity.<Resource>status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    // }
-    // })
-    // .map(Mono::just)
-    // .orElse(Mono.just(ResponseEntity.notFound().build()));
-    // }
+    @GetMapping("/photo/json/{param}")
+    public Mono<ResponseEntity<Photo>> getPhoto(@PathVariable String param) {
+        try {
+            Optional<Photo> photoOpt = photoService.findByFileName(param);
+            if (!photoOpt.isEmpty()) {
+                return Mono.just(ResponseEntity.ok(photoOpt.get()));
+            } else
+                return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        } catch (Exception e) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    @GetMapping("/photo/file/{filename}")
+    public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String filename) {
+        return Mono.fromCallable(() -> {
+            try {
+
+                Path filePath = Paths.get("backend/downloaded/photos/" + filename + ".jpg");
+
+                if (!Files.exists(filePath)) {
+                    return ResponseEntity.notFound().build();
+                }
+
+                Resource resource = new FileSystemResource(filePath.toFile());
+
+                String contentType = Files.probeContentType(filePath);
+                if (contentType == null) {
+                    contentType = "image/jpeg";
+                }
+
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + ".jpg\"")
+                        .body(resource);
+
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        });
+    }
+
 }

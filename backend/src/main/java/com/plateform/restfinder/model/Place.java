@@ -1,9 +1,11 @@
 package com.plateform.restfinder.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +14,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -69,6 +73,8 @@ public class Place {
 
     // private Integer reviewAverage;
 
+    private Set<String> photosId;
+
     private String googleMapsURL;
 
     private String webSiteURL;
@@ -91,7 +97,9 @@ public class Place {
     @JsonManagedReference
     private Set<Tag> tags;
 
-    private Integer ratingClassId;
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Photo> photos = new HashSet<>();
 
     public Place(String id, String name, String address, String city, Integer cap, String province,
             String nation, Double latitude, Double longitude, String mainCategory,

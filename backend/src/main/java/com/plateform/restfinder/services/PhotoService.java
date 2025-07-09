@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.plateform.restfinder.model.Photo;
+import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.repository.PhotoRepository;
+import com.plateform.restfinder.repository.PlaceRepository;
 
 import reactor.core.publisher.Mono;
 
@@ -25,8 +28,12 @@ public class PhotoService {
     @Autowired
     private GooglePlacesService googlePlacesService;
 
+    @Autowired
+    private PlaceRepository placeRepository;
+
     public Optional<Photo> findByPhotoReference(String placeId, String photoReference) {
-        return photoRepository.findByPlaceIdAndPhotoReference(placeId, photoReference);
+        Optional<Place> place = placeRepository.findById(placeId);
+        return place.flatMap(p -> photoRepository.findByPlaceAndPhotoReference(p, photoReference));
     }
 
     public Optional<Photo> findByFileName(String filname) {
@@ -38,19 +45,29 @@ public class PhotoService {
     }
 
     public Mono<Photo> downloadAndSavePhoto(String placeId, String photoReference, int width, int height) {
+        Optional<Place> placeOpt = placeRepository.findById(placeId);
+        if (placeOpt.isEmpty()) {
+            return Mono.error(new IllegalArgumentException("Place not found: " + placeId));
+        }
+        Place place = placeOpt.get();
 
-        Optional<Photo> existing = photoRepository.findByPlaceIdAndPhotoReference(placeId, photoReference);
+        Optional<Photo> existing = photoRepository.findByPlaceAndPhotoReference(place, photoReference);
         if (existing.isPresent()) {
             return Mono.just(existing.get());
         }
 
         String safeFilename = createSafeFilename(photoReference);
-
-        Photo photo = new Photo(placeId, photoReference, safeFilename);
         String basePath = "backend/downloaded/photos/" + safeFilename;
+
+        Photo photo = new Photo();
+        photo.setPlace(place);
+        photo.setPhotoReference(photoReference);
+        photo.setFileName(safeFilename);
+        photo.setFilePath(basePath);
+        photo.setDownloadTime(LocalDateTime.now());
+
         return googlePlacesService.downloadPlacePhoto(placeId, photoReference, width, height, basePath)
                 .then(Mono.fromCallable(() -> {
-
                     try {
                         Path path = Path.of(basePath);
                         if (Files.exists(path)) {
@@ -58,10 +75,8 @@ public class PhotoService {
                             photo.setContentType(contentType);
                         }
                     } catch (IOException e) {
-
                         System.err.println("Error getting file info: " + e.getMessage());
                     }
-
                     return photoRepository.save(photo);
                 }));
     }
@@ -87,5 +102,4 @@ public class PhotoService {
             return "photo_" + System.currentTimeMillis();
         }
     }
-
 }

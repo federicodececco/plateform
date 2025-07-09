@@ -71,7 +71,13 @@ INSERT INTO places VALUES (_binary '\0',33054,_binary '\0',45.6473587,13.0974214
 INSERT INTO places VALUES (_binary '\0',33054,_binary '\0',45.6683589,13.106136399999999,4.9,NULL,15,'ATKogpd9ylh2QNgjqPi8u45TFQuuvAt_nxb5lqZh8Fr8DWcbnywafbujit-j-dKPe8YKMznmAwnR7oj6JwhC4bijZO3YdAwx6gGU2xUbF21OtnwkAUC_iZAchG3zN0r6x2rgtmuhjXvjGw0Cf9TLBF_BhdRo8DEkfFDGJrc4lRI-OT5VrXuEtGV1ROhLKyDyfKxeGI14GJyavzrye30dtkfcECy7tVSINHQmGhqDT66lr6gDrnObDZKrggNeQbB-2kEJQZKwEaFql8DBH-yfZwyacWlRuK3CsC5h5V61vrTNa5gV4Q','Raggio dello Scirocco','11','Lignano Sabbiadoro','https://maps.google.com/?cid=91253942031924872&g_mp=CiVnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLkdldFBsYWNlEAAYBCAA','ChIJY9jDY6OTe0cRiL4qD_oyRAE','Restaurant','Osteria al Picolit con Cicchetteria','Italy','+39 346 810 2090','','',NULL,'UD','');
 
 
+--inserimento RatingRange
 
+INSERT INTO rating_ranges (id, max, min, actualValue) VALUES (1, 5.0, 4.01, 5);
+INSERT INTO rating_ranges (id, max, min, actualValue) VALUES (2, 4.0, 3.01, 4)
+INSERT INTO rating_ranges (id, max, min, actualValue) VALUES (3, 3.0, 2.01, 3);
+INSERT INTO rating_ranges (id, max, min, actualValue) VALUES (4, 2.0, 1.01, 2);
+INSERT INTO rating_ranges (id, max, min, actualValue) VALUES (5, 1.0, 0.01, 1);
 
 
 INSERT INTO place_tag VALUES (1,'ChIJ-eC-h4-Te0cRTTFc44kf5d8');
