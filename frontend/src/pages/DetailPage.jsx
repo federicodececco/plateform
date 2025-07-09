@@ -15,7 +15,7 @@ import {
     FaFacebookF,
     FaInstagram,
     FaTripadvisor
-} from 'react-icons/fa'; // Assicurati di aver installato 'react-icons'
+} from 'react-icons/fa';
 
 const reviewsData = [
     {

@@ -57,20 +57,21 @@ export default function SearchPage() {
             <div className={styles["filters-sort-section"]}>
                 <div className={styles["filters"]}>
                     <span>{t('filtersLabel')}</span>
-                    <select className={styles["filter-dropdown"]}>
-                        <option>{t('allLocationsOption')}</option>
+                    <select
+                        aria-label={t('allLocationsOption')} className={styles["filter-dropdown"]}>
+                        <option className={styles.optionPlaceHolder}>{t('allLocationsOption')}</option>
                     </select>
-                    <select className={styles["filter-dropdown"]}>
-                        <option>{t('priceRangeOption')}</option>
+                    <select aria-label={t('priceRangeOptions')} className={styles["filter-dropdown"]}>
+                        <option className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
                     </select>
-                    <select className={styles["filter-dropdown"]}>
-                        <option>{t('cuisineOption')}</option>
+                    <select aria-label={t('cuisineOption')} className={styles["filter-dropdown"]}>
+                        <option className={styles.optionPlaceHolder}>{t('cuisineOption')}</option>
                     </select>
                 </div>
                 <div className={styles["sort-by"]}>
                     <span>{t('sortByLabel')}</span>
-                    <select className={styles["sort-dropdown"]}>
-                        <option>{t('mostPopularOption')}</option>
+                    <select aria-label={t('mostPopularOption')} className={styles["sort-dropdown"]}>
+                        <option className={styles.optionPlaceHolder}>{t('mostPopularOption')}</option>
                     </select>
                 </div>
             </div>

@@ -179,6 +179,11 @@
     border-color: #e64a19;
 }
 
+.optionPlaceHolder {
+    /* Per mostrare di cosa si tratta il select ma nascondendo l'opzione */
+    display: none;
+}
+
 /* Media Queries per responsività */
 @media (max-width: 768px) {
     .hero-section h1 {

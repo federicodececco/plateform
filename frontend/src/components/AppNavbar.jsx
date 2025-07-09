@@ -1,11 +1,15 @@
 import { useGlobalContext } from '../context/GlobalContext';
 import styles from './AppNavbar.module.css';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
+import {
+    FaBars
+} from 'react-icons/fa';
 
 export default function AppNavbar() {
 
+    const [hamburgerMenuOpen, setHamburgerMenuOpen] = useState(false);
     const { navSearchBar, setNavSearchBar } = useGlobalContext();
     const { i18n, t } = useTranslation();
     // passare la chiamata api dentro la callback del debounce
@@ -29,21 +33,47 @@ export default function AppNavbar() {
 
     return (
         <nav className={styles["navbar"]}>
-            <div className={styles["navbar-logo"]}>
-                <a href="/">RestFinder.it</a>
+            <div className={styles.navContainer}>
+
+                <div className={styles["navbar-logo"]}>
+                    <a href="/">RestFinder.it</a>
+                    <select
+                        name='language'
+                        aria-label="Seleziona la lingua"
+                        onChange={e => i18n.changeLanguage(e.target.value)}
+                        value={i18n.language}
+                    >
+                        <option value="it">IT</option>
+                        <option value="en">EN</option>
+                    </select>
+                </div>
+                <ul className={styles["navbar-links"]}>
+                    <li><a href="/ristoranti">{t('restaurants')}</a></li>
+                    <li><a href="/regioni">{t('regions')}</a></li>
+                    {/* <li><a href="/recensioni">{t('reviews')}</a></li> */}
+                    <li><a href="/blog">{t('blog')}</a></li>
+                    <li><a href="/Search">{t('search')}</a></li>
+                    <li><a href="/detail">Detail</a></li>
+                </ul>
+                <div
+                    className={styles.hamburgerMenu}
+                    onClick={() => setHamburgerMenuOpen(prev => !prev)}
+                >
+                    <FaBars />
+                </div>
+                {/* Overlay*/}
+                {hamburgerMenuOpen && (
+                    <div className={`${styles.overlay} ${styles.active}`} onClick={() => setHamburgerMenuOpen(false)}></div>
+                )}
+                <ul className={`${styles["hamburgerLinks"]} ${hamburgerMenuOpen ? styles.open : ''}`}>
+                    <li><a href="/ristoranti">{t('restaurants')}</a></li>
+                    <li><a href="/regioni">{t('regions')}</a></li>
+                    <li><a href="/blog">{t('blog')}</a></li>
+                    <li><a href="/Search">{t('search')}</a></li>
+                    <li><a href="/detail">Detail</a></li>
+                </ul>
             </div>
-            <ul className={styles["navbar-links"]}>
-                <li><a href="/ristoranti">{t('restaurants')}</a></li>
-                <li><a href="/regioni">{t('regions')}</a></li>
-                <li><a href="/recensioni">{t('reviews')}</a></li>
-                <li><a href="/blog">{t('blog')}</a></li>
-                <li><a href="/Search">{t('search')}</a></li>
-                <li><a href="/detail">Detail</a></li>
-            </ul>
-            <select onChange={e => i18n.changeLanguage(e.target.value)} value={i18n.language}>
-                <option value="it">IT</option>
-                <option value="en">EN</option>
-            </select>
+
             <div className={styles["navbar-search"]}>
                 <input type="text" placeholder={t('navbarSearchPlaceholder')} value={navSearchBar} onKeyUp={handleEnterUp} onChange={e => setNavSearchBar(e.target.value)} />
                 <button type="submit" aria-label="Cerca" onClick={handleSearchClick}>
