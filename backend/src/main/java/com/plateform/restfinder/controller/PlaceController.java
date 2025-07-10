@@ -191,17 +191,56 @@ public class PlaceController {
                 categoryTmp.add(saved);
             }
         }
+        Place savedPlace = placeService.create(placetoSave);
 
         Set<Photo> photoSet = new HashSet<>();
         int i = 0;
-        while (i < googleResponse.getPhotos().size() && i < 4) {
-            photoSet.add(null);
+        while (i < googleResponse.getPhotos().size() && i < 2) {
+            try {
 
+                String fullPhotoName = googleResponse.getPhotos().get(i).getName();
+
+                String photoReference = fullPhotoName.substring(fullPhotoName.lastIndexOf("/") + 1);
+
+                System.out.println("Nome completo foto: " + fullPhotoName);
+                System.out.println("Photo reference estratto: " + photoReference);
+
+                Optional<Photo> existing = photoService.findByPhotoReference(savedPlace.getId(), photoReference);
+
+                if (!existing.isPresent()) {
+
+                    Photo downloadedPhoto = photoService.downloadAndSavePhoto(
+                            savedPlace.getId(),
+                            photoReference,
+                            500,
+                            500).block();
+
+                    if (downloadedPhoto != null) {
+                        photoSet.add(downloadedPhoto);
+                        System.out.println("Foto scaricata con successo: " + downloadedPhoto.getFileName());
+                    } else {
+                        System.err.println("Errore nel download della foto con reference: " + photoReference);
+                    }
+                } else {
+
+                    photoSet.add(existing.get());
+                    System.out.println("Foto già esistente: " + existing.get().getFilePath());
+                }
+
+            } catch (Exception e) {
+                System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
+                e.printStackTrace();
+
+            }
+            i++;
         }
 
-        placetoSave.setCategories(categoryTmp);
+        if (!photoSet.isEmpty()) {
+            savedPlace.setPhotos(photoSet);
+            savedPlace = placeService.edit(savedPlace);
+        }
 
-        return placeService.create(placetoSave);
+        return savedPlace;
     }
 
     @GetMapping("/details/{id}")
