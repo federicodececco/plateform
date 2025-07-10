@@ -12,7 +12,7 @@ const ErrorPage = () => {
                 <p className={styles["error-description"]}>
                     {t('errorDescription')}
                 </p>
-                <a href="/" className={styles["error-home-button"]}>{t('errorHomeButton')}</a>
+                <a href="/home" className={styles["error-home-button"]}>{t('errorHomeButton')}</a>
                 <p className={styles["error-contact-suggestion"]}>
                     {t('errorContactSuggestion')}
                 </p>

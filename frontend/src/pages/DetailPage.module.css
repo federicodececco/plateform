@@ -33,6 +33,18 @@
     grid-template-rows: repeat(2, 150px);
     gap: 10px;
     margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.mainPhoto,
+.thumbnailPhoto {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
 }
 
 .mainPhoto {
@@ -345,7 +357,6 @@
 /* Sezione Mappa e Contatti (lato destro, sotto il modulo di prenotazione) */
 .mapAndContactSection {
     flex: 1;
-    /* Prende la stessa proporzione della sezione di booking */
     max-width: 350px;
 }
 
@@ -418,7 +429,6 @@
 
 /* --- Sezione Recensioni --- */
 .reviewsSection {
-    background-color: white;
     margin-top: 40px;
     padding: 20px 0;
     border-top: 1px solid #eee;
@@ -461,7 +471,10 @@
 .overallRating {
     flex: 0 0 200px;
     /* Larghezza fissa per il blocco del rating */
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: fit-content;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
@@ -508,4 +521,52 @@
 
 .viewAllReviewsButton:hover {
     background-color: #fcece7;
+}
+
+@media screen and (max-width: 870px) {
+
+    .pageContainer {
+        padding: 20px 0;
+    }
+
+    /* Sezione alta sinistra immagini */
+    .upperSection {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .leftSection {
+        min-width: 100%
+    }
+
+    .gallery {
+        display: flex;
+        justify-content: center;
+    }
+
+    .mainPhoto {
+        width: 100%;
+        height: 350px;
+    }
+
+    .thumbnailPhoto {
+        display: none;
+    }
+
+    /* Sezione alta destra from prenotazione */
+    .rightSection {
+        width: 100%;
+    }
+
+
+    /* Sezione bassa destra mappa e contatti */
+    .detailsSection {
+        flex-direction: column;
+    }
+
+
+    /* Sezione bassa destra mappa e contatti */
+    .reviewsContent {
+        flex-direction: column;
+    }
 }

@@ -36,7 +36,7 @@ export default function AppNavbar() {
             <div className={styles.navContainer}>
 
                 <div className={styles["navbar-logo"]}>
-                    <a href="/">RestFinder.it</a>
+                    <a href="/home">RestFinder.it</a>
                     <select
                         name='language'
                         aria-label="Seleziona la lingua"
@@ -50,7 +50,7 @@ export default function AppNavbar() {
                 <ul className={styles["navbar-links"]}>
                     <li><a href="/ristoranti">{t('restaurants')}</a></li>
                     <li><a href="/regioni">{t('regions')}</a></li>
-                    {/* <li><a href="/recensioni">{t('reviews')}</a></li> */}
+                    <li><a href="/">Login</a></li>
                     <li><a href="/blog">{t('blog')}</a></li>
                     <li><a href="/Search">{t('search')}</a></li>
                     <li><a href="/detail">Detail</a></li>
