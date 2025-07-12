@@ -154,8 +154,8 @@ public class PlaceController {
         placetoSave.setRating(googleResponse.getRating());
         placetoSave.setReviewNumber(googleResponse.getUserRatingCount());
         placetoSave.setGoogleMapsURL(googleResponse.getGoogleMapsUri());
-        if (googleResponse.getWebSiteURL() != null) {
-            placetoSave.setWebSiteURL(googleResponse.getWebSiteURL());
+        if (googleResponse.getWebsiteUri() != null) {
+            placetoSave.setWebSiteURL(googleResponse.getWebsiteUri());
         } else {
             placetoSave.setWebSiteURL("");
         }
@@ -163,6 +163,30 @@ public class PlaceController {
         placetoSave.setPlateformURL("");
         placetoSave.setBlacklist(false);
         placetoSave.setIsEdited(false);
+
+        // setting priceRange
+        if (googleResponse.getPriceLevel() != null) {
+            switch (googleResponse.getPriceLevel()) {
+                case "PRICE_LEVEL_MODERATE":
+                    placetoSave.setPriceRange("moderate");
+                    break;
+                case "PRICE_LEVEL_EXPENSIVE":
+                    placetoSave.setPriceRange("expensive");
+                    break;
+                case "PRICE_LEVEL_INEXPENSIVE":
+                    placetoSave.setPriceRange("inexpensive");
+                    break;
+                case "PRICE_LEVEL_VERY_EXPENSIVE":
+                    placetoSave.setPriceRange("very expensive");
+                    break;
+                case "PRICE_LEVEL_FREE":
+                    placetoSave.setPriceRange("free");
+                    break;
+                default:
+                    placetoSave.setPriceRange(googleResponse.getPriceLevel());
+                    break;
+            }
+        }
 
         // setting tags
 
@@ -252,6 +276,7 @@ public class PlaceController {
         return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
     }
 
+    // download photo by reference and place id
     @GetMapping("/{placeId}/photos/{photoReference}")
     public Mono<ResponseEntity<String>> downloadPlacePhoto(
             @PathVariable String photoReference,
@@ -323,12 +348,17 @@ public class PlaceController {
         }
     }
 
+    // get photo by name
     @GetMapping("/photo/file/{filename}")
     public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String filename) {
         return Mono.fromCallable(() -> {
             try {
 
                 Path filePath = Paths.get("backend/downloaded/photos/" + filename + ".jpg");
+
+                if (!Files.exists(filePath)) {
+                    filePath = Paths.get("backend/downloaded/photos/" + filename + ".png");
+                }
 
                 if (!Files.exists(filePath)) {
                     return ResponseEntity.notFound().build();

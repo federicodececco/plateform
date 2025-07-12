@@ -19,7 +19,7 @@ public class PlaceResponse {
     private Coordinates location;
     private Double rating;
     private String googleMapsUri;
-    private String webSiteURL;
+    private String websiteUri;
     private String priceLevel;
     private Integer userRatingCount;
     private List<Photo> photos;
