@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.plateform.restfinder.controller.PhotoController;
 import com.plateform.restfinder.model.Photo;
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.repository.PhotoRepository;
@@ -22,6 +22,8 @@ import reactor.core.publisher.Mono;
 @Service
 public class PhotoService {
 
+    private final PhotoController photoController;
+
     @Autowired
     private PhotoRepository photoRepository;
 
@@ -30,6 +32,15 @@ public class PhotoService {
 
     @Autowired
     private PlaceRepository placeRepository;
+
+    PhotoService(PhotoController photoController) {
+        this.photoController = photoController;
+    }
+
+    public Optional<Photo> findById(Long photoId) {
+        return photoRepository.findById(photoId);
+
+    }
 
     public Optional<Photo> findByPhotoReference(String placeId, String photoReference) {
         Optional<Place> place = placeRepository.findById(placeId);
@@ -79,6 +90,10 @@ public class PhotoService {
                     }
                     return photoRepository.save(photo);
                 }));
+    }
+
+    public void delete(Long photoId) {
+        photoRepository.deleteById(photoId);
     }
 
     private String createSafeFilename(String photoReference) {
