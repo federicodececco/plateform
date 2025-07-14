@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
+import AppGoogleMap from '../components/AppGoogleMap';
 import styles from './DetailPage.module.css';
+
 import ReviewCard from '../components/ReviewCard';
 import { useTranslation } from 'react-i18next';
 import {
@@ -208,15 +210,7 @@ export default function DetailPage() {
 
                     {/* Sezione Destra: Mappa e Contatti */}
                     <div className={styles.mapAndContactSection}>
-                        <div className={styles.mapSection}>
-                            <h2 className={styles.sectionHeading}>{t('mapHeading')}</h2>
-                            <div className={styles.mapContainer}>
-                                {t('mapInteractive')}
-                            </div>
-                            <a href="https://maps.google.com/?q=Osteria+del+Porto+Napoli" target="_blank" rel="noopener noreferrer" className={styles.getDirectionsButton}>
-                                {t('getDirections')}
-                            </a>
-                        </div>
+                        <AppGoogleMap />
 
                         <div className={styles.contactInfoBlock}>
                             <h2 className={styles.sectionHeading}>{t('contacts')}</h2>
