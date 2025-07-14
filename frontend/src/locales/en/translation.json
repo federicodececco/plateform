@@ -94,5 +94,7 @@
     "priceRangeOption": "Price range",
     "cuisineOption": "Cuisine",
     "sortByLabel": "Sort by:",
-    "mostPopularOption": "Most popular"
+    "mostPopularOption": "Most popular",
+    "languageItalian": "Italian",
+    "languageEnglish": "English"
 }

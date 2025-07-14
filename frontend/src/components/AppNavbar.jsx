@@ -10,6 +10,7 @@ import {
 export default function AppNavbar() {
 
     const [hamburgerMenuOpen, setHamburgerMenuOpen] = useState(false);
+    const [showLanguageOptions, setShowLanguageOptions] = useState(false);
     const { navSearchBar, setNavSearchBar } = useGlobalContext();
     const { i18n, t } = useTranslation();
     // passare la chiamata api dentro la callback del debounce
@@ -37,15 +38,6 @@ export default function AppNavbar() {
 
                 <div className={styles["navbar-logo"]}>
                     <a href="/home">RestFinder.it</a>
-                    <select
-                        name='language'
-                        aria-label="Seleziona la lingua"
-                        onChange={e => i18n.changeLanguage(e.target.value)}
-                        value={i18n.language}
-                    >
-                        <option value="it">IT</option>
-                        <option value="en">EN</option>
-                    </select>
                 </div>
                 <ul className={styles["navbar-links"]}>
                     <li><a href="/ristoranti">{t('restaurants')}</a></li>
@@ -54,6 +46,22 @@ export default function AppNavbar() {
                     <li><a href="/blog">{t('blog')}</a></li>
                     <li><a href="/Search">{t('search')}</a></li>
                     <li><a href="/detail">Detail</a></li>
+                    <li>
+                        <button onClick={() => setShowLanguageOptions(prev => !prev)}>
+                            <img src={i18n.language === 'it' ? "https://flagicons.lipis.dev/flags/4x3/it.svg" : "https://flagicons.lipis.dev/flags/4x3/gb.svg"}
+                                alt={i18n.language === 'it' ? "Bandiera Italiana" : "Bandiera Inglese"} />
+                        </button>
+                        {showLanguageOptions && (
+                            <div className={styles.languageOptions}>
+                                <button onClick={() => i18n.changeLanguage('it')}>
+                                    <img src="https://flagicons.lipis.dev/flags/4x3/it.svg" alt="Bandiera Italiana" />
+                                    <span>{t('languageItalian')}</span></button>
+                                <button onClick={() => i18n.changeLanguage('en')}>
+                                    <img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" alt="Bandiera Britannica" />
+                                    <span>{t('languageEnglish')}</span></button>
+                            </div>
+                        )}
+                    </li>
                 </ul>
                 <div
                     className={styles.hamburgerMenu}
@@ -71,6 +79,17 @@ export default function AppNavbar() {
                     <li><a href="/blog">{t('blog')}</a></li>
                     <li><a href="/Search">{t('search')}</a></li>
                     <li><a href="/detail">Detail</a></li>
+                    <li>
+                        <span>Seleziona lingua</span>
+                        <div className={styles.languageButtons}>
+                            <button onClick={() => i18n.changeLanguage('it')}>
+                                <img src="https://flagicons.lipis.dev/flags/4x3/it.svg" alt="Bandiera Italiana" />
+                                <span>Italiano</span></button>
+                            <button onClick={() => i18n.changeLanguage('en')}>
+                                <img src="https://flagicons.lipis.dev/flags/4x3/gb.svg" alt="Bandiera Britannica" />
+                                <span>Inglese</span></button>
+                        </div>
+                    </li>
                 </ul>
             </div>
 
