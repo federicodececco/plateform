@@ -8,7 +8,7 @@ export default function AppFooter() {
             <div className={styles["footer-content"]}>
                 <div className={styles["footer-column"]}>
                     <div className={styles["footer-logo"]}>
-                        <a href="/home">Ristorant.it</a>
+                        <a href="/">Ristorant.it</a>
                     </div>
                     <p className={styles["footer-description"]}>{t('footerDescription')}</p>
                 </div>

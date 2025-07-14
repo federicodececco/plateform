@@ -37,12 +37,12 @@ export default function AppNavbar() {
             <div className={styles.navContainer}>
 
                 <div className={styles["navbar-logo"]}>
-                    <a href="/home">RestFinder.it</a>
+                    <a href="/">RestFinder.it</a>
                 </div>
                 <ul className={styles["navbar-links"]}>
-                    <li><a href="/ristoranti">{t('restaurants')}</a></li>
-                    <li><a href="/regioni">{t('regions')}</a></li>
-                    <li><a href="/">Login</a></li>
+                    {/* <li><a href="/ristoranti">{t('restaurants')}</a></li>
+                    <li><a href="/regioni">{t('regions')}</a></li> */}
+                    <li><a href="/login">Login</a></li>
                     <li><a href="/blog">{t('blog')}</a></li>
                     <li><a href="/Search">{t('search')}</a></li>
                     <li><a href="/detail">Detail</a></li>

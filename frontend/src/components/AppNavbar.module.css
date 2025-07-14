@@ -36,6 +36,8 @@
     padding: 0;
     display: flex;
     gap: 25px;
+    justify-content: center;
+    align-items: center;
 }
 
 .navbar-links li a,
@@ -56,8 +58,13 @@
     position: relative;
 }
 
+.navbar-links li:last-child>button {
+    background-color: transparent;
+    padding: 0;
+}
+
 .navbar-links li:last-child img {
-    height: 20px;
+    height: 30px;
 }
 
 .languageOptions {

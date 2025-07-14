@@ -20,7 +20,7 @@ export default function LoginPage() {
         setNickname('');
         setPassword('');
 
-        navigate('/home'); //Reindirizza alla home page
+        navigate('/'); //Reindirizza alla home page
     };
 
     const togglePasswordVisibility = () => {
