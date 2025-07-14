@@ -4,6 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,28 +30,40 @@ import lombok.ToString;
 public class Place {
 
     // googel place id
+    @Schema(description = "Id generato da google, una stringa")
     @Id
     private String id;
 
+    @Schema(description = "Nome del locale")
     private String name;
 
+    @Schema(description = "Via/piazza dell'indirizzo")
     private String address;
 
+    @Schema(description = "Numero civico")
     private String adressNumber;
 
+    @Schema(description = "Città")
     private String city;
 
+    @Schema(description = "Cap")
     private Integer cap;
 
+    @Schema(description = "Provincia")
     private String province;
 
+    @Schema(description = "Nazione")
     private String nation;
 
+    @Schema(description = "Latitudine")
     private Double latitude;
 
+    @Schema(description = "Longitudine")
     private Double longitude;
 
+    @Schema(description = "Categoria principale")
     private String mainCategory;
+    @Schema(description = "Nome di google, quindi una stringa ")
     @Column(name = "cover_image_name", length = 500)
     private String coverImageName;
 
@@ -61,40 +74,50 @@ public class Place {
      * String description???
      */
 
+    @Schema(description = "numero telefonico")
     private String phoneNumber;
 
+    @Schema(description = "range di prezzo, può essere: free, inexpensive, moderate, expensive, very expensive")
     private String priceRange;
 
+    @Schema(description = "media delle recensioni")
     private Double rating;
 
+    @Schema(description = "numero delle recensioni")
     private Integer reviewNumber;
 
     // private Integer reviewAverage;
-
-    private Set<String> photosId;
-
+    @Schema(description = "link a google maps del ristorante ")
     private String googleMapsURL;
 
+    @Schema(description = "link al sito web, spesso facebook")
     private String webSiteURL;
 
+    @Schema(description = "id plateform del luogo")
     private String plateformID;
 
+    @Schema(description = "url di collegamento a plateform")
     private String plateformURL;
 
+    @Schema(description = "indicazione booleana per vedere se il luogo è blacklisted  ")
     private Boolean blacklist;
 
+    @Schema(description = "indicazione boolena per vedere se il luogo è stato editato da un utente manualemente")
     private Boolean isEdited; // edited by user, not to update with google
 
+    @Schema(description = "Array di oggeti Categoria collegate al luogo")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "category_place", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonManagedReference
     private Set<Category> categories;
 
+    @Schema(description = "Array di oggetti Tag collegati al luogo")
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "place_tag", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
     @JsonManagedReference
     private Set<Tag> tags;
 
+    @Schema(description = "Array di oggetti Photo collegati al luogo")
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Photo> photos;

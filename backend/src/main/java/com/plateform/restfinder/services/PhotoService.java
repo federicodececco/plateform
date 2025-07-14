@@ -22,8 +22,6 @@ import reactor.core.publisher.Mono;
 @Service
 public class PhotoService {
 
-    private final PhotoController photoController;
-
     @Autowired
     private PhotoRepository photoRepository;
 
@@ -32,10 +30,6 @@ public class PhotoService {
 
     @Autowired
     private PlaceRepository placeRepository;
-
-    PhotoService(PhotoController photoController) {
-        this.photoController = photoController;
-    }
 
     public Optional<Photo> findById(Long photoId) {
         return photoRepository.findById(photoId);
@@ -75,7 +69,7 @@ public class PhotoService {
         photo.setPhotoReference(photoReference);
         photo.setFileName(safeFilename);
         photo.setFilePath(basePath);
-        photo.setDownloadTime(LocalDateTime.now());
+        photo.setCreatedAt(LocalDateTime.now());
 
         return googlePlacesService.downloadPlacePhoto(placeId, photoReference, width, height, basePath)
                 .then(Mono.fromCallable(() -> {

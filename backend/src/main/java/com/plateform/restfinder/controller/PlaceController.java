@@ -27,7 +27,6 @@ import com.plateform.restfinder.model.Category;
 import com.plateform.restfinder.model.Photo;
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.model.Tag;
-import com.plateform.restfinder.repository.CategoryRepository;
 import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.GooglePlacesService;
 import com.plateform.restfinder.services.PhotoService;
@@ -35,6 +34,9 @@ import com.plateform.restfinder.services.PlaceService;
 
 import com.plateform.restfinder.services.TagServiceMapping;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,8 +47,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RestController
 @RequestMapping("/api/places")
 public class PlaceController {
-
-    private final CategoryRepository categoryRepository;
 
     @Autowired
     private PlaceService placeService;
@@ -62,10 +62,6 @@ public class PlaceController {
 
     @Autowired
     private PhotoService photoService;
-
-    PlaceController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
-    }
 
     // frontend view
 
@@ -211,7 +207,7 @@ public class PlaceController {
             } else {
                 Category newCat = new Category();
                 newCat.setGoogleName(googleType);
-                Category saved = categoryRepository.save(newCat);
+                Category saved = categoryService.create(newCat);
                 categoryTmp.add(saved);
             }
         }
@@ -267,6 +263,12 @@ public class PlaceController {
         return savedPlace;
     }
 
+    @Operation(summary = "Ritorna un luogo in base all'ID", description = "Ritorna un luogo specifico posto in base al suo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Posto trovato"),
+            @ApiResponse(responseCode = "404", description = "Posto non trovato")
+
+    })
     @GetMapping("/details/{id}")
     public ResponseEntity<Place> getPlaceDetails(@PathVariable String id) {
         Optional<Place> optPlace = placeService.findById(id);

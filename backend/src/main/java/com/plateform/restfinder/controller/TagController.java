@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/api/tag")
+@RequestMapping("/api/tags")
 public class TagController {
 
     @Autowired
@@ -48,7 +48,7 @@ public class TagController {
         }
     }
 
-    @GetMapping("/{googleName}")
+    @GetMapping("/google/{googleName}")
     public Mono<ResponseEntity<Tag>> getByGoogleName(@PathVariable String googleName) {
         try {
             Optional<Tag> optTag = tagService.findByGLName(googleName);
