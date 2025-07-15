@@ -26,4 +26,5 @@ public interface PlaceRepository extends JpaRepository<Place, String> {
             @Param("longitude") Double longitude,
             @Param("radiusMeters") Double radiusMeters);
 
+    List<Place> findPlacesByProvinceEquals(String province);
 }

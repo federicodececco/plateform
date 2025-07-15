@@ -19,6 +19,10 @@ public class PlaceService {
         return placeRepository.findAll();
     }
 
+    public List<Place> findByProvince(String province) {
+        return placeRepository.findPlacesByProvinceEquals(province);
+    }
+
     public Optional<Place> findById(String id) {
         return placeRepository.findById(id);
     }

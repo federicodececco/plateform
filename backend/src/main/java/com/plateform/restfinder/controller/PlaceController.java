@@ -144,6 +144,11 @@ public class PlaceController {
         return Mono.just(new ResponseEntity<>(places, HttpStatus.OK));
     }
 
+    @GetMapping("/province/{province}")
+    public Mono<ResponseEntity<List<Place>>> getMethodName(@PathVariable String province) {
+        return Mono.just(new ResponseEntity<>(placeService.findByProvince(province), HttpStatus.OK));
+    }
+
     // database post
     @PostMapping("/save/{id}")
     public Place addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
