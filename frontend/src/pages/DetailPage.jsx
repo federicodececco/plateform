@@ -38,6 +38,30 @@ export default function DetailPage() {
     const { t } = useTranslation();
     const { renderStars } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
+    const [placeData, setPlaceData] = useState({
+        "id": "ChIJN1t_tDeuEmsRUrtjV_Wc9Gg",
+        "name": "Ristorante Il Mare in Tasca",
+        "address": "Via dei Pescatori",
+        "adressNumber": "12",
+        "city": "Napoli",
+        "cap": 80100,
+        "province": "NA",
+        "nation": "Italia",
+        "latitude": 40.8354,
+        "longitude": 14.2488,
+        "mainCategory": "Ristorante di Pesce",
+        "coverImageName": "il_mare_in_tasca_cover.jpg",
+        "phoneNumber": "+390811234567",
+        "priceRange": "moderate",
+        "rating": 4.7,
+        "reviewNumber": 325,
+        "googleMapsURL": "https://maps.app.goo.gl/abcdef1234567890",
+        "webSiteURL": "https://www.ilmareintasca.it",
+        "plateformID": "PLATFORM-REST-001",
+        "plateformURL": "https://www.mia_piattaforma.it/ilmareintasca",
+        "blacklist": false,
+        "isEdited": false
+    })
 
     const handleFormData = e => {
         const { name, value } = e.target;
@@ -76,14 +100,14 @@ export default function DetailPage() {
                         <span className={styles.tag}>{t('open')}</span>
                     </div>
 
-                    <h1 className={styles.restaurantName}>{t('restaurantName')}</h1>
+                    <h1 className={styles.restaurantName}>{placeData.name}</h1>
 
                     <div className={styles.rating}>
-                        {renderStars(4.8)}
-                        <span className={styles.reviewsCount}>4.8 (247 {t('reviewsLowecase')})</span>
+                        {renderStars(placeData.rating)}
+                        <span className={styles.reviewsCount}>{placeData.rating} ({placeData.reviewNumber} {t('reviewsLowecase')})</span>
                     </div>
 
-                    <p className={styles.address}>{t('restaurantAddress')}</p>
+                    <p className={styles.address}>{placeData.address}, {placeData.adressNumber} - {placeData.cap} {placeData.city} ({placeData.province})</p>
                 </div>
 
                 {/* Sezione Destra: Modulo di Prenotazione*/}
@@ -147,18 +171,18 @@ export default function DetailPage() {
 
                     <div className={styles.priceInfo}>
                         <span>{t('averagePrice')}</span>
-                        <span>{t('averagePriceValue')}</span>
+                        <span>{placeData.priceRange}</span>
                     </div>
 
                     <div className={styles.contactInfo}>
                         <span>{t('phone')}</span>
-                        <span className={styles.contactValue}>{t('phoneNumber')}</span>
+                        <span className={styles.contactValue}>{placeData.phoneNumber}</span>
                     </div>
 
                     <div className={styles.contactInfo}>
                         <span>{t('website')}</span>
-                        <a href="http://www.osteriadelporto.it" target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
-                            {t('websiteUrl')}
+                        <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
+                            {placeData.webSiteURL}
                         </a>
                     </div>
                 </div>
@@ -210,21 +234,26 @@ export default function DetailPage() {
 
                     {/* Sezione Destra: Mappa e Contatti */}
                     <div className={styles.mapAndContactSection}>
-                        <AppGoogleMap />
+                        <AppGoogleMap
+                            restaurantLat={placeData.latitude}
+                            restaurantLng={placeData.longitude}
+                            restaurantName={placeData.name}
+                            restaurantPlaceId={placeData.plateformID}
+                        />
 
                         <div className={styles.contactInfoBlock}>
                             <h2 className={styles.sectionHeading}>{t('contacts')}</h2>
                             <div className={styles.contactItem}>
                                 <FaPhoneAlt className={styles.contactIcon} />
-                                <a href="tel:0811234567" className={styles.contactLink}>{t('phoneNumber')}</a>
+                                <a href={placeData.phoneNumber} className={styles.contactLink}>{placeData.phoneNumber}</a>
                             </div>
-                            <div className={styles.contactItem}>
+                            {/* <div className={styles.contactItem}>
                                 <FaEnvelope className={styles.contactIcon} />
                                 <a href="mailto:info@osteriadelporto.it" className={styles.contactLink}>{t('emailContact')}</a>
-                            </div>
+                            </div> */}
                             <div className={styles.contactItem}>
                                 <FaGlobe className={styles.contactIcon} />
-                                <a href="http://www.osteriadelporto.it" target="_blank" rel="noopener noreferrer" className={styles.contactLink}>{t('websiteUrl')}</a>
+                                <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>{placeData.webSiteURL}</a>
                             </div>
                             <div className={styles.contactItem}>
                                 <FaFacebookF className={styles.contactIcon} />
@@ -244,9 +273,9 @@ export default function DetailPage() {
 
                     <div className={styles.reviewsContent}>
                         <div className={styles.overallRating}>
-                            <div className={styles.overallScore}>4.8</div>
-                            <div className={styles.overallRatingStars}>{renderStars(4.8, '1.8em')}</div>
-                            <div className={styles.overallReviewsCount}>{t('overallRatingBasedOn')} 247 {t('reviewsLowecase')}</div>
+                            <div className={styles.overallScore}>{placeData.rating}</div>
+                            <div className={styles.overallRatingStars}>{renderStars(placeData.rating, '1.8em')}</div>
+                            <div className={styles.overallReviewsCount}>{t('overallRatingBasedOn')} {placeData.reviewNumber} {t('reviewsLowecase')}</div>
                         </div>
 
                         <div className={styles.individualReviews}>
