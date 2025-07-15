@@ -122,6 +122,28 @@ public class PlaceController {
         return googlePlacesService.getPlaceDetailsDebug(id, masks);
     }
 
+    @GetMapping("/proximity")
+    public Mono<ResponseEntity<List<Place>>> searchPlacesInRadius(
+            @RequestParam Double latitude,
+            @RequestParam Double longitude,
+            @RequestParam Double radius) {
+
+        if (latitude == null || longitude == null || radius == null) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        }
+
+        if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        }
+
+        if (radius <= 0) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        }
+
+        List<Place> places = placeService.findPlacesWithinRadius(latitude, longitude, radius);
+        return Mono.just(new ResponseEntity<>(places, HttpStatus.OK));
+    }
+
     // database post
     @PostMapping("/save/{id}")
     public Place addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
@@ -139,8 +161,9 @@ public class PlaceController {
         placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
         placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
         placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
-        placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
-
+        if (googleResponse.getPrimaryTypeDisplayName() != null) {
+            placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
+        }
         String namePartial = googleResponse.getPhotos().get(1).getName();
         String nameFinal = googleResponse.getPhotos().get(1).getName().substring(namePartial.length() - 306,
                 namePartial.length());

@@ -34,4 +34,11 @@ public class PlaceService {
     public void deleteById(String id) {
         placeRepository.deleteById(id);
     }
+
+    public List<Place> findPlacesWithinRadius(Double latitude, Double longitude, Double radiusKm) {
+
+        Double radiusMeters = radiusKm * 1000;
+
+        return placeRepository.findPlacesWithinRadius(latitude, longitude, radiusMeters);
+    }
 }
