@@ -5,6 +5,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
+import {axios} from "../../api/axios"
 
 const regionsData = [
     {

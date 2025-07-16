@@ -340,6 +340,17 @@ public class PlaceController {
         return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    public Mono<ResponseEntity<List<Place>>> getMethodName(@RequestParam String name) {
+        try {
+            return Mono.just(new ResponseEntity<>(placeService.searchFinal(name), HttpStatus.OK));
+
+        } catch (Exception e) {
+            System.err.print(e);
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
     // download photo by reference and place id
     @GetMapping("/{placeId}/photos/{photoReference}")
     public Mono<ResponseEntity<String>> downloadPlacePhoto(

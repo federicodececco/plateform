@@ -1,5 +1,6 @@
 package com.plateform.restfinder.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,19 @@ public class PlaceService {
         Double radiusMeters = radiusKm * 1000;
 
         return placeRepository.findPlacesWithinRadius(latitude, longitude, radiusMeters);
+    }
+
+    public List<Place> search(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return placeRepository.fullTextSearch(name.trim());
+    }
+
+    public List<Place> searchFinal(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return placeRepository.searchComplete(name.trim());
     }
 }

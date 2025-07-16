@@ -1,4 +1,4 @@
-
+ALTER TABLE places ADD FULLTEXT(name);
 --inserimento tags
 
 INSERT INTO tags (id, google_name, en_name, it_name, is_visible) VALUES (1, 'takeout', 'Takeout', 'Asporto', true);

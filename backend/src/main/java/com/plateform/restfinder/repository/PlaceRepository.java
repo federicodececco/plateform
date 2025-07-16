@@ -27,4 +27,25 @@ public interface PlaceRepository extends JpaRepository<Place, String> {
             @Param("radiusMeters") Double radiusMeters);
 
     List<Place> findPlacesByProvinceEquals(String province);
+
+    @Query(value = "SELECT * FROM places WHERE MATCH(name) AGAINST(?1 IN BOOLEAN MODE)", nativeQuery = true)
+    List<Place> fullTextSearch(String name);
+
+    @Query(value = """
+            SELECT DISTINCT p.*,
+                   CASE
+                       WHEN MATCH(p.name) AGAINST(?1 IN BOOLEAN MODE) THEN 3
+                       WHEN LOWER(p.name) LIKE LOWER(CONCAT(?1, '%')) THEN 2
+                       WHEN LOWER(p.name) LIKE LOWER(CONCAT('%', ?1, '%')) THEN 1
+                       ELSE 0
+                   END as search_rank
+            FROM places p
+            WHERE MATCH(p.name) AGAINST(?1 IN BOOLEAN MODE)
+               OR LOWER(p.name) LIKE LOWER(CONCAT(?1, '%'))
+               OR LOWER(p.name) LIKE LOWER(CONCAT('%', ?1, '%'))
+            ORDER BY search_rank DESC, p.name ASC
+            LIMIT 50
+            """, nativeQuery = true)
+    List<Place> searchComplete(String searchTerm);
+
 }
