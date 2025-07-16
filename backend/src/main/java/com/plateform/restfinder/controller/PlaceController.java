@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.slugify.Slugify;
 import com.plateform.restfinder.dto.response.PlaceResponse;
 import com.plateform.restfinder.dto.response.PlacesResponseList;
 import com.plateform.restfinder.model.Category;
@@ -145,8 +147,13 @@ public class PlaceController {
     }
 
     @GetMapping("/province/{province}")
-    public Mono<ResponseEntity<List<Place>>> getMethodName(@PathVariable String province) {
-        return Mono.just(new ResponseEntity<>(placeService.findByProvince(province), HttpStatus.OK));
+    public Mono<ResponseEntity<List<Place>>> findByProvince(@PathVariable String province) {
+        try {
+            return Mono.just(new ResponseEntity<>(placeService.findByProvince(province), HttpStatus.OK));
+        } catch (Exception e) {
+            System.err.print(e);
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
     }
 
     // database post
@@ -163,6 +170,7 @@ public class PlaceController {
         placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
         placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
         placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
+        placetoSave.setRegion(googleResponse.getAddressComponents().get(5).getShortText());
         placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
         placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
         placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
@@ -187,6 +195,8 @@ public class PlaceController {
         placetoSave.setPlateformURL("");
         placetoSave.setBlacklist(false);
         placetoSave.setIsEdited(false);
+
+        placetoSave.setSlugName(slugify(googleResponse.getDisplayName().getText()));
 
         // setting priceRange
         if (googleResponse.getPriceLevel() != null) {
@@ -365,7 +375,7 @@ public class PlaceController {
     }
 
     @GetMapping("/photo/json/{param}")
-    public Mono<ResponseEntity<Photo>> getPhoto(@PathVariable String param) {
+    public Mono<ResponseEntity<Photo>> getPhotoJson(@PathVariable String param) {
         try {
             Optional<Photo> photoOpt = photoService.findByFileName(param);
             if (!photoOpt.isEmpty()) {
@@ -412,4 +422,10 @@ public class PlaceController {
         });
     }
 
+    private static final Slugify slugger = Slugify.builder().transliterator(true).locale(Locale.ITALIAN).build();
+
+    private String slugify(String name) {
+
+        return slugger.slugify(name).toLowerCase();
+    }
 }

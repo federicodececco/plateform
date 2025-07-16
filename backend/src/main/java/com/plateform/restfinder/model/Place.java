@@ -52,6 +52,9 @@ public class Place {
     @Schema(description = "Provincia")
     private String province;
 
+    @Schema(description = "Regione")
+    private String region;
+
     @Schema(description = "Nazione")
     private String nation;
 
@@ -104,6 +107,9 @@ public class Place {
 
     @Schema(description = "indicazione boolena per vedere se il luogo è stato editato da un utente manualemente")
     private Boolean isEdited; // edited by user, not to update with google
+
+    @Schema(description = "nome slug da inserire nell'url")
+    private String slugName;
 
     @Schema(description = "Array di oggeti Categoria collegate al luogo")
     @ManyToMany(fetch = FetchType.EAGER)
