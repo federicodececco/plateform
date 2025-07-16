@@ -6,12 +6,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+import com.ibm.icu.text.Transliterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.slugify.Slugify;
+import com.plateform.restfinder.dto.response.AdressComponents;
 import com.plateform.restfinder.dto.response.PlaceResponse;
 import com.plateform.restfinder.dto.response.PlacesResponseList;
 import com.plateform.restfinder.model.Category;
@@ -165,13 +167,35 @@ public class PlaceController {
         Place placetoSave = new Place();
         placetoSave.setId(googleResponse.getId());
         placetoSave.setName(googleResponse.getDisplayName().getText());
-        placetoSave.setAddress(googleResponse.getAddressComponents().get(1).getLongText());
-        placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(0).getLongText());
-        placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
-        placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
-        placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
-        placetoSave.setRegion(googleResponse.getAddressComponents().get(5).getShortText());
-        placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
+
+        Iterator<AdressComponents> iter = googleResponse.getAddressComponents().iterator();
+        while (iter.hasNext()) {
+            AdressComponents component = iter.next();
+            String type = component.getTypes().get(0);
+
+            if (type.equals("street_number")) { // numero civico
+                placetoSave.setAdressNumber(component.getLongText());
+            } else if (type.equals("route")) {// strada
+                placetoSave.setAddress(component.getLongText());
+            } else if (type.equals("administrative_area_level_3")) {// città
+                placetoSave.setCity(component.getLongText());
+            } else if (type.equals("administrative_area_level_1")) {// regione
+                placetoSave.setRegion(component.getLongText());
+            } else if (type.equals("country")) {// nazione
+                placetoSave.setNation(component.getLongText());
+            } else if (type.equals("postal_code")) {// cap
+                placetoSave.setCap(Integer.valueOf(component.getLongText()));
+            } else if (type.equals("administrative_area_level_2")) {// provincia
+                placetoSave.setProvince(component.getShortText());
+            }
+        }
+        // placetoSave.setAddress(googleResponse.getAddressComponents().get(1).getLongText());
+        // placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(0).getLongText());
+        // placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
+        // placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
+        // placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
+        // placetoSave.setRegion(googleResponse.getAddressComponents().get(5).getShortText());
+        // placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
         placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
         placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
         if (googleResponse.getPrimaryTypeDisplayName() != null) {

@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.plateform.restfinder.controller.PhotoController;
 import com.plateform.restfinder.model.Photo;
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.repository.PhotoRepository;

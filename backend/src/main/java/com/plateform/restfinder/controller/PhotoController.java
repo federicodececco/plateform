@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plateform.restfinder.model.Photo;
-import com.plateform.restfinder.services.CategoryService;
 import com.plateform.restfinder.services.PhotoService;
 
 import reactor.core.publisher.Mono;
