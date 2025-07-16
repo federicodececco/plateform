@@ -36,7 +36,7 @@ const reviewsData = [
 
 export default function DetailPage() {
     const { t } = useTranslation();
-    const { renderStars } = useGlobalContext()
+    const { renderStars, renderPrice } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
     const [placeData, setPlaceData] = useState({
         "id": "ChIJN1t_tDeuEmsRUrtjV_Wc9Gg",
@@ -171,7 +171,7 @@ export default function DetailPage() {
 
                     <div className={styles.priceInfo}>
                         <span>{t('averagePrice')}</span>
-                        <span>{placeData.priceRange}</span>
+                        <span>{renderPrice(placeData.priceRange)}</span>
                     </div>
 
                     <div className={styles.contactInfo}>

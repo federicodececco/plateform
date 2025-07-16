@@ -8,26 +8,43 @@ export default function SearchPage() {
     const restaurantsData = [
         {
             name: "Osteria del Mare Amalfi",
-            location: "Via Marina Grande, 84011 Amalfi SA",
+            address: "Via dei Pescatori",
             description: "Elegante osteria ad Amalfi con cucina gourmet. Perfetto per una cena romantica con specialità di mare e vini pregiati.",
             tags: ["Cucina Gourmet", "Cantina Vini", "Disponibile", "Parcheggio"],
-            price: "€€€ - Da €65 a persona",
+            price: "moderate",
             rating: 4.8,
             actionText: "Prenota Tavolo",
-            actionType: "book"
+            actionType: "book",
+            "adressNumber": "12",
+            "city": "Napoli",
+            "cap": 80100,
+            "province": "NA",
         },
         {
             name: "Trattoria Nonna Rosa Ravello",
-            location: "Via della Repubblica Marinara, 84010 Ravello SA",
+            address: "Via della Repubblica Marinara",
             description: "Storico stabilimento balneare di Ravello con tradizione familiare. Offre un'esperienza autentica della Costiera Amalfitana.",
             tags: ["Cucina Tradizionale", "Bar", "Spogliatoi", "Ombrelloni"],
-            price: "Da €35/giorno", // Esempio diverso di prezzo
-            rating: 4.1,
+            price: "very expensive",
+            rating: 3.0,
             actionText: "Vedi Dettagli",
-            actionType: "details"
+            actionType: "details",
+            "adressNumber": "12",
+            "city": "Napoli",
+            "cap": 80100,
+            "province": "NA",
         }
         // Aggiungi altri ristoranti qui
     ];
+
+    // const Category = {
+    //     id, //int
+    //     googleName, //string
+    //     enName, //string
+    //     itName, //string
+    //     isVisible, //bool
+    //     places,//array  di locali $ref: "#/components/schemas/Place"
+    // }
 
     return (
         <div className={styles["search-page"]}>

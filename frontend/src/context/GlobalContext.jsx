@@ -4,6 +4,14 @@ import {
     FaRegStar
 } from 'react-icons/fa';
 
+const priceMap = {
+    "free": "free",
+    "inexpensive": "€",
+    "moderate": "€€",
+    "expensive": "€€€",
+    "very expensive": "€€€€",
+}
+
 const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
@@ -24,8 +32,11 @@ function GlobalProvider({ children }) {
         );
     };
 
+    const renderPrice = price => priceMap[price.toLowerCase()];
+
     const globalProviderValue = {
-        navSearchBar, setNavSearchBar, renderStars
+        navSearchBar, setNavSearchBar,
+        renderStars, renderPrice
     };
 
     return (

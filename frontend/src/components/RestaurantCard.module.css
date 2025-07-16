@@ -4,25 +4,18 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     margin-bottom: 20px;
-    /* Spazio tra le card */
     overflow: hidden;
-    /* Assicura che l'ombra sia contenuta e gli angoli arrotondati */
     transition: transform 0.2s ease-in-out;
-    /* Effetto hover */
 }
 
 .restaurant-card:hover {
     transform: translateY(-3px);
-    /* Leggero sollevamento all'hover */
 }
 
 .restaurant-image-placeholder {
     flex-shrink: 0;
-    /* Impedisce che l'immagine si rimpicciolisca */
     width: 250px;
-    /* Larghezza fissa per l'immagine */
     background-color: #ccc;
-    /* Colore placeholder */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,27 +25,22 @@
 }
 
 .restaurant-image-placeholder .image-text {
-    /* Per il testo "Ristorante" sull'immagine */
     transform: rotate(-90deg);
-    /* Ruota il testo */
     white-space: nowrap;
 }
 
 .restaurant-details {
     flex-grow: 1;
-    /* Permette ai dettagli di occupare lo spazio rimanente */
     padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* Spinge footer in basso */
 }
 
 .restaurant-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    /* Allinea in alto nome e rating */
     margin-bottom: 5px;
 }
 
@@ -68,9 +56,7 @@
     display: flex;
     align-items: center;
     white-space: nowrap;
-    /* Impedisce al rating di andare a capo */
     margin-left: 15px;
-    /* Spazio tra nome e rating */
 }
 
 .rating-value {
@@ -99,13 +85,11 @@
     line-height: 1.4;
     margin-bottom: 15px;
     flex-grow: 1;
-    /* Permette alla descrizione di occupare spazio */
 }
 
 .restaurant-tags {
     display: flex;
     flex-wrap: wrap;
-    /* Permette ai tag di andare a capo */
     margin-bottom: 15px;
 }
 
@@ -114,7 +98,6 @@
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
-    /* Spinge il footer in basso */
 }
 
 .restaurant-price {
@@ -123,25 +106,19 @@
     color: #333;
 }
 
-/* Media Queries per la responsività */
 @media (max-width: 768px) {
     .restaurant-card {
         flex-direction: column;
-        /* Su schermi piccoli, impila immagine e dettagli */
     }
 
     .restaurant-image-placeholder {
         width: 100%;
-        /* L'immagine occupa tutta la larghezza */
         height: 180px;
-        /* Altezza fissa per l'immagine impilata */
         order: 0;
-        /* Mantiene l'immagine sopra i dettagli */
     }
 
     .restaurant-image-placeholder .image-text {
         transform: none;
-        /* Rimuove la rotazione del testo sull'immagine */
     }
 
     .restaurant-details {
@@ -150,7 +127,6 @@
 
     .restaurant-header {
         flex-direction: column;
-        /* Impila nome e rating */
         align-items: flex-start;
     }
 
@@ -165,14 +141,12 @@
 
     .restaurant-footer {
         flex-direction: column;
-        /* Impila prezzo e bottone */
         align-items: flex-start;
         gap: 10px;
     }
 
     .action-button {
         width: 100%;
-        /* Bottone occupa tutta la larghezza */
         text-align: center;
     }
 }

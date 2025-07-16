@@ -1,42 +1,38 @@
 import React from 'react';
 import styles from './RestaurantCard.module.css';
+import { useGlobalContext } from '../context/GlobalContext';
 
 const RestaurantCard = ({ restaurant }) => {
     const {
         name,
-        location,
-        description,
-        tags,
+        mainCategory,
+        coverImageName = 'false',
+        address,
+        adressNumber,
+        city,
+        cap,
+        province,
+        description, //non è presente
+        tags, //non è presente
         price,
         rating,
-        reviewCount, // Potrebbe essere utile se il rating fosse (4.8) basato su X recensioni
-        actionText,
-        actionType // e.g., 'book' or 'details' to determine button color/style
+        reviewNumber,
+        actionText, //non è presente
+        actionType, // e.g., 'book' or 'details' to determine button color/style
+        blacklist, // stabilisce se è visibile o meno
     } = restaurant;
 
-    // Funzione per generare le stelle del rating
-    const renderStars = (rating) => {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
-        const stars = [];
+    const { renderStars, rendererPrice } = useGlobalContext()
 
-        for (let i = 0; i < fullStars; i++) {
-            stars.push(<span key={`full-${i}`} className={styles["star filled"]}>★</span>);
-        }
-        if (hasHalfStar) {
-            stars.push(<span key="half" className={styles["star half-filled"]}>★</span>); // O un'icona specifica per mezza stella
-        }
-        while (stars.length < 5) {
-            stars.push(<span key={`empty-${stars.length}`} className={styles["star empty"]}>★</span>);
-        }
-        return stars;
-    };
+    if (blacklist) {
+        return null
+    }
 
     return (
         <div className={styles["restaurant-card"]}>
-            <div className={styles["restaurant-image-placeholder"]}>
+            {coverImageName ? <div className={styles["restaurant-image-placeholder"]}>
                 <span className={styles["image-text"]}>Ristorante</span>
-            </div>
+            </div> : <img src={coverImageName} />}
             <div className={styles["restaurant-details"]}>
                 <div className={styles["restaurant-header"]}>
                     <h3 className={styles["restaurant-name"]}>{name}</h3>
@@ -46,7 +42,7 @@ const RestaurantCard = ({ restaurant }) => {
                     </div>
                 </div>
                 <p className={styles["restaurant-location"]}>
-                    <span className={styles["location-icon"]}>📍</span> {location}
+                    <span className={styles["location-icon"]}>📍</span> {address}, {adressNumber} - {cap} {city} {province}
                 </p>
                 <div className={styles["restaurant-tags"]}>
                     {tags.map((tag, index) => (
@@ -56,7 +52,7 @@ const RestaurantCard = ({ restaurant }) => {
                     ))}
                 </div>
                 <div className={styles["restaurant-footer"]}>
-                    <span className={styles["restaurant-price"]}>{price}</span>
+                    <span className={styles["restaurant-price"]}>{rendererPrice(price)}</span>
                     <button className={styles[`action-button action-button-${actionType}`]}>
                         {actionText}
                     </button>
