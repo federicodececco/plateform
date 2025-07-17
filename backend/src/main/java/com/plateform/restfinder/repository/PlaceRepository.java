@@ -2,6 +2,8 @@ package com.plateform.restfinder.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,9 +30,6 @@ public interface PlaceRepository extends JpaRepository<Place, String> {
 
     List<Place> findPlacesByProvinceEquals(String province);
 
-    @Query(value = "SELECT * FROM places WHERE MATCH(name) AGAINST(?1 IN BOOLEAN MODE)", nativeQuery = true)
-    List<Place> fullTextSearch(String name);
-
     @Query(value = """
             SELECT DISTINCT p.*,
                    CASE
@@ -44,8 +43,12 @@ public interface PlaceRepository extends JpaRepository<Place, String> {
                OR LOWER(p.name) LIKE LOWER(CONCAT(?1, '%'))
                OR LOWER(p.name) LIKE LOWER(CONCAT('%', ?1, '%'))
             ORDER BY search_rank DESC, p.name ASC
-            LIMIT 50
+            """, countQuery = """
+            SELECT COUNT(DISTINCT p.id)
+            FROM places p
+            WHERE MATCH(p.name) AGAINST(?1 IN BOOLEAN MODE)
+               OR LOWER(p.name) LIKE LOWER(CONCAT(?1, '%'))
+               OR LOWER(p.name) LIKE LOWER(CONCAT('%', ?1, '%'))
             """, nativeQuery = true)
-    List<Place> searchComplete(String searchTerm);
-
+    Page<Place> searchWithRanking(String searchTerm, Pageable pageable);
 }

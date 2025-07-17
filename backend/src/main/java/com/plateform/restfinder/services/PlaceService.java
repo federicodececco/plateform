@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.plateform.restfinder.model.Place;
@@ -47,17 +50,31 @@ public class PlaceService {
         return placeRepository.findPlacesWithinRadius(latitude, longitude, radiusMeters);
     }
 
-    public List<Place> search(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return Collections.emptyList();
+    public Page<Place> search(String query, int page, int size) {
+        if (query == null || query.trim().isEmpty()) {
+            return Page.empty();
         }
-        return placeRepository.fullTextSearch(name.trim());
+
+        String cleanQuery = query.trim();
+        if (cleanQuery.contains(" ")) {
+            String[] words = cleanQuery.split("\\s+");
+            StringBuilder newQuery = new StringBuilder();
+
+            for (int i = 0; i < words.length; i++) {
+                if (i > 0) {
+                    newQuery.append(" ");
+                }
+                newQuery.append("+").append(words[i]).append("*");
+            }
+
+            return placeRepository.searchWithRanking(newQuery.toString(), PageRequest.of(page, size));
+        } else {
+
+            return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
+        }
     }
 
-    public List<Place> searchFinal(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            return Collections.emptyList();
-        }
-        return placeRepository.searchComplete(name.trim());
+    public Page<Place> search(String query, int page) {
+        return search(query, page, 10);
     }
 }

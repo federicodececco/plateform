@@ -14,8 +14,10 @@ import java.util.Optional;
 import java.util.Set;
 import com.ibm.icu.text.Transliterator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -341,10 +343,19 @@ public class PlaceController {
     }
 
     @GetMapping("/search")
-    public Mono<ResponseEntity<List<Place>>> getMethodName(@RequestParam String name) {
+    public Mono<ResponseEntity<Page<Place>>> searchPlaces(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         try {
-            return Mono.just(new ResponseEntity<>(placeService.searchFinal(name), HttpStatus.OK));
+            if (size > 100)
+                size = 100;
+            if (size < 1)
+                size = 10;
 
+            Page<Place> results = placeService.search(name, page, size);
+
+            return Mono.just(ResponseEntity.ok(results));
         } catch (Exception e) {
             System.err.print(e);
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
