@@ -1,0 +1,162 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #f8f8f8;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Colori personalizzati */
+
+  /* --primary-color: purple; */
+  --primary-color: #E24E29;
+  --primary-color-hover: #bd4021;
+  /* --tag-color: blue; */
+  --tag-color: #4DA167;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: inherit;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+/* Stili per le stelle del rating */
+.star {
+  color: #ccc;
+  /* Colore stelle vuote */
+  font-size: 18px;
+  /* Dimensione stelle */
+  line-height: 1;
+  /* Assicura che le stelle siano ben allineate */
+  display: inline-block;
+}
+
+.star.filled {
+  color: #ffc107;
+  /* Colore stelle piene (giallo/arancio) */
+}
+
+.star.half-filled {
+  /* Potresti usare un'icona SVG o un gradiente per la mezza stella */
+  color: #ffc107;
+  /* O un colore leggermente diverso */
+  /* Clip Path per simulare mezza stella, se non hai un'icona specifica */
+  clip-path: inset(0 50% 0 0);
+  /* Taglia la metà destra della stella */
+  display: inline-block;
+  /* Necessario per clip-path */
+}
+
+/* Stili per i tag (etichette) */
+.tag {
+  display: inline-block;
+  padding: 5px 10px;
+  margin-right: 8px;
+  /* Spazio tra i tag */
+  margin-bottom: 8px;
+  /* Spazio sotto i tag se vanno a capo */
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  /* Impedisce che il testo del tag vada a capo */
+}
+
+/* Colori specifici per i tag */
+.tag-cucina-gourmet {
+  background-color: #e0f7fa;
+  color: #00796b;
+}
+
+.tag-cantina-vini {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.tag-disponibile {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.tag-parcheggio {
+  background-color: #fce4ec;
+  color: #ad1457;
+}
+
+.tag-cucina-tradizionale {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.tag-bar {
+  background-color: #ede7f6;
+  color: #673ab7;
+}
+
+.tag-spogliatoi {
+  background-color: #f9fbe7;
+  color: #afb42b;
+}
+
+.tag-ombrelloni {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+/* Stili per i bottoni di azione */
+.action-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+  /* Impedisce al testo di andare a capo */
+}
+
+.action-button-book {
+  /* Prenota Tavolo */
+  background-color: #e64a19;
+  /* Arancione */
+  color: #fff;
+}
+
+.action-button-book:hover {
+  background-color: #d84315;
+}
+
+.action-button-details {
+  /* Vedi Dettagli */
+  background-color: #333;
+  /* Nero scuro */
+  color: #fff;
+}
+
+.action-button-details:hover {
+  background-color: #1a1a1a;
+}
