@@ -1,40 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import styles from './SearchPage.module.css';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
-
-const restaurantsData = [
-    {
-        name: "Osteria del Mare Amalfi",
-        address: "Via dei Pescatori",
-        description: "Elegante osteria ad Amalfi con cucina gourmet. Perfetto per una cena romantica con specialità di mare e vini pregiati.",
-        tags: ["Cucina Gourmet", "Cantina Vini", "Disponibile", "Parcheggio"],
-        price: "moderate",
-        rating: 4.8,
-        actionText: "Prenota Tavolo",
-        actionType: "book",
-        "adressNumber": "12",
-        "city": "Napoli",
-        "cap": 80100,
-        "province": "NA",
-    },
-    {
-        name: "Trattoria Nonna Rosa Ravello",
-        address: "Via della Repubblica Marinara",
-        description: "Storico stabilimento balneare di Ravello con tradizione familiare. Offre un'esperienza autentica della Costiera Amalfitana.",
-        tags: ["Cucina Tradizionale", "Bar", "Spogliatoi", "Ombrelloni"],
-        price: "very expensive",
-        rating: 3.0,
-        actionText: "Vedi Dettagli",
-        actionType: "details",
-        "adressNumber": "12",
-        "city": "Napoli",
-        "cap": 80100,
-        "province": "NA",
-    }
-    // Aggiungi altri ristoranti qui
-];
+import { useGlobalContext } from '../context/GlobalContext';
+import { debounce } from 'lodash';
 
 export default function SearchPage() {
 
@@ -42,10 +12,11 @@ export default function SearchPage() {
 
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [placesData, setPlacesData] = useState(restaurantsData)
+    const [placesData, setPlacesData] = useState([])
     const [searchLocation, setSearchLocation] = useState(searchParams.get('city') || '');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
+
     const [filter, setFilter] = useState({
         category: searchParams.get('category') || '',
         cuisine: searchParams.get('cuisine') || '',
@@ -54,46 +25,62 @@ export default function SearchPage() {
         services: searchParams.get('services') || ''
     })
 
+    const { getPlaces } = useGlobalContext()
+
+    // questa funzione di debounce serve per evitare di fare troppe chiamate API quando l'utente digita nella barra di ricerca
+    // il primo parametro: handleSearchRestaurant dice la funzione che chiama, 300 sono i millisecondi di attesa prima di eseguire la funzione
+    const handleDebouncedSearchRestaurant = useCallback(debounce(handleSearchRestaurant, 300), [])
+
+    async function handleSearchRestaurant(location) {
+        console.log(location);
+
+        const response = await getPlaces(location)
+        setPlacesData(response.content)
+    }
 
     useEffect(() => {
+        handleDebouncedSearchRestaurant(searchLocation)
+    }, [searchLocation])
 
-        const filtersArr = []
-        let url = `/Search`;
+    // useEffect(() => {
 
-        // inizio popolazione array dei filtri
-        if (searchLocation) {
-            filtersArr.push(`city=${searchLocation}`)
-        }
-        if (filter.category) {
-            filtersArr.push(`category=${filter.category}`)
-        }
-        if (filter.cuisine) {
-            filtersArr.push(`cuisine=${filter.cuisine}`)
-        }
-        if (filter.price) {
-            filtersArr.push(`price=${filter.price}`)
-        }
-        if (filter.rating) {
-            filtersArr.push(`rating=${filter.rating}`)
-        }
-        if (filter.services) {
-            filtersArr.push(`services=${filter.services}`)
-        }
-        // fine popolazione array dei filtri
-        // controllo se ci sono dei filtri ne caso concateno il punto interrogativo all'url per permettere di metter i parametri
-        if (searchLocation !== '' || filter.category !== '' || filter.cuisine !== '' || filter.price !== '' || filter.rating !== '' || filter.services !== '') {
-            url += '?'
-        }
+    //     const filtersArr = []
+    //     let url = `/Search`;
 
-        // concateno all'url i parametri uniti dall'end logico
-        if (filtersArr) {
-            url += filtersArr.join('&')
-        }
+    //     // inizio popolazione array dei filtri
+    //     if (searchLocation) {
+    //         filtersArr.push(`city=${searchLocation}`)
+    //     }
+    //     if (filter.category) {
+    //         filtersArr.push(`category=${filter.category}`)
+    //     }
+    //     if (filter.cuisine) {
+    //         filtersArr.push(`cuisine=${filter.cuisine}`)
+    //     }
+    //     if (filter.price) {
+    //         filtersArr.push(`price=${filter.price}`)
+    //     }
+    //     if (filter.rating) {
+    //         filtersArr.push(`rating=${filter.rating}`)
+    //     }
+    //     if (filter.services) {
+    //         filtersArr.push(`services=${filter.services}`)
+    //     }
+    //     // fine popolazione array dei filtri
+    //     // controllo se ci sono dei filtri ne caso concateno il punto interrogativo all'url per permettere di metter i parametri
+    //     if (searchLocation !== '' || filter.category !== '' || filter.cuisine !== '' || filter.price !== '' || filter.rating !== '' || filter.services !== '') {
+    //         url += '?'
+    //     }
 
-        navigate(url);
+    //     // concateno all'url i parametri uniti dall'end logico
+    //     if (filtersArr) {
+    //         url += filtersArr.join('&')
+    //     }
 
-        return
-    }, [searchLocation, filter])
+    //     navigate(url);
+
+    //     return
+    // }, [searchLocation, filter])
 
     const handleInputChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value })
@@ -145,7 +132,7 @@ export default function SearchPage() {
                             className={styles["location-input"]} />
                         <span className={styles["location-icon"]}>📍</span>
                     </div>
-                    <button onClick={() => console.log(filter)} className={styles["search-button"]}>{t('searchRestaurants')}</button>
+                    <button onClick={() => handleDebouncedSearchRestaurant(searchLocation)} className={styles["search-button"]}>{t('searchRestaurants')}</button>
                 </div>
             </div>
 
@@ -186,7 +173,7 @@ export default function SearchPage() {
 
             {/* Lista dei ristoranti */}
             <div className={styles["restaurant-list-container"]}>
-                {orderedPlacesData.map((restaurant, index) => (
+                {placesData.map((restaurant, index) => (
                     <RestaurantCard key={index} restaurant={restaurant} />
                 ))}
             </div>

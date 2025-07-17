@@ -22,8 +22,30 @@ export default function usePlace() {
     const api = import.meta.env.VITE_API_URL
 
     //esempio di chiamata API GET
-    async function getPlace() {
-        const response = await fetchData(`${api}/places`)
+    async function getPlaces(value) {
+        const response = await fetchData(`${api}/places/search?name=${value}`)
+        return response
+    }
+
+    async function getPlacesByProvince(province) {
+        const response = await fetchData(`${api}/places/province/${province}`)
+        return response
+    }
+
+    async function getPlacesByRegion(region) {
+        const response = await fetchData(`${api}places/region/${region}`)
+        return response
+    }
+
+    async function getPlacesDetails(placeId) {
+        const response = await fetchData(`${api}/places/details/${placeId}`)
+        console.log('response', response);
+        return response
+    }
+
+    async function getPlacesPic(picArray) {
+        const response = await fetchData(`${api}/photo/json/${picArray}`)
+        console.log('response', response);
         return response
     }
 
@@ -44,5 +66,7 @@ export default function usePlace() {
 
     }
 
-    return [getPlace, addPlace]
+
+
+    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace]
 }

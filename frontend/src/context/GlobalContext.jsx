@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 
 const priceMap = {
+    "": "",
     "free": "free",
     "inexpensive": "€",
     "moderate": "€€",
@@ -17,7 +18,7 @@ const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
     const [navSearchBar, setNavSearchBar] = useState('');
-    const [getPlace, addPlace] = usePlace()
+    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace] = usePlace()
 
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
@@ -34,12 +35,12 @@ function GlobalProvider({ children }) {
         );
     };
 
-    const renderPrice = price => priceMap[price.toLowerCase()];
+    const renderPrice = price => price ? priceMap[price.toLowerCase()] : "N.D.";
 
     const globalProviderValue = {
         navSearchBar, setNavSearchBar,
         renderStars, renderPrice,
-        getPlace, addPlace
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace
     };
 
     return (

@@ -1,33 +1,55 @@
 import React from 'react';
 import styles from './RestaurantCard.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useTranslation } from 'react-i18next';
 
 const RestaurantCard = ({ restaurant }) => {
+
+    const { i18n } = useTranslation();
+    console.log(i18n.language, 'lingua corrente');
+
+
     const {
-        name,
-        mainCategory,
-        coverImageName = 'false',
         address,
         adressNumber,
-        city,
+        blacklist,
         cap,
+        categories, //arr
+        city,
+        coverImageName,
+        googleMapsURL,
+        id,
+        isEdited,
+        latitude,
+        longitude,
+        mainCategory,
+        name,
+        nation,
+        phoneNumber,
+        photos, //arr
+        plateformID,
+        plateformURL,
+        priceRange,
         province,
-        description, //non è presente
-        tags, //non è presente
-        price,
         rating,
+        region,
         reviewNumber,
-        actionText, //non è presente
-        actionType, // e.g., 'book' or 'details' to determine button color/style
-        blacklist, // stabilisce se è visibile o meno
+        slugName,
+        tags, //arr enName itName googleName id isVisible
+        webSiteURL
     } = restaurant;
 
     const { renderStars, renderPrice } = useGlobalContext()
+
+    // console.log('restaurant', restaurant[0]);
+    console.log('tags', tags[0]);
+
 
     if (blacklist) {
         return null
     }
 
+    // return null
     return (
         <div className={styles["restaurant-card"]}>
             {coverImageName ? <div className={styles["restaurant-image-placeholder"]}>
@@ -46,19 +68,20 @@ const RestaurantCard = ({ restaurant }) => {
                 </p>
                 <div className={styles["restaurant-tags"]}>
                     {tags.map((tag, index) => (
-                        <span key={index} className={styles[`tag tag-${tag.toLowerCase().replace(/\s/g, '-')}`]}>
-                            {tag}
+                        // <span key={index} className={styles[`tag tag-${tag.googleName.toLowerCase().replace(/\s/g, '-')}`]}>
+                        <span key={index} className={styles[`tag tag-${tag.googleName} ${!tag.isVisible && 'hidden'}`]}>
+                            {i18n.language === 'it' ? `${tag.itName}` : `${tag.enName}`}
                         </span>
                     ))}
                 </div>
                 <div className={styles["restaurant-footer"]}>
-                    <span className={styles["restaurant-price"]}>{renderPrice(price)}</span>
-                    <button className={styles[`action-button action-button-${actionType}`]}>
-                        {actionText}
+                    <span className={styles["restaurant-price"]}>{renderPrice(priceRange)}</span>
+                    <button className={styles[`action-button action-button-${plateformID ? 'prenota' : 'visualizza'}`]}>
+                        {plateformID ? 'Prenota' : 'Visualizza'}
                     </button>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

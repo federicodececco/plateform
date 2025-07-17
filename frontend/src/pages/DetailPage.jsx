@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../context/GlobalContext';
 import AppGoogleMap from '../components/AppGoogleMap';
 import styles from './DetailPage.module.css';
@@ -35,8 +35,10 @@ const reviewsData = [
 ];
 
 export default function DetailPage() {
+
+    const api = import.meta.env.VITE_API_URL
     const { t } = useTranslation();
-    const { renderStars, renderPrice } = useGlobalContext()
+    const { renderStars, renderPrice, getPlacesDetails, getPlacesPic } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
     const [placeData, setPlaceData] = useState({
         "id": "ChIJN1t_tDeuEmsRUrtjV_Wc9Gg",
@@ -63,11 +65,22 @@ export default function DetailPage() {
         "isEdited": false
     })
 
+    const getPlace = async () => {
+        try {
+            setPlaceData(await getPlacesDetails('ChIJT4Pkr6lWKhMR_TbNKLsHz00'))
+        } catch (error) {
+            console.error('Error fetching place details:', error);
+        }
+    }
+
+    useEffect(() => {
+        getPlace()
+    }, [])
+
     const handleFormData = e => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     }
-
 
     const handleSubmitBooking = (e) => {
         e.preventDefault();
@@ -78,7 +91,6 @@ export default function DetailPage() {
     const handleFormSubmit = e => {
         e.preventDefault();
         console.log(formData);
-
     }
 
     return (
@@ -93,7 +105,7 @@ export default function DetailPage() {
                         <div className={styles.thumbnailPhoto}>{t('terracePhoto')}</div>
                         <div className={styles.thumbnailPhoto}>{t('morePhotos')}</div>
                     </div>
-
+                    {/* <img src={`${api}/photo/file/${placeData.coverImageName}`} alt="aaaaa" /> */}
                     <div className={styles.tagsContainer}>
                         <span className={styles.tag}>{t('seafoodCuisine')}</span>
                         <span className={styles.tag}>{t('terracePhoto')}</span>
@@ -182,7 +194,7 @@ export default function DetailPage() {
                     <div className={styles.contactInfo}>
                         <span>{t('website')}</span>
                         <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactValue}>
-                            {placeData.webSiteURL}
+                            Vai al Sito
                         </a>
                     </div>
                 </div>
@@ -253,7 +265,7 @@ export default function DetailPage() {
                             </div> */}
                             <div className={styles.contactItem}>
                                 <FaGlobe className={styles.contactIcon} />
-                                <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>{placeData.webSiteURL}</a>
+                                <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>Vai al Sito</a>
                             </div>
                             <div className={styles.contactItem}>
                                 <FaFacebookF className={styles.contactIcon} />
