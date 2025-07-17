@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import usePlace from "../hooks/usePlace";
 import {
     FaStar,
     FaRegStar
@@ -16,6 +17,7 @@ const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
     const [navSearchBar, setNavSearchBar] = useState('');
+    const [getPlace, addPlace] = usePlace()
 
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
@@ -36,7 +38,8 @@ function GlobalProvider({ children }) {
 
     const globalProviderValue = {
         navSearchBar, setNavSearchBar,
-        renderStars, renderPrice
+        renderStars, renderPrice,
+        getPlace, addPlace
     };
 
     return (

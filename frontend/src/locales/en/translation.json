@@ -90,5 +90,7 @@
     "sortByLabel": "Sort by:",
     "mostPopularOption": "Most popular",
     "languageItalian": "Italian",
-    "languageEnglish": "English"
+    "languageEnglish": "English",
+    "categoryOption": "Category",
+    "ratingOption": "Rating"
 }

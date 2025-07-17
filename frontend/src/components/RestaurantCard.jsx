@@ -22,7 +22,7 @@ const RestaurantCard = ({ restaurant }) => {
         blacklist, // stabilisce se è visibile o meno
     } = restaurant;
 
-    const { renderStars, rendererPrice } = useGlobalContext()
+    const { renderStars, renderPrice } = useGlobalContext()
 
     if (blacklist) {
         return null
@@ -52,7 +52,7 @@ const RestaurantCard = ({ restaurant }) => {
                     ))}
                 </div>
                 <div className={styles["restaurant-footer"]}>
-                    <span className={styles["restaurant-price"]}>{rendererPrice(price)}</span>
+                    <span className={styles["restaurant-price"]}>{renderPrice(price)}</span>
                     <button className={styles[`action-button action-button-${actionType}`]}>
                         {actionText}
                     </button>

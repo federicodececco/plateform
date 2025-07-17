@@ -1,5 +1,6 @@
 .loginPage {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
@@ -100,4 +101,32 @@
 
 .loginButton:active {
     transform: translateY(0);
+}
+
+
+/* stile per le credenziali di accesso admin */
+.admin-credentials {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-top: 30px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    max-width: 300px;
+}
+
+.admin-credentials h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.admin-credentials p {
+    margin-bottom: 5px;
+}
+
+.admin-credentials strong {
+    color: #007bff;
+}
+
+.admin-credentials p {
+    color: #000;
 }

@@ -4,11 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import {
     FaEye, FaEyeSlash
 } from 'react-icons/fa';
+import { useGlobalContext } from '../context/GlobalContext';
 
 export default function LoginPage() {
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Stato per mostrare/nascondere la password
+    const { usePlace, addPlace } = useGlobalContext(); //queste sono le funzioni dello usePlace
+
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -68,7 +71,16 @@ export default function LoginPage() {
                     </div>
                 </div>
                 <button type="submit" className={styles.loginButton}>Login</button>
+
+                <div></div>
             </form>
+
+            {/* sezione agiunta solo per velocizzare il login in fase di sviluppo */}
+            <div className={styles["admin-credentials"]}>
+                <h3>Admin Access Credentials</h3>
+                <p><strong>Username:</strong> admin</p>
+                <p><strong>Password:</strong> admin</p>
+            </div>
         </div>
     );
 };
