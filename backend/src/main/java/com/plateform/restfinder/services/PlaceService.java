@@ -56,20 +56,30 @@ public class PlaceService {
         }
 
         String cleanQuery = query.trim();
+        Pageable pageable = PageRequest.of(page, size);
+
         if (cleanQuery.contains(" ")) {
             String[] words = cleanQuery.split("\\s+");
-            StringBuilder newQuery = new StringBuilder();
+            StringBuilder booleanQuery = new StringBuilder();
 
-            for (int i = 0; i < words.length; i++) {
-                if (i > 0) {
-                    newQuery.append(" ");
+            for (String word : words) {
+                // Skip words shorter than 3 characters (common stopwords)
+                if (word.length() >= 3) {
+                    if (booleanQuery.length() > 0) {
+                        booleanQuery.append(" ");
+                    }
+                    booleanQuery.append("+").append(word).append("*");
                 }
-                newQuery.append("+").append(words[i]).append("*");
             }
 
-            return placeRepository.searchWithRanking(newQuery.toString(), PageRequest.of(page, size));
-        } else {
+            // If no valid words for boolean search, fall back to LIKE
+            if (booleanQuery.length() == 0) {
+                return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
+            }
 
+            return placeRepository.searchWithRanking(booleanQuery.toString(), PageRequest.of(page, size));
+        } else {
+            // Single word search can use the original logic
             return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
         }
     }
