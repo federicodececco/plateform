@@ -18,6 +18,7 @@ import {
     FaInstagram,
     FaTripadvisor
 } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
 
 const reviewsData = [
     {
@@ -38,36 +39,14 @@ export default function DetailPage() {
 
     const api = import.meta.env.VITE_API_URL
     const { t } = useTranslation();
-    const { renderStars, renderPrice, getPlacesDetails, getPlacesPic } = useGlobalContext()
+    const { renderStars, renderPrice, getPlacesDetails, getPlacesPic, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
-    const [placeData, setPlaceData] = useState({
-        "id": "ChIJN1t_tDeuEmsRUrtjV_Wc9Gg",
-        "name": "Ristorante Il Mare in Tasca",
-        "address": "Via dei Pescatori",
-        "adressNumber": "12",
-        "city": "Napoli",
-        "cap": 80100,
-        "province": "NA",
-        "nation": "Italia",
-        "latitude": 40.8354,
-        "longitude": 14.2488,
-        "mainCategory": "Ristorante di Pesce",
-        "coverImageName": "il_mare_in_tasca_cover.jpg",
-        "phoneNumber": "+390811234567",
-        "priceRange": "moderate",
-        "rating": 4.7,
-        "reviewNumber": 325,
-        "googleMapsURL": "https://maps.app.goo.gl/abcdef1234567890",
-        "webSiteURL": "https://www.ilmareintasca.it",
-        "plateformID": "PLATFORM-REST-001",
-        "plateformURL": "https://www.mia_piattaforma.it/ilmareintasca",
-        "blacklist": false,
-        "isEdited": false
-    })
+    const [placeData, setPlaceData] = useState(null)
+    const { id } = useParams()
 
     const getPlace = async () => {
         try {
-            setPlaceData(await getPlacesDetails('ChIJT4Pkr6lWKhMR_TbNKLsHz00'))
+            setPlaceData(await getPlacesDetails(id))
         } catch (error) {
             console.error('Error fetching place details:', error);
         }
@@ -86,15 +65,20 @@ export default function DetailPage() {
         e.preventDefault();
         // alert(`Prenotazione per il ${selectedDate} alle ${selectedTime} per ${selectedPeople}.`);
         // console.log('Dettagli prenotazione:', { selectedDate, selectedTime, selectedPeople });
+        console.log(formData);
     };
 
-    const handleFormSubmit = e => {
-        e.preventDefault();
-        console.log(formData);
+    if (!placeData) {
+        console.log('placeData vuoto');
+        return (
+            <div className="loading">
+                {t('loading')}
+            </div>
+        );
     }
 
     return (
-        <div className={styles.pageContainer}>
+        <div onClick={closeShowLanguageOptions} className={styles.pageContainer}>
             <section className={styles.upperSection}>
                 {/* Sezione Sinistra: Dettagli Ristorante e Galleria (Parte precedente) */}
                 <div className={styles.leftSection}>
@@ -176,7 +160,7 @@ export default function DetailPage() {
                             </select>
                         </div>
 
-                        <button onClick={handleFormSubmit} type="submit" className={styles.submitButton}>
+                        <button type="submit" className={styles.submitButton}>
                             {t('reserveNow')}
                         </button>
                     </form>

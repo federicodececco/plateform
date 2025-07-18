@@ -43,6 +43,11 @@ button {
   transition: border-color 0.25s;
 }
 
+.loading {
+  color: #000;
+}
+
+
 /* Stili per le stelle del rating */
 .star {
   color: #ccc;
@@ -136,7 +141,6 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
   white-space: nowrap;
-  /* Impedisce al testo di andare a capo */
 }
 
 .action-button-book {

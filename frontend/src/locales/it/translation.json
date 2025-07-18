@@ -92,5 +92,6 @@
     "languageItalian": "Italiano",
     "languageEnglish": "Inglese",
     "categoryOption": "Categoria",
-    "ratingOption": "Valutazione"
+    "ratingOption": "Valutazione",
+    "loading": "Caricamento..."
 }

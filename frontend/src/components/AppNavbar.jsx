@@ -10,8 +10,7 @@ import {
 export default function AppNavbar() {
 
     const [hamburgerMenuOpen, setHamburgerMenuOpen] = useState(false);
-    const [showLanguageOptions, setShowLanguageOptions] = useState(false);
-    const { navSearchBar, setNavSearchBar } = useGlobalContext();
+    const { navSearchBar, setNavSearchBar, showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions } = useGlobalContext();
     const { i18n, t } = useTranslation();
     // passare la chiamata api dentro la callback del debounce
     const handleDebouncedSearch = useCallback(debounce(chiamataApi, 300), [])

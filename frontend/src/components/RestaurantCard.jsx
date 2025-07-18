@@ -2,12 +2,11 @@ import React from 'react';
 import styles from './RestaurantCard.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 const RestaurantCard = ({ restaurant }) => {
 
     const { i18n } = useTranslation();
-    console.log(i18n.language, 'lingua corrente');
-
 
     const {
         address,
@@ -41,10 +40,6 @@ const RestaurantCard = ({ restaurant }) => {
 
     const { renderStars, renderPrice } = useGlobalContext()
 
-    // console.log('restaurant', restaurant[0]);
-    console.log('tags', tags[0]);
-
-
     if (blacklist) {
         return null
     }
@@ -69,16 +64,20 @@ const RestaurantCard = ({ restaurant }) => {
                 <div className={styles["restaurant-tags"]}>
                     {tags.map((tag, index) => (
                         // <span key={index} className={styles[`tag tag-${tag.googleName.toLowerCase().replace(/\s/g, '-')}`]}>
-                        <span key={index} className={styles[`tag tag-${tag.googleName} ${!tag.isVisible && 'hidden'}`]}>
+                        <span key={index} className={`${styles.tag} ${styles[`tag-${tag.googleName}`]} ${!tag.isVisible ? styles.hidden : ''}`}>
+                            {/* <span key={index} className={styles["tag", (!tag.isVisible) ? 'hidden' : '']}> */}
                             {i18n.language === 'it' ? `${tag.itName}` : `${tag.enName}`}
                         </span>
                     ))}
                 </div>
                 <div className={styles["restaurant-footer"]}>
                     <span className={styles["restaurant-price"]}>{renderPrice(priceRange)}</span>
-                    <button className={styles[`action-button action-button-${plateformID ? 'prenota' : 'visualizza'}`]}>
-                        {plateformID ? 'Prenota' : 'Visualizza'}
-                    </button>
+
+                    <Link
+                        to={`/detail/${id}`}
+                        className={`${styles["detail-button"]} ${styles[`detail-button-${(plateformID !== '') ? 'prenota' : 'visualizza'}`]}`}>
+                        {(plateformID !== '') ? 'Prenota' : 'Visualizza'}
+                    </Link>
                 </div>
             </div>
         </div >

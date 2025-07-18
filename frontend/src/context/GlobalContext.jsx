@@ -17,8 +17,12 @@ const priceMap = {
 const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
+
+    const [showLanguageOptions, setShowLanguageOptions] = useState(false);
     const [navSearchBar, setNavSearchBar] = useState('');
     const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace] = usePlace()
+
+    const closeShowLanguageOptions = () => setShowLanguageOptions(false)
 
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
@@ -38,6 +42,7 @@ function GlobalProvider({ children }) {
     const renderPrice = price => price ? priceMap[price.toLowerCase()] : "N.D.";
 
     const globalProviderValue = {
+        showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
         navSearchBar, setNavSearchBar,
         renderStars, renderPrice,
         getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace

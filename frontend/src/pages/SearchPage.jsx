@@ -25,7 +25,7 @@ export default function SearchPage() {
         services: searchParams.get('services') || ''
     })
 
-    const { getPlaces } = useGlobalContext()
+    const { getPlaces, closeShowLanguageOptions } = useGlobalContext()
 
     // questa funzione di debounce serve per evitare di fare troppe chiamate API quando l'utente digita nella barra di ricerca
     // il primo parametro: handleSearchRestaurant dice la funzione che chiama, 300 sono i millisecondi di attesa prima di eseguire la funzione
@@ -108,7 +108,7 @@ export default function SearchPage() {
     }, [placesData, sortBy, sortOrder])
 
     return (
-        <div className={styles["search-page"]}>
+        <div onClick={closeShowLanguageOptions} className={styles["search-page"]}>
             {/* Breadcrumbs */}
 
             {/* Da riprodurre dinamicamente con i link delle pagine precedenti */}

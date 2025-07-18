@@ -523,11 +523,13 @@
     background-color: #fcece7;
 }
 
-@media screen and (max-width: 870px) {
-
+@media screen and (max-width: 950px) {
     .pageContainer {
         padding: 20px 0;
     }
+}
+
+@media screen and (max-width: 870px) {
 
     /* Sezione alta sinistra immagini */
     .upperSection {
