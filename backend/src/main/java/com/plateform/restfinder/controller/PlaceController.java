@@ -14,7 +14,6 @@ import java.util.Optional;
 import java.util.Set;
 import com.ibm.icu.text.Transliterator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
