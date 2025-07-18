@@ -43,8 +43,8 @@ export default function AppNavbar() {
                     <li><a href="/regioni">{t('regions')}</a></li> */}
                     {/* <li><a href="/blog">{t('blog')}</a></li> */}
                     <li><a href="/login">Login</a></li>
-                    <li><a href="/Search">{t('search')}</a></li>
-                    <li><a href="/detail">Detail</a></li>
+                    <li><a href="/search">{t('search')}</a></li>
+                    {/* <li><a href="/detail">Detail</a></li> */}
                     <li>
                         <button onClick={() => setShowLanguageOptions(prev => !prev)}>
                             <img src={i18n.language === 'it' ? "https://flagicons.lipis.dev/flags/4x3/it.svg" : "https://flagicons.lipis.dev/flags/4x3/gb.svg"}

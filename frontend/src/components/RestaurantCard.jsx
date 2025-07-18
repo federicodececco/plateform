@@ -2,10 +2,11 @@ import React from 'react';
 import styles from './RestaurantCard.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const RestaurantCard = ({ restaurant }) => {
 
+    const location = useLocation()
     const { i18n } = useTranslation();
 
     const {
@@ -75,6 +76,7 @@ const RestaurantCard = ({ restaurant }) => {
 
                     <Link
                         to={`/detail/${id}`}
+                        state={{ from: location.pathname }} // Passa il percorso attuale
                         className={`${styles["detail-button"]} ${styles[`detail-button-${(plateformID !== '') ? 'prenota' : 'visualizza'}`]}`}>
                         {(plateformID !== '') ? 'Prenota' : 'Visualizza'}
                     </Link>

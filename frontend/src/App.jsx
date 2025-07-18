@@ -13,10 +13,14 @@ function App() {
       <BrowserRouter>
         <Routes>
 
+
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/search" element={<SearchPage />} />
+            <Route path='/search'>
+              <Route index element={<SearchPage />}></Route>
+              <Route path=':region' element={<SearchPage />}></Route>
+            </Route>
             <Route path="/detail/:id" element={<DetailPage />} />
           </Route>
           <Route path="*" element={<ErrorPage />} />

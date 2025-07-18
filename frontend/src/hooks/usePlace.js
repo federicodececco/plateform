@@ -28,12 +28,13 @@ export default function usePlace() {
     }
 
     async function getPlacesByProvince(province) {
-        const response = await fetchData(`${api}/places/province/${province}`)
+        const response = await fetchData(`${api}/places/province/${province}`) //ud
         return response
     }
 
     async function getPlacesByRegion(region) {
         const response = await fetchData(`${api}places/region/${region}`)
+        console.log(response);
         return response
     }
 
