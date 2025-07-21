@@ -1,27 +1,43 @@
 import React, { useState } from 'react';
 import styles from './LoginPage.module.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
 import {
     FaEye, FaEyeSlash
 } from 'react-icons/fa';
 
 export default function LoginPage() {
-    const [nickname, setNickname] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false); // Stato per mostrare/nascondere la password
     const navigate = useNavigate();
+    const  {login}  = useAuthContext();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // da inserire Api per inviare i dati di login
-        console.log('Nickname:', nickname);
-        console.log('Password:', password);
-        alert('Login Tentato!\nNickname: ' + nickname + '\nPassword: ' + password);
-        setNickname('');
-        setPassword('');
-
-        navigate('/'); //Reindirizza alla home page
-    };
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+     try {
+        console.log(username);
+        console.log(password);
+      const result = await login(username, password);
+      
+      if (result.success) {
+        navigate('/'); 
+      } else {
+        setError(result.error || 'Login Fallito');
+      }
+    } catch (error) {
+      setError('errore');
+      console.log(error)
+    } finally {
+      setLoading(false);
+      console.log(error)
+    }
+  };
+    
 
     const togglePasswordVisibility = () => {
         setShowPassword(prevShowPassword => !prevShowPassword);
@@ -32,12 +48,12 @@ export default function LoginPage() {
             <form onSubmit={handleSubmit} className={styles.loginForm}>
                 <h2>Login</h2>
                 <div className={styles.inputGroup}>
-                    <label htmlFor="nickname">Nickname</label>
+                    <label htmlFor="username">Username</label>
                     <input
                         type="text"
-                        id="nickname"
-                        value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
+                        id="username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                         className={styles.inputField}
                     />

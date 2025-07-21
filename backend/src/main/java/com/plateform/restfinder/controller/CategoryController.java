@@ -50,7 +50,7 @@ public class CategoryController {
     @PostMapping("/create")
     public Mono<ResponseEntity<Category>> create(@RequestBody Category category) {
         try {
-            return Mono.just(new ResponseEntity<Category>(categoryService.create(category), HttpStatus.OK));
+            return Mono.just(new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK));
 
         } catch (Exception e) {
             System.err.print(e);
@@ -62,7 +62,7 @@ public class CategoryController {
     public Mono<ResponseEntity<Category>> edit(@PathVariable Integer id, @RequestBody Category category) {
         try {
             category.setId(id);
-            return Mono.just(new ResponseEntity<Category>(categoryService.create(category), HttpStatus.OK));
+            return Mono.just(new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK));
         } catch (Exception e) {
             System.err.print(e);
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
