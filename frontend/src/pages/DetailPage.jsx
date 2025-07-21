@@ -42,11 +42,16 @@ export default function DetailPage() {
     const { renderStars, renderPrice, getPlacesDetails, getPlacesPic, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
     const [placeData, setPlaceData] = useState(null)
+    const [placePhotos, setPlacePhotos] = useState(null)
     const { id } = useParams()
 
     const getPlace = async () => {
         try {
-            setPlaceData(await getPlacesDetails(id))
+            const data = await getPlacesDetails(id)
+            setPlaceData(data)
+            // getPlacesPic(data.photos);
+
+            // setPlacePhotos(await getPlacesPic(placeData.photos))
         } catch (error) {
             console.error('Error fetching place details:', error);
         }
@@ -69,7 +74,7 @@ export default function DetailPage() {
     };
 
     if (!placeData) {
-        console.log('placeData vuoto');
+        // console.log('placeData vuoto');
         return (
             <div className="loading">
                 {t('loading')}
