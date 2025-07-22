@@ -32,3 +32,12 @@ https://rest.dececcofederico.eu/api/places/google-details/(id google place) - fa
 https://rest.dececcofederico.eu/api/places/save/(id google place) - fa una chiamata Post in base all'id che salva il luogo scaricando le foto e aggiornando il database
 
 https://rest.dececcofederico.eu/api/places/(id luogo)/photos/(reference della foto) - attraverso chiamata google Get scarica una foto in base al suo luogo e sua reference
+
+    https://rest.dececcofederico.eu/api/tags/ - index dei tag
+    https://rest.dececcofederico.eu/api/tags/{id} - show, dove {id} è l'id del tag
+    https://rest.dececcofederico.eu/api/tags/google/{googleName} - dove {googleName} è il campo googleName del tag, è una ricerca in base a quel campo, alternativa alla show
+    https://rest.dececcofederico.eu/api/create - Post, crea un nuovo tag
+    https://rest.dececcofederico.eu/api/edit - Post, la differenza con create è che devi tornare anche l'id originale della risorsa
+    https://rest.dececcofederico.eu/api/delete/{id} - Delete, delete in base all'id
+
+    per categories sono uguali con l'unica differenza che al posto di /api/tags metti /api/categories

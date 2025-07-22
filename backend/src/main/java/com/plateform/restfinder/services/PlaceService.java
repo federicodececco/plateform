@@ -62,7 +62,7 @@ public class PlaceService {
             StringBuilder booleanQuery = new StringBuilder();
 
             for (String word : words) {
-                // Skip words shorter than 3 characters (common stopwords)
+
                 if (word.length() >= 3) {
                     if (booleanQuery.length() > 0) {
                         booleanQuery.append(" ");
@@ -71,14 +71,13 @@ public class PlaceService {
                 }
             }
 
-            // If no valid words for boolean search, fall back to LIKE
             if (booleanQuery.length() == 0) {
                 return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
             }
 
             return placeRepository.searchWithRanking(booleanQuery.toString(), PageRequest.of(page, size));
         } else {
-            // Single word search can use the original logic
+
             return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
         }
     }

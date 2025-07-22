@@ -74,12 +74,7 @@ INSERT INTO photos (created_at, id, photo_reference,  file_name, file_path, plac
 INSERT INTO photos (created_at, id, photo_reference,  file_name, file_path, place_id) VALUES ('2025-07-11 10:58:44.308821', 12, 'ATKogpez6MUYwj1359HX94O-G5-sNoNDkq6zxMIKrGP2CQcNd5Shg_qn9tmiyr6nPRY6dSLgSMjGuBm0daWEicXjd1beVnN4kJz5qMhHr7bt5LRlNa4QbMq18gIuYtxGCOvClqPYpMocy5FNNGnjN4ym3LSzhkDbpceGFaDvdj-gwnG9Q8ITjH2ff9f1nLlELblB9naSn5cm0Mn_RyU3gGLsCQTbfgZ7cgsjphj3FO7GR8Luo-0VxRLXUMAEqcYVNg5IHPJXC0K1C6cW_wt9BU05lsfMJKiTCNkwp0qBfx5NbQ-r5i3hZC2Kak-gEokeqzEHkrS0q7W-3mR8_xnnJM7kUnwvRfxfcxErBL64K2fZWqbyJRlUn86_L4pJb9Aoyas42vJoIMmgZWpdSD0BOF1eYC1EY35-DonJP20o4MgFzLEfS74',  '9bbf97f39cd9928d_1752224324308', 'backend/downloaded/photos/9bbf97f39cd9928d_1752224324308', 'ChIJ534ctZ6Te0cRXjpRSahupgE');
 
 
---passowrd= password123
-INSERT INTO users (id, username, password) VALUES (1, "gigio", "{noop}password" );
 
-INSERT INTO roles (id, name) VALUES (1, "ADMIN");
-
-INSERT INTO role_user (user_id, role_id) VALUES(1,1);
 
 INSERT INTO `place_tag` VALUES (1,'ChIJ534ctZ6Te0cRXjpRSahupgE');
 INSERT INTO `place_tag` VALUES (2,'ChIJ534ctZ6Te0cRXjpRSahupgE');
@@ -159,3 +154,16 @@ INSERT INTO `place_tag` VALUES (1,'ChIJY9jDY6OTe0cRiL4qD_oyRAE');
 INSERT INTO `place_tag` VALUES (2,'ChIJY9jDY6OTe0cRiL4qD_oyRAE');
 INSERT INTO `place_tag` VALUES (28,'ChIJY9jDY6OTe0cRiL4qD_oyRAE');
 
+DELETE FROM role_user WHERE user_id IN (SELECT id FROM users WHERE username = 'admin');
+DELETE FROM users WHERE username = 'admin';
+DELETE FROM roles WHERE name IN ('ADMIN', 'USER');
+
+-- Inserisci i ruoli
+INSERT INTO roles (name) VALUES ('ADMIN');
+INSERT INTO roles (name) VALUES ('USER');
+
+-- Inserisci l'utente admin
+INSERT INTO users (username, password) VALUES ('admin', '{noop}admin123');
+
+-- Collega l'utente al ruolo (usando le query per essere sicuri degli ID)
+INSERT INTO role_user (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'admin' AND r.name = 'ADMIN';

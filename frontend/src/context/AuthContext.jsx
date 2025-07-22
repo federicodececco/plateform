@@ -8,59 +8,22 @@ function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  //salva il token nel local storage
+  //url del backend, da sostituire eventualmente con un .env
+  const API_BASE_URL = 'http://localhost:8080/api';
+
+  //salva jwt nel local storage
   const saveToken = (token) => {
     localStorage.setItem('authToken', token);
     setToken(token);
   };
 
-    // rimuove il token
+  //cancella il token dal local storage, per un eventuale logout
   const removeToken = () => {
     localStorage.removeItem('authToken');
     setToken(null);
   };
 
-  const login = async (username, password) => {
-    try {
-      console.log(username)
-      console.log(password)
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
-      }
-
-      const data = await response.json();
-      saveToken(data.token);
-      
-      // ricava le info sull-utente 
-      const userInfo = parseJwt(data.token);
-      setUser({ username: userInfo.sub });
-      
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  };
-
-  // logout
-  const logout = () => {
-    removeToken();
-    setUser(null);
-  };
-
-  // verifica l'autenitcazione
-  const isAuthenticated = () => {
-    return !!token && !isTokenExpired(token);
-  };
-
-  // parsing di jwt
+  //parsing del jtw
   const parseJwt = (token) => {
     try {
       const base64Url = token.split('.')[1];
@@ -73,50 +36,223 @@ function AuthProvider({ children }) {
       );
       return JSON.parse(jsonPayload);
     } catch (error) {
+      console.error('Errore nel parsing del JWT:', error);
       return null;
     }
   };
 
-  // check di scadenza del token
+  //check per vedere se il jwt è scaduto o meno
   const isTokenExpired = (token) => {
     try {
       const payload = parseJwt(token);
+      if (!payload || !payload.exp) return true;
       return payload.exp * 1000 < Date.now();
     } catch (error) {
       return true;
     }
   };
 
-  // retrive del token dal local storage
-  useEffect(() => {
-    const storedToken = localStorage.getItem('authToken');
-    if (storedToken && !isTokenExpired(storedToken)) {
-      setToken(storedToken);
-      const userInfo = parseJwt(storedToken);
-      setUser({ username: userInfo.sub });
-    } else if (storedToken) {
-      removeToken();
+  //funzione di login effettiva
+  const login = async (username, password) => {
+    try {
+      setLoading(true);
+      
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login fallito');
+      }
+
+      //salva il jwt
+      saveToken(data.accessToken);
+      
+      //prende le info del jwt
+      const userInfo = parseJwt(data.accessToken);
+      if (userInfo) {
+        setUser({ 
+          username: userInfo.sub,
+          roles: userInfo.roles || []
+        });
+      }
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Errore durante il login:', error);
+      return { 
+        success: false, 
+        error: error.message || 'Errore durante il login'
+      };
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  //funzione di logout
+  const logout = async () => {
+    try {
+      
+      if (token) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }).catch(() => {
+          
+        });
+      }
+    } finally {
+      removeToken();
+      setUser(null);
+    }
+  };
+
+  //verificato lo stato di autenticazione
+  const isAuthenticated = () => {
+    return !!token && !isTokenExpired(token);
+  };
+
+  //funzione per effettuare chiamate autentcate
+  const authenticatedFetch = async (url, options = {}) => {
+    if (!token || isTokenExpired(token)) {
+      logout();
+      throw new Error('Token non valido o scaduto');
+    }
+
+    const defaultOptions = {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    };
+
+    const response = await fetch(url, { ...options, ...defaultOptions });
+
+    //log out automatico in caso di autenticazione non più valida
+    if (response.status === 401) {
+      logout();
+      throw new Error('Sessione scaduta');
+    }
+
+    return response;
+  };
+
+  //controlla i permessi dello user
+  const hasRole = (requiredRole) => {
+    return user?.roles?.includes(requiredRole) || false;
+  };
+
+  //refresh del jwt, da sostituire in futuro con un refresh token
+  const refreshToken = async () => {
+    try {
+      if (!token || isTokenExpired(token)) {
+        logout();
+        return false;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        saveToken(data.token);
+        return true;
+      } else {
+        logout();
+        return false;
+      }
+    } catch (error) {
+      console.error('Errore nel refresh del token:', error);
+      logout();
+      return false;
+    }
+  };
+
+  //recupera il jwt dal local storage al caricamento
+  useEffect(() => {
+    const initAuth = () => {
+      const storedToken = localStorage.getItem('authToken');
+      
+      if (storedToken && !isTokenExpired(storedToken)) {
+        setToken(storedToken);
+        const userInfo = parseJwt(storedToken);
+        if (userInfo) {
+          setUser({ 
+            username: userInfo.sub,
+            roles: userInfo.roles || []
+          });
+        }
+      } else if (storedToken) {
+        // Token scaduto, rimuovilo
+        removeToken();
+      }
+      
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
+
+  //refresh automatico del token mentre sei connesso
+  useEffect(() => {
+    if (!token) return;
+
+    const payload = parseJwt(token);
+    if (!payload || !payload.exp) return;
+
+    const timeUntilExpiry = payload.exp * 1000 - Date.now();
+    // 5min
+    const refreshTime = timeUntilExpiry - 5 * 60 * 1000;
+
+    if (refreshTime > 0) {
+      const timeoutId = setTimeout(() => {
+        refreshToken();
+      }, refreshTime);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [token]);
 
   const value = {
     user,
     token,
+    loading,
     login,
     logout,
     isAuthenticated,
-    loading,
+    authenticatedFetch,
+    hasRole,
+    refreshToken,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-function useAuthContext(){
-  const context =useContext(AuthContext)
-  if (!context) {
-        throw new Error("useAuthContext error");
-    }
-    return context;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
+
+function useAuthContext() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuthContext deve essere usato all'interno di AuthProvider");
+  }
+  return context;
+}
+
 export { useAuthContext, AuthProvider };

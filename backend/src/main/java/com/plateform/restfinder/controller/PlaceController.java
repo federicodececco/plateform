@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import com.ibm.icu.text.Transliterator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -44,12 +43,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import reactor.core.publisher.Mono;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/places")
 public class PlaceController {
 
@@ -190,13 +191,7 @@ public class PlaceController {
                 placetoSave.setProvince(component.getShortText());
             }
         }
-        // placetoSave.setAddress(googleResponse.getAddressComponents().get(1).getLongText());
-        // placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(0).getLongText());
-        // placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
-        // placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
-        // placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
-        // placetoSave.setRegion(googleResponse.getAddressComponents().get(5).getShortText());
-        // placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
+
         placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
         placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
         if (googleResponse.getPrimaryTypeDisplayName() != null) {
@@ -270,7 +265,7 @@ public class PlaceController {
             } else {
                 Category newCat = new Category();
                 newCat.setGoogleName(googleType);
-                Category saved = categoryService.create(newCat);
+                Category saved = categoryService.save(newCat);
                 categoryTmp.add(saved);
             }
         }

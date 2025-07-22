@@ -6,7 +6,7 @@ import DetailPage from './pages/DetailPage';
 import SearchPage from './pages/SearchPage';
 import ErrorPage from './pages/ErrorPage';
 import LoginPage from './pages/LoginPage';
-import ProtectedRoute from "./pages/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from './context/AuthContext';
 
 function App() {

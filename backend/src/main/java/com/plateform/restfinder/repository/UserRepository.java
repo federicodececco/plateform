@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.plateform.restfinder.model.User;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
+    Optional<User> findById(Integer id);
 
     Optional<User> findByUsername(String username);
 }
