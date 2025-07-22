@@ -6,6 +6,7 @@ import DetailPage from './pages/DetailPage';
 import SearchPage from './pages/SearchPage';
 import ErrorPage from './pages/ErrorPage';
 import LoginPage from './pages/LoginPage';
+import SettingPlacesPage from './pages/SettingPlacesPage';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path=':region' element={<SearchPage />}></Route>
             </Route>
             <Route path="/detail/:id" element={<DetailPage />} />
+            <Route path="/addplaces" element={<SettingPlacesPage />} />
           </Route>
           <Route path="*" element={<ErrorPage />} />
         </Routes>

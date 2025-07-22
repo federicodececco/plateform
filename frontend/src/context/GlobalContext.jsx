@@ -8,9 +8,13 @@ import {
 const priceMap = {
     "": "",
     "free": "free",
+    "PRICE_LEVEL_INEXPENSIVE": "€",
     "inexpensive": "€",
+    "PRICE_LEVEL_MODERATE": "€€",
     "moderate": "€€",
+    "PRICE_LEVEL_EXPENSIVE": "€€€",
     "expensive": "€€€",
+    "PRICE_LEVEL_VERY_EXPENSIVE": "€€€€",
     "very expensive": "€€€€",
 }
 
@@ -20,7 +24,7 @@ function GlobalProvider({ children }) {
 
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
     const [navSearchBar, setNavSearchBar] = useState('');
-    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace] = usePlace()
+    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch] = usePlace()
 
     const closeShowLanguageOptions = () => setShowLanguageOptions(false)
 
@@ -39,13 +43,13 @@ function GlobalProvider({ children }) {
         );
     };
 
-    const renderPrice = price => price ? priceMap[price.toLowerCase()] : "N.D.";
+    const renderPrice = price => price ? priceMap[price] : "N.D.";
 
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
         navSearchBar, setNavSearchBar,
         renderStars, renderPrice,
-        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch
     };
 
     return (

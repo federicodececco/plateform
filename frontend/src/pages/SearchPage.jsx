@@ -43,46 +43,6 @@ export default function SearchPage() {
         handleDebouncedSearchRestaurant(searchLocation)
     }, [searchLocation])
 
-    // useEffect(() => {
-
-    //     const filtersArr = []
-    //     let url = `/Search`;
-
-    //     // inizio popolazione array dei filtri
-    //     if (searchLocation) {
-    //         filtersArr.push(`city=${searchLocation}`)
-    //     }
-    //     if (filter.category) {
-    //         filtersArr.push(`category=${filter.category}`)
-    //     }
-    //     if (filter.cuisine) {
-    //         filtersArr.push(`cuisine=${filter.cuisine}`)
-    //     }
-    //     if (filter.price) {
-    //         filtersArr.push(`price=${filter.price}`)
-    //     }
-    //     if (filter.rating) {
-    //         filtersArr.push(`rating=${filter.rating}`)
-    //     }
-    //     if (filter.services) {
-    //         filtersArr.push(`services=${filter.services}`)
-    //     }
-    //     // fine popolazione array dei filtri
-    //     // controllo se ci sono dei filtri ne caso concateno il punto interrogativo all'url per permettere di metter i parametri
-    //     if (searchLocation !== '' || filter.category !== '' || filter.cuisine !== '' || filter.price !== '' || filter.rating !== '' || filter.services !== '') {
-    //         url += '?'
-    //     }
-
-    //     // concateno all'url i parametri uniti dall'end logico
-    //     if (filtersArr) {
-    //         url += filtersArr.join('&')
-    //     }
-
-    //     navigate(url);
-
-    //     return
-    // }, [searchLocation, filter])
-
     const handleInputChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value })
     }
@@ -98,15 +58,6 @@ export default function SearchPage() {
             setSortOrder(1);
         }
     }
-
-    const orderedPlacesData = useMemo(() => {
-        let result = [...placesData]
-        return result.sort((a, b) =>
-            sortOrder === 1
-                ? a.name.localeCompare(b.name)
-                : b.name.localeCompare(a.name)
-        );
-    }, [placesData, sortBy, sortOrder])
 
     return (
         <>

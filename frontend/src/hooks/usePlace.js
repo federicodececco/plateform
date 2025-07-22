@@ -59,23 +59,26 @@ export default function usePlace() {
     }
 
     //esempio di chiamata API POST dove quando la richiami devi passare l'oggetto data con già tutti i campi compilati
-    async function addPlace(data) {
-        const response = await fetch(`${api}/places`, {
+    async function addPlace(id) {
+        const response = await fetch(`${api}/places/save/${id}`, {
             //dichiaro il metodo della richiesta
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(data), //entro al body passo l'oggetto data
+            body: JSON.stringify(id),
         });
         //controllo se la risposta è ok
         if (!response.ok) {
             throw new Error("Network response was not ok", response.messageS);
         }
-
     }
 
+    async function googleSearch({ query, latitude, longitude, radius, maxResults }) {
+        // places/google-search-text?query=&latitude=&longitude=&radius=&maxResults=
+        const response = await fetchData(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
+        return response
+    }
 
-
-    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace]
+    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch]
 }

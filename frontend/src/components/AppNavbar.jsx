@@ -41,7 +41,7 @@ export default function AppNavbar() {
                 <ul className={styles["navbar-links"]}>
                     {/* <li><a href="/ristoranti">{t('restaurants')}</a></li>
                     <li><a href="/regioni">{t('regions')}</a></li> */}
-                    {/* <li><a href="/blog">{t('blog')}</a></li> */}
+                    <li><a href="/addplaces">adplaces</a></li>
                     <li><a href="/login">Login</a></li>
                     <li><a href="/search">{t('search')}</a></li>
                     {/* <li><a href="/detail">Detail</a></li> */}

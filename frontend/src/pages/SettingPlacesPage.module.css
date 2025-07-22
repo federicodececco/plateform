@@ -1,0 +1,437 @@
+/* --- Base e Contenitore Pagina --- */
+.pageContainer {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* --- Contenuto Principale --- */
+.mainContent {
+    max-width: 60rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+/* --- Hero Section --- */
+.heroSection {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.heroTitle {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: #212121;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.heroSubtitle {
+    font-size: 1.2rem;
+    color: #555555;
+    max-width: 48rem;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+}
+
+/* --- Search Section --- */
+.searchSection {
+    margin-bottom: 3.5rem;
+}
+
+.searchCard {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.08), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+    padding: 2.5rem;
+}
+
+.searchGrid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: flex-end;
+}
+
+.formLabel {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333333;
+    margin-bottom: 0.6rem;
+}
+
+.formInput,
+.formSelect {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.6rem;
+    font-size: 1rem;
+    color: #ffffff;
+    background-color: #495057;
+    transition: all 200ms ease-in-out;
+}
+
+/* Placeholder text per .formInput */
+.formInput::placeholder {
+    color: #cccccc;
+}
+
+.formInput:focus,
+.formSelect:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(226, 78, 41, 0.25);
+}
+
+.searchButton {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 0.85rem 1.5rem;
+    border-radius: 0.6rem;
+    transition: background-color 200ms ease-in-out, box-shadow 200ms ease-in-out;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    font-weight: 700;
+    font-size: 1.125rem;
+    border: none;
+}
+
+.searchButton:hover {
+    background-color: var(--primary-color-hover);
+    box-shadow: 0 4px 10px rgba(226, 78, 41, 0.2);
+}
+
+.searchButton:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(226, 78, 41, 0.4);
+}
+
+.searchButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #d1d5db;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: 360deg;
+    }
+}
+
+.advancedOptions {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1.5rem;
+}
+
+.errorBox {
+    margin-top: 1.75rem;
+    padding: 1.25rem;
+    background-color: #ffebeb;
+    border: 1px solid #ff7a7a;
+    border-radius: 0.6rem;
+}
+
+.errorMessage {
+    color: #d63333;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* --- Results Section --- */
+.resultsSection {
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 15px 30px -8px rgba(0, 0, 0, 0.08), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+    padding: 2rem;
+}
+
+.resultsHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.resultsTitle {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #212121;
+}
+
+.resultsCount {
+    background-color: #ffedd5;
+    color: #9a3412;
+    padding: 0.35rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.loadingMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 0;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.loadingSpinner {
+    height: 3rem;
+    width: 3rem;
+    animation: spin 1s linear infinite;
+    color: var(--primary-color);
+    /* Potresti considerare var(--primary-color) qui */
+}
+
+.loadingText {
+    color: #555555;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.searchResultsList {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+.resultCard {
+    border: 1px solid #e0e0e0;
+    border-radius: 0.75rem;
+    padding: 1.75rem;
+    transition: all 250ms ease-in-out;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.resultCard:hover {
+    border-color: #fdba74;
+    background-color: #fffaf0;
+    box-shadow: 0 6px 15px -4px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.resultCardContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.resultDetails {
+    flex: 1;
+}
+
+.resultHeader {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    gap: 1rem;
+}
+
+.placeName {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #212121;
+    line-height: 1.2;
+}
+
+.ratingBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background-color: #dcfce7;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.starIcon {
+    height: 1.1rem;
+    width: 1.1rem;
+    color: #f59e0b;
+    fill: currentColor;
+}
+
+.ratingText {
+    font-weight: 700;
+    color: #166534;
+    font-size: 0.9rem;
+}
+
+.address {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #616161;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.mapPinIcon {
+    height: 1.1rem;
+    width: 1.1rem;
+    color: var(--primary-color);
+    /* Potresti considerare var(--primary-color) qui */
+}
+
+.infoRow {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-size: 0.9rem;
+}
+
+.priceInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.priceLabel {
+    color: #757575;
+}
+
+.priceSymbols {
+    color: #16a34a;
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+.openingHours {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.clockIcon {
+    height: 1.1rem;
+    width: 1.1rem;
+    color: #757575;
+}
+
+.openNow {
+    font-weight: 600;
+    color: #16a34a;
+}
+
+.closed {
+    font-weight: 600;
+    color: var(--primary-color-hover);
+}
+
+.typesContainer {
+    margin-top: 1.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.typeTag {
+    padding: 0.3rem 0.8rem;
+    background-color: #f0f0f0;
+    color: #424242;
+    font-size: 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+.detailsLink {
+    margin-left: 1.5rem;
+    color: var(--primary-color);
+    /* Potresti considerare var(--primary-color) qui */
+    font-weight: 700;
+    font-size: 1.05rem;
+    white-space: nowrap;
+    align-self: flex-end;
+}
+
+.detailsLink {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--primary-color);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.detailsLink:hover {
+    color: var(--primary-color-hover);
+}
+
+/* --- No Results --- */
+.noResults {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.noResultsIcon {
+    color: #bdbdbd;
+    margin-bottom: 1.5rem;
+    height: 5rem;
+    width: 5rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.noResultsTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 0.75rem;
+}
+
+.noResultsText {
+    color: #616161;
+    font-size: 1rem;
+}
+
+/* --- Media Queries --- */
+
+@media screen and (min-width: 768px) {
+    .advancedOptions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .searchGrid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+
+    .queryField {
+        grid-column: span 4 / span 4;
+    }
+
+    .locationField {
+        grid-column: span 3 / span 3;
+    }
+
+    .searchButtonContainer {
+        grid-column: span 2 / span 2;
+    }
+}

@@ -5,8 +5,11 @@ import {
     FaEye, FaEyeSlash
 } from 'react-icons/fa';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
+
+    const { t } = useTranslation();
     const [nickname, setNickname] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false); // Stato per mostrare/nascondere la password
@@ -71,8 +74,7 @@ export default function LoginPage() {
                     </div>
                 </div>
                 <button type="submit" className={styles.loginButton}>Login</button>
-
-                <div></div>
+                <button onClick={() => navigate(-1)} className={styles.loginButton}>{t('goBack')}</button>
             </form>
 
             {/* sezione agiunta solo per velocizzare il login in fase di sviluppo */}
