@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './LoginPage.module.css';
-
-
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
@@ -14,7 +13,7 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    
+    const { t } = useTranslation();
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -35,14 +34,14 @@ export default function LoginPage() {
             ...prev,
             [name]: value
         }));
-        
+
         if (error) setError('');
     };
 
     //chiamata per autenticazione, ritorna un errore se fallsce, altrimenti ti reindirizza o alla root o da dove sei arrivato
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         //basilare validazione, controlla che eistano password e username diversi da " "
         if (!formData.username.trim() || !formData.password.trim()) {
             setError('Username e password sono obbligatori');
@@ -54,9 +53,9 @@ export default function LoginPage() {
 
         try {
             const result = await login(formData.username.trim(), formData.password);
-            
+
             if (result.success) {
-                
+
                 const from = location.state?.from?.pathname || '/';
                 navigate(from, { replace: true });
             } else {
@@ -70,14 +69,14 @@ export default function LoginPage() {
         }
     };
 
-   
+
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             handleSubmit(e);
         }
     };
-    
+
 
     const togglePasswordVisibility = () => {
         setShowPassword(prevShowPassword => !prevShowPassword);
@@ -87,10 +86,10 @@ export default function LoginPage() {
         <div className={styles.loginPage}>
             <form onSubmit={handleSubmit} className={styles.loginForm}>
                 {error && (
-                        <div className={styles.errorMessage}>
-                            <span>{error}</span>
-                        </div>
-                    )}
+                    <div className={styles.errorMessage}>
+                        <span>{error}</span>
+                    </div>
+                )}
                 <h2>Login</h2>
                 <div className={styles.inputGroup}>
                     <label htmlFor="username">Username</label>
@@ -99,7 +98,7 @@ export default function LoginPage() {
                         id="username"
                         name="username"
                         value={formData.username}
-                        onKeyDown={handleKeyPress}
+                        onKeyUp={handleKeyPress}
                         disabled={loading}
                         onChange={handleInputChange}
                         required
@@ -109,25 +108,24 @@ export default function LoginPage() {
                 <div className={styles.inputGroup}>
                     <label htmlFor="password">Password</label>
                     <div className={styles.passwordWrapper}>
-                       <input
-                                type={showPassword ? 'text' : 'password'}
-                                id="password"
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                onKeyPress={handleKeyPress}
-                                required
-                                disabled={loading}
-                                className={styles.inputField}
-                                placeholder="Inserisci la tua password"
-                                
-                            />
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            onKeyUp={handleKeyPress}
+                            required
+                            disabled={loading}
+                            className={styles.inputField}
+                            placeholder="Inserisci la tua password"
+
+                        />
                         <span
                             className={styles.passwordToggle}
                             onClick={togglePasswordVisibility}
                             aria-label={showPassword ? 'Hide password' : 'Show password'}
                         >
-                            {/* Icona SVG per l'occhio. Puoi sostituirla con un componente da react-icons (es. <FaEye />) */}
                             {showPassword ? (
                                 <FaEye />
                             ) : (
@@ -138,13 +136,14 @@ export default function LoginPage() {
                 </div>
 
                 <button type="submit" className={styles.loginButton}>{loading ? (
-                            <span className={styles.loadingSpinner}>
-                                Accesso in corso...
-                            </span>
-                        ) : (
-                            'Login'
-                        )}
-                    </button>
+                    <span className={styles.loadingSpinner}>
+                        Accesso in corso...
+                    </span>
+                ) : (
+                    'Login'
+                )}
+                </button>
+                <button onClick={() => navigate(-1)} className={styles.loginButton}>{t('goBack')}</button>
 
             </form>
 

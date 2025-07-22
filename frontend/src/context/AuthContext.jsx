@@ -9,7 +9,7 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   //url del backend, da sostituire eventualmente con un .env
-  const API_BASE_URL = 'http://localhost:8080/api';
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   //salva jwt nel local storage
   const saveToken = (token) => {
@@ -56,7 +56,7 @@ function AuthProvider({ children }) {
   const login = async (username, password) => {
     try {
       setLoading(true);
-      
+
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
@@ -74,22 +74,22 @@ function AuthProvider({ children }) {
       //salva il jwt
       const jwtToken = data.accessToken;
       saveToken(jwtToken);
-      
+
       //prende le info del jwt
       const userInfo = parseJwt(jwtToken);
       if (userInfo) {
-         const roles = userInfo.authorities || [];
-        setUser({ 
+        const roles = userInfo.authorities || [];
+        setUser({
           username: data.username,
           roles: roles
         });
       }
-      
+
       return { success: true };
     } catch (error) {
       console.error('Errore durante il login:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: error.message || 'Errore durante il login'
       };
     } finally {
@@ -100,7 +100,7 @@ function AuthProvider({ children }) {
   //funzione di logout
   const logout = async () => {
     try {
-      
+
       if (token) {
         await fetch(`${API_BASE_URL}/auth/logout`, {
           method: 'POST',
@@ -109,7 +109,7 @@ function AuthProvider({ children }) {
             'Content-Type': 'application/json',
           },
         }).catch(() => {
-          
+
         });
       }
     } finally {
@@ -189,13 +189,13 @@ function AuthProvider({ children }) {
   useEffect(() => {
     const initAuth = () => {
       const storedToken = localStorage.getItem('authToken');
-      
+
       if (storedToken && !isTokenExpired(storedToken)) {
         setToken(storedToken);
         const userInfo = parseJwt(storedToken);
         if (userInfo) {
           const roles = userInfo.authorities || [];
-          setUser({ 
+          setUser({
             username: userInfo.sub,
             roles: roles
           });
@@ -204,7 +204,7 @@ function AuthProvider({ children }) {
         // Token scaduto, rimuovilo
         removeToken();
       }
-      
+
       setLoading(false);
     };
 

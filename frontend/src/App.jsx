@@ -18,33 +18,28 @@ function App() {
   return (
     <GlobalProvider>
       <AuthProvider>
-      <BrowserRouter>
-        <Routes>
+        <BrowserRouter>
+          <Routes>
+
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<AppLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/detail/:id" element={<DetailPage />} />
+              <Route path='/search'>
+                <Route index element={<SearchPage />}></Route>
+                <Route path=':region' element={<SearchPage />}></Route>
+              </Route>
+
+              {/* route protetta, solo per esempio, non puoi accedere senza login */}
+              <Route element={<ProtectedRoute />}>
+              </Route>
+              <Route path="/addplaces" element={<SettingPlacesPage />} />
 
 
-          <Route path="/login" element={<LoginPage />} />
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<HomePage />} />
-<
-            <Route path='/search'>
-              <Route index element={<SearchPage />}></Route>
-              <Route path=':region' element={<SearchPage />}></Route>
             </Route>
-<Route element={<ProtectedRoute/>}>
-            <Route path="/detail/:id" element={<DetailPage />} />
-                </Route>
-            <Route path="/addplaces" element={<SettingPlacesPage />} />
-
-            <Route path="/search" element={<SearchPage />} />
-            {/* route protetta, solo per esempio, non puoi accedere senza login */}
-            
-             <Route path="/detail" element={<DetailPage />} />
-          
-
-          </Route>
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </BrowserRouter>
       </AuthProvider>
     </GlobalProvider>
   )

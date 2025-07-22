@@ -99,34 +99,6 @@ export default function SettingPlacesPage() {
                                 />
                             </div>
 
-                            {/* Location Fields */}
-                            <div className={styles.locationField}>
-                                <label className={styles.formLabel}>
-                                    {t('latitude')}
-                                </label>
-                                <input
-                                    type="number"
-                                    name="latitude"
-                                    value={formData.latitude}
-                                    onChange={handleInputChange}
-                                    placeholder="40.6319"
-                                    className={styles.formInput}
-                                />
-                            </div>
-
-                            <div className={styles.locationField}>
-                                <label className={styles.formLabel}>
-                                    {t('longitude')}
-                                </label>
-                                <input
-                                    type="number"
-                                    name="longitude"
-                                    value={formData.longitude}
-                                    onChange={handleInputChange}
-                                    placeholder="14.6026"
-                                    className={styles.formInput}
-                                />
-                            </div>
 
                             {/* Search Button */}
                             <div className={styles.searchButtonContainer}>
@@ -169,6 +141,35 @@ export default function SettingPlacesPage() {
                                     <option value="5000">5 {t('kilometers')}</option>
                                     <option value="10000">10 {t('kilometers')}</option>
                                 </select>
+                            </div>
+
+                            {/* Location Fields */}
+                            <div className={styles.locationField}>
+                                <label className={styles.formLabel}>
+                                    {t('latitude')}
+                                </label>
+                                <input
+                                    type="number"
+                                    name="latitude"
+                                    value={formData.latitude}
+                                    onChange={handleInputChange}
+                                    placeholder="40.6319"
+                                    className={styles.formInput}
+                                />
+                            </div>
+
+                            <div className={styles.locationField}>
+                                <label className={styles.formLabel}>
+                                    {t('longitude')}
+                                </label>
+                                <input
+                                    type="number"
+                                    name="longitude"
+                                    value={formData.longitude}
+                                    onChange={handleInputChange}
+                                    placeholder="14.6026"
+                                    className={styles.formInput}
+                                />
                             </div>
                         </div>
 

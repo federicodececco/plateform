@@ -5,7 +5,6 @@ import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
-import instance from "../../api/axios"
 const regionsData = [
     {
         id: 'campania', // Un ID unico è utile in React per le chiavi nelle liste
@@ -34,7 +33,7 @@ const regionsData = [
 ];
 
 export default function HomePage() {
-   
+
     const { t } = useTranslation();
     const { navSearchBar, setNavSearchBar, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ location: '', date: '', people: '' })

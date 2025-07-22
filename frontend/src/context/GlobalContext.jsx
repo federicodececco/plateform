@@ -23,7 +23,6 @@ const GlobalContext = createContext();
 function GlobalProvider({ children }) {
 
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
-    const [navSearchBar, setNavSearchBar] = useState('');
     const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch] = usePlace()
 
     const closeShowLanguageOptions = () => setShowLanguageOptions(false)
@@ -47,7 +46,6 @@ function GlobalProvider({ children }) {
 
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
-        navSearchBar, setNavSearchBar,
         renderStars, renderPrice,
         getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch
     };
