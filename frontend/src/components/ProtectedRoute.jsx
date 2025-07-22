@@ -1,8 +1,8 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 
-const ProtectedRoute = ({ children, requiredRole = null }) => {
+export default function ProtectedRoute({ children, requiredRole = null }) {
   const { isAuthenticated, hasRole, loading } = useAuthContext();
   const location = useLocation();
 
@@ -21,12 +21,12 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
     );
   }
 
-  //in mancana di aut ti rimanda al login
+  //in mancanza di aut ti rimanda al login
   if (!isAuthenticated()) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // nel caso vengano aggiunti più ruoli e non si possieda  quello necessario
+  // nel caso vengano aggiunti più ruoli e non si possieda  quello necessario, di default viene ignorato
   if (requiredRole && !hasRole(requiredRole)) {
     return (
       <div style={{
@@ -47,7 +47,5 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
   }
 
   // se passa i test manda la pagina richeista
-  return children;
+  return <Outlet/>;
 };
-
-export default ProtectedRoute;

@@ -9,6 +9,7 @@ import LoginPage from './pages/LoginPage';
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from './context/AuthContext';
 
+
 function App() {
   return (
     <GlobalProvider>
@@ -20,8 +21,9 @@ function App() {
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<SearchPage />} />
+            {/* route protetta, solo per esempio, non puoi accedere senza login */}
             <Route element={<ProtectedRoute/>}>
-            <Route path="/detail" element={<DetailPage />} />
+             <Route path="/detail" element={<DetailPage />} />
             </Route>
           </Route>
           <Route path="*" element={<ErrorPage />} />

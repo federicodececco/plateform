@@ -72,14 +72,16 @@ function AuthProvider({ children }) {
       }
 
       //salva il jwt
-      saveToken(data.accessToken);
+      const jwtToken = data.accessToken;
+      saveToken(jwtToken);
       
       //prende le info del jwt
-      const userInfo = parseJwt(data.accessToken);
+      const userInfo = parseJwt(jwtToken);
       if (userInfo) {
+         const roles = userInfo.authorities || [];
         setUser({ 
-          username: userInfo.sub,
-          roles: userInfo.roles || []
+          username: data.username,
+          roles: roles
         });
       }
       
@@ -192,9 +194,10 @@ function AuthProvider({ children }) {
         setToken(storedToken);
         const userInfo = parseJwt(storedToken);
         if (userInfo) {
+          const roles = userInfo.authorities || [];
           setUser({ 
             username: userInfo.sub,
-            roles: userInfo.roles || []
+            roles: roles
           });
         }
       } else if (storedToken) {

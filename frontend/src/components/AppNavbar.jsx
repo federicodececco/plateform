@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import {
     FaBars
 } from 'react-icons/fa';
+import { useAuthContext } from '../context/AuthContext';
 
 export default function AppNavbar() {
 
@@ -13,6 +14,7 @@ export default function AppNavbar() {
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
     const { navSearchBar, setNavSearchBar } = useGlobalContext();
     const { i18n, t } = useTranslation();
+     const {logout} =useAuthContext();
     // passare la chiamata api dentro la callback del debounce
     const handleDebouncedSearch = useCallback(debounce(chiamataApi, 300), [])
 
@@ -46,6 +48,7 @@ export default function AppNavbar() {
                     <li><a href="/blog">{t('blog')}</a></li>
                     <li><a href="/Search">{t('search')}</a></li>
                     <li><a href="/detail">Detail</a></li>
+                    <button onClick={logout}>logout</button>
                     <li>
                         <button onClick={() => setShowLanguageOptions(prev => !prev)}>
                             <img src={i18n.language === 'it' ? "https://flagicons.lipis.dev/flags/4x3/it.svg" : "https://flagicons.lipis.dev/flags/4x3/gb.svg"}
