@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './LoginPage.module.css';
+
+
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { FaEye, FaEyeSlash, FaUser, FaLock } from 'react-icons/fa';
@@ -13,6 +15,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     
+
     const navigate = useNavigate();
     const location = useLocation();
     const { login, isAuthenticated } = useAuthContext();
@@ -133,6 +136,7 @@ export default function LoginPage() {
                         </span>
                     </div>
                 </div>
+
                 <button type="submit" className={styles.loginButton}>{loading ? (
                             <span className={styles.loadingSpinner}>
                                 Accesso in corso...
@@ -141,7 +145,15 @@ export default function LoginPage() {
                             'Login'
                         )}
                     </button>
+
             </form>
+
+            {/* sezione agiunta solo per velocizzare il login in fase di sviluppo */}
+            <div className={styles["admin-credentials"]}>
+                <h3>Admin Access Credentials</h3>
+                <p><strong>Username:</strong> admin</p>
+                <p><strong>Password:</strong> admin</p>
+            </div>
         </div>
     );
 };

@@ -36,7 +36,7 @@ const regionsData = [
 export default function HomePage() {
    
     const { t } = useTranslation();
-    const { navSearchBar, setNavSearchBar } = useGlobalContext()
+    const { navSearchBar, setNavSearchBar, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ location: '', date: '', people: '' })
 
     const handleFormData = e => {
@@ -58,7 +58,7 @@ export default function HomePage() {
     }
 
     return (
-        <div className={styles["hero-search-section-container"]}>
+        <div onClick={closeShowLanguageOptions} className={styles["hero-search-section-container"]}>
             {/* Intestazione */}
             <h1 className={styles["hero-title"]}>{t('heroTitle')}</h1>
             <p className={styles["hero-description"]}>{t('heroDescription')}</p>

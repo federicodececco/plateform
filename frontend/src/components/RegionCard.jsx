@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styles from './RegionCard.module.css';
 import { useTranslation } from 'react-i18next';
 
@@ -12,6 +13,10 @@ const RegionCard = ({ regionName, description, restaurantCount }) => {
                 <h3 className={styles["card-title"]}>{regionName}</h3>
                 <p className={styles["card-description"]}>{description}</p>
                 <span className={styles["restaurant-count"]}>{restaurantCount} {t('restaurantsLowercase')}</span>
+                <Link
+                    to={`/search/${regionName}`}>
+                    link
+                </Link>
             </div>
         </div>
     );
