@@ -25,7 +25,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
-<
+
             <Route path='/search'>
               <Route index element={<SearchPage />}></Route>
               <Route path=':region' element={<SearchPage />}></Route>

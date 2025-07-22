@@ -9,7 +9,7 @@ import {
 import { useAuthContext } from '../context/AuthContext';
 
 export default function AppNavbar() {
-
+   
     const [hamburgerMenuOpen, setHamburgerMenuOpen] = useState(false);
     const { navSearchBar, setNavSearchBar, showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions } = useGlobalContext();
     const { i18n, t } = useTranslation();
@@ -36,7 +36,7 @@ export default function AppNavbar() {
     return (
         <nav className={styles["navbar"]}>
             <div className={styles.navContainer}>
-
+<button onClick={logout}>logout</button>
                 <div className={styles["navbar-logo"]}>
                     <a href="/">RestFinder.it</a>
                 </div>
