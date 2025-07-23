@@ -1,5 +1,7 @@
 
 import { useState, useEffect } from "react"
+import { useAuthContext } from "../context/AuthContext"
+
 
 const fetchData = async (url) => {
 
@@ -18,6 +20,7 @@ const fetchData = async (url) => {
 
 // queste funzioni sono chiamabili tramite il global context context/GLobalContext.jsx
 export default function usePlace() {
+   
 
     const api = import.meta.env.VITE_API_URL
 
@@ -25,6 +28,14 @@ export default function usePlace() {
     async function getPlaces(value) {
         const response = await fetchData(`${api}/places/search?name=${value}`)
         return response
+    }
+
+     async function testAuth() {
+        const response = await authenticatedFetch(`${api}/auth/users`)       
+        
+       
+        
+        return await response.json() 
     }
 
     async function getPlacesByProvince(province) {
@@ -80,5 +91,5 @@ export default function usePlace() {
         return response
     }
 
-    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch]
+    return [testAuth,getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch]
 }

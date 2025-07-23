@@ -30,10 +30,10 @@ function App() {
               <Route index element={<SearchPage />}></Route>
               <Route path=':region' element={<SearchPage />}></Route>
             </Route>
-<Route element={<ProtectedRoute/>}>
-            <Route path="/detail/:id" element={<DetailPage />} />
-                </Route>
-            <Route path="/addplaces" element={<SettingPlacesPage />} />
+            <Route element={<ProtectedRoute/>}>
+             <Route path="/addplaces" element={<SettingPlacesPage />} />
+            </Route>
+           <Route path="/detail/:id" element={<DetailPage />} />
 
             <Route path="/search" element={<SearchPage />} />
             {/* route protetta, solo per esempio, non puoi accedere senza login */}

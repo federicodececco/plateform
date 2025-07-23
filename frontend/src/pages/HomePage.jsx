@@ -6,6 +6,8 @@ import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
 import instance from "../../api/axios"
+import { useAuthContext } from '../context/AuthContext';
+
 const regionsData = [
     {
         id: 'campania', // Un ID unico è utile in React per le chiavi nelle liste
@@ -34,7 +36,7 @@ const regionsData = [
 ];
 
 export default function HomePage() {
-   
+    const{authenticatedFetch,isTokenExpired,isAuthenticated,token,parseJwt,user} =useAuthContext()
     const { t } = useTranslation();
     const { navSearchBar, setNavSearchBar, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ location: '', date: '', people: '' })
@@ -56,13 +58,27 @@ export default function HomePage() {
             handleDebouncedSearchRestaurant();
         }
     }
-
+    const superCheck =async()=>{
+        
+            const data=await authenticatedFetch("http://localhost:8080/api/categories/")
+            console.log(data.json())
+        
+    }
+    const simperCheck =async()=>{
+        
+            const data=await authenticatedFetch("http://localhost:8080/api/tags/")
+            console.log(data)
+        
+    }
+    
     return (
         <div onClick={closeShowLanguageOptions} className={styles["hero-search-section-container"]}>
             {/* Intestazione */}
             <h1 className={styles["hero-title"]}>{t('heroTitle')}</h1>
             <p className={styles["hero-description"]}>{t('heroDescription')}</p>
-
+          <button onClick={superCheck}>bottone</button>
+                    <button onClick={simperCheck}>aaaaa</button>
+                
             {/* Box di ricerca */}
             <div className={styles["search-box"]}>
                 <div className={styles["search-field"]}>

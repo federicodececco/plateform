@@ -1,17 +1,11 @@
 package com.plateform.restfinder.model;
 
-import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,11 +19,6 @@ public class User {
     private String username;
 
     private String password;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "role_user", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    @JsonManagedReference
-    private Set<Role> roles;
 
     public User(String username, String password) {
         this.username = username;
@@ -63,12 +52,12 @@ public class User {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
-    }
+    // public Set<Role> getRoles() {
+    // return roles;
+    // }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
+    // public void setRoles(Set<Role> roles) {
+    // this.roles = roles;
+    // }
 
 }

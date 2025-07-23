@@ -2,7 +2,7 @@ package com.plateform.restfinder.model;
 
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
@@ -115,20 +115,20 @@ public class Place {
     private String slugName;
 
     @Schema(description = "Array di oggeti Categoria collegate al luogo")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "category_place", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Category> categories;
 
     @Schema(description = "Array di oggetti Tag collegati al luogo")
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "place_tag", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Tag> tags;
 
     @Schema(description = "Array di oggetti Photo collegati al luogo")
-    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<Photo> photos;
 
     public Place(String id, String name, String address, String city, Integer cap, String province,

@@ -9,7 +9,7 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   //url del backend, da sostituire eventualmente con un .env
-  const API_BASE_URL = 'http://localhost:8080/api';
+  const API_BASE_URL = `http://localhost:8080/api`;
 
   //salva jwt nel local storage
   const saveToken = (token) => {
@@ -66,7 +66,7 @@ function AuthProvider({ children }) {
       });
 
       const data = await response.json();
-
+      console.log(data)
       if (!response.ok) {
         throw new Error(data.message || 'Login fallito');
       }
@@ -126,7 +126,7 @@ function AuthProvider({ children }) {
   //funzione per effettuare chiamate autentcate
   const authenticatedFetch = async (url, options = {}) => {
     if (!token || isTokenExpired(token)) {
-      logout();
+    logout();
       throw new Error('Token non valido o scaduto');
     }
 
@@ -142,7 +142,7 @@ function AuthProvider({ children }) {
 
     //log out automatico in caso di autenticazione non più valida
     if (response.status === 401) {
-      logout();
+       logout();
       throw new Error('Sessione scaduta');
     }
 
@@ -241,6 +241,7 @@ function AuthProvider({ children }) {
     authenticatedFetch,
     hasRole,
     refreshToken,
+    parseJwt
   };
 
   return (
