@@ -428,6 +428,45 @@ public class PlaceController {
         }
     }
 
+    @GetMapping("/filter")
+    public Mono<ResponseEntity<Page<Place>>> filter(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+
+            if (size > 100)
+                size = 100;
+            if (size < 1)
+                size = 10;
+            if (page < 0)
+                page = 0;
+
+            if (rating != null && (rating < 0 || rating > 5)) {
+                return Mono.just(ResponseEntity.badRequest().build());
+            }
+
+            if (priceRange != null && !priceRange.trim().isEmpty()) {
+                Set<String> validPriceRanges = Set.of("free", "inexpensive", "moderate", "expensive", "very expensive");
+                if (!validPriceRanges.contains(priceRange.toLowerCase())) {
+                    return Mono.just(ResponseEntity.badRequest().build());
+                }
+            }
+
+            Page<Place> results = placeService.filter(category, tags, priceRange, rating, page, size);
+
+            return Mono.just(ResponseEntity.ok(results));
+
+        } catch (Exception e) {
+            System.err.println("Error in filter method: " + e.getMessage());
+            e.printStackTrace();
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
     // get photo by name
     @GetMapping("/photo/file/{filename}")
     public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String filename) {

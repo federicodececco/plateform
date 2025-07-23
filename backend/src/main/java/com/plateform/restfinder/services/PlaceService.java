@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.repository.PlaceRepository;
+import com.plateform.restfinder.specifications.PlaceSpecifications;
 
 @Service
 public class PlaceService {
@@ -80,6 +83,18 @@ public class PlaceService {
 
             return placeRepository.searchWithRanking(cleanQuery, PageRequest.of(page, size));
         }
+    }
+
+    public Page<Place> filter(String category, List<String> tags, String priceRange, Integer rating,
+            int page, int size) {
+
+        Specification<Place> spec = PlaceSpecifications.buildFilterSpecification(
+                category, tags, priceRange, rating);
+
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by("rating").descending().and(Sort.by("name")));
+
+        return placeRepository.findAll(spec, pageable);
     }
 
     public Page<Place> search(String query, int page) {
