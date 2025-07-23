@@ -2,8 +2,9 @@ import { useTranslation } from 'react-i18next';
 import styles from './BreadcrumbsCard.module.css';
 import { Link } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
+import React from 'react';
 
-export default function BreadcrumbsCard({ region }) {
+const BreadcrumbsCard = React.memo(({ region }) => {
     const { t } = useTranslation();
     const { closeShowLanguageOptions } = useGlobalContext()
     return (
@@ -12,4 +13,6 @@ export default function BreadcrumbsCard({ region }) {
                 : <><a href="/">{t('homeBreadcrumb')}</a> &gt; <span>{t('restaurants')}</span></>}
         </div>
     )
-}
+})
+
+export default BreadcrumbsCard

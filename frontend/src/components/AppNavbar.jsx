@@ -3,9 +3,7 @@ import styles from './AppNavbar.module.css';
 import { useCallback, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
-import {
-    FaBars
-} from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import { useAuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
