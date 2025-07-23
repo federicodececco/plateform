@@ -4,6 +4,8 @@ import {
     FaStar,
     FaRegStar
 } from 'react-icons/fa';
+import useTag from "../hooks/useTag";
+import useCategory from "../hooks/useCategory";
 
 const priceMap = {
     "": "",
@@ -24,8 +26,24 @@ function GlobalProvider({ children }) {
 
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
     const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch] = usePlace()
+    const [getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag] = useTag()
+    const [getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory] = useCategory()
 
     const closeShowLanguageOptions = () => setShowLanguageOptions(false)
+
+    const fetchData = async (url) => {
+
+        // eseguo chiamata API GET
+        const response = await fetch(url)
+
+        //controllo se la risposta è ok
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        // converto la risposta in JSON
+        const json = await response.json()
+        return json
+    }
 
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
@@ -46,8 +64,10 @@ function GlobalProvider({ children }) {
 
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
-        renderStars, renderPrice,
-        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch
+        renderStars, renderPrice, fetchData,
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch,
+        getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag,
+        getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory
     };
 
     return (

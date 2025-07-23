@@ -1,20 +1,4 @@
-
-import { useState, useEffect } from "react"
-
-const fetchData = async (url) => {
-
-    // eseguo chiamata API GET
-    const response = await fetch(url)
-
-    //controllo se la risposta è ok
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    // converto la risposta in JSON
-    const json = await response.json()
-    return json
-}
-
+import fetchData from "../utilities";
 
 // queste funzioni sono chiamabili tramite il global context context/GLobalContext.jsx
 export default function usePlace() {
@@ -72,6 +56,8 @@ export default function usePlace() {
         if (!response.ok) {
             throw new Error("Network response was not ok", response.messageS);
         }
+
+        return response.status
     }
 
     async function googleSearch({ query, latitude, longitude, radius, maxResults }) {
@@ -80,5 +66,21 @@ export default function usePlace() {
         return response
     }
 
-    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch]
+
+    async function getCategory() {
+        const response = await fetchData(`${api}/categories/`)
+        console.log('categories', response);
+
+        return response
+    }
+
+    return [
+        getPlaces,
+        getPlacesByProvince,
+        getPlacesByRegion,
+        getPlacesDetails,
+        getPlacesPic,
+        addPlace,
+        googleSearch
+    ]
 }

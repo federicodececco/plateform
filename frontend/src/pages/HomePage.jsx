@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styles from './HomePage.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
@@ -35,7 +35,7 @@ const regionsData = [
 export default function HomePage() {
 
     const { t } = useTranslation();
-    const { navSearchBar, setNavSearchBar, closeShowLanguageOptions } = useGlobalContext()
+    const { closeShowLanguageOptions, getTags, getCategory } = useGlobalContext()
     const [formData, setFormData] = useState({ location: '', date: '', people: '' })
 
     const handleFormData = e => {
@@ -55,6 +55,11 @@ export default function HomePage() {
             handleDebouncedSearchRestaurant();
         }
     }
+
+    useEffect(() => {
+        const dataTags = getTags()
+        const dataCategory = getCategory()
+    }, [])
 
     return (
         <div onClick={closeShowLanguageOptions} className={styles["hero-search-section-container"]}>
