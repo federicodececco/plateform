@@ -43,8 +43,12 @@ export default function SearchPage() {
     const handleDebouncedSearchRestaurant = useCallback(debounce(handleSearchRestaurant, 300), [])
 
     async function handleSearchRestaurant(location) {
-        const response = await getPlaces(location)
-        setPlacesData(response.content)
+        try {
+            const response = await getPlaces(location)
+            setPlacesData(response.content)
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     const handleInputChange = (e) => {
@@ -82,7 +86,7 @@ export default function SearchPage() {
         let url = region ? `/search/${region}` : `/search`;
 
         // inizio popolazione array dei filtri
-        if (searchLocation) {
+        if (searchLocation !== '') {
             filtersArr.push(`name=${searchLocation}`)
         }
         if (filter.category) {
@@ -112,7 +116,9 @@ export default function SearchPage() {
         }
 
         navigate(url);
-        handleDebouncedSearchRestaurant(searchLocation)
+        if (filtersArr.length !== 0) {
+            handleDebouncedSearchRestaurant(searchLocation)
+        }
 
     }, [searchLocation, filter])
 

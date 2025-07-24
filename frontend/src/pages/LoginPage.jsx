@@ -151,7 +151,7 @@ export default function LoginPage() {
             <div className={styles["admin-credentials"]}>
                 <h3>Admin Access Credentials</h3>
                 <p><strong>Username:</strong> admin</p>
-                <p><strong>Password:</strong> admin</p>
+                <p><strong>Password:</strong> admin123</p>
             </div>
         </div>
     );

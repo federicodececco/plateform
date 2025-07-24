@@ -1,9 +1,23 @@
 import {fetchData} from "../utilities";
 
-// queste funzioni sono chiamabili tramite il global context context/GLobalContext.jsx
-export default function usePlace() {
+import { useAuthContext } from "../context/AuthContext";
 
+
+// queste funzioni sono chiamabili tramite il global context context/GlobalContext.jsx
+export default function usePlace() {
+    
+    const { token, isAuthenticated, logout, authenticatedFetch  } = useAuthContext()
     const api = import.meta.env.VITE_API_URL
+    
+    const fetchDataAuth = async (url) => {
+        
+        const response = await authenticatedFetch(url)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const json = await response.json()
+        return json
+    }
 
     //esempio di chiamata API GET
     async function getPlaces(value) {
@@ -36,7 +50,7 @@ export default function usePlace() {
 
     //esempio di chiamata API POST dove quando la richiami devi passare l'oggetto data con già tutti i campi compilati
     async function addPlace(id) {
-        const response = await fetch(`${api}/places/save/${id}`, {
+        const response = await fetchDataAuth(`${api}/places/save/${id}`, {
             //dichiaro il metodo della richiesta
             method: "POST",
             headers: {
@@ -51,12 +65,12 @@ export default function usePlace() {
 
         return response.status
     }
-
-    async function googleSearch({ query, latitude, longitude, radius, maxResults }) {
+    
+    async function googleSearchAuth({ query, latitude, longitude, radius, maxResults }) {
         // places/google-search-text?query=&latitude=&longitude=&radius=&maxResults=
-        const response = await fetchData(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
+        const response = await fetchDataAuth(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
         return response
     }
 
-    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered]
+    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered]
 }

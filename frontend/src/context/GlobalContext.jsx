@@ -25,7 +25,7 @@ const GlobalContext = createContext();
 function GlobalProvider({ children }) {
 
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
-    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered] = usePlace()
+    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered] = usePlace()
     const [getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag] = useTag()
     const [getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory] = useCategory()
 
@@ -51,8 +51,8 @@ function GlobalProvider({ children }) {
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
         renderStars, renderPrice,
-        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered,
-        getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag,
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered,
+        getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag, googleSearchAuth,
         getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory
     };
 

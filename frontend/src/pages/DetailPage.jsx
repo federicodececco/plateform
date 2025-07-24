@@ -48,8 +48,7 @@ export default function DetailPage() {
     const getPlace = async () => {
         try {
             const data = await getPlacesDetails(id)
-            console.log('data', data.photos);
-
+            console.log('data', data);
             setPlaceData(data)
         } catch (error) {
             console.error('Error fetching place details:', error);
@@ -177,7 +176,7 @@ export default function DetailPage() {
                                 </select>
                             </div>
 
-                            <button type="submit" className={styles.submitButton}>
+                            <button type="submit" className={styles.submitButton} disabled={!platformID}>
                                 {t('reserveNow')}
                             </button>
                         </form>

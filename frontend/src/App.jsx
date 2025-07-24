@@ -16,8 +16,8 @@ import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
-    <GlobalProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <GlobalProvider>
         <BrowserRouter>
           <Routes>
 
@@ -40,8 +40,8 @@ function App() {
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-    </GlobalProvider>
+      </GlobalProvider>
+    </AuthProvider>
   )
 }
 

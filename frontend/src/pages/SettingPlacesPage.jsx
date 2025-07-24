@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { FaSearch, FaMapMarkerAlt, FaClock, FaStar, FaSpinner } from 'react-icons/fa'; // Importa le icone da react-icons/fa
 import styles from './SettingPlacesPage.module.css'; // Importa il modulo CSS
-import { useGlobalContext } from '../context/GlobalContext';
 import { useTranslation } from 'react-i18next';
-
+import { useGlobalContext } from '../context/GlobalContext';
+import PlaceModal from '../components/PlaceModal.jsx';
 export default function SettingPlacesPage() {
 
     const [formData, setFormData] = useState({
@@ -15,7 +15,8 @@ export default function SettingPlacesPage() {
     });
 
     const { t } = useTranslation();
-    const { closeShowLanguageOptions, googleSearch, renderPrice, addPlace } = useGlobalContext()
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const { closeShowLanguageOptions, googleSearch, renderPrice, addPlace, googleSearchAuth } = useGlobalContext()
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -40,7 +41,7 @@ export default function SettingPlacesPage() {
         setError('');
 
         try {
-            const response = await googleSearch(formData);
+            const response = await googleSearchAuth(formData);
             console.log(response.places);
 
             setSearchResults(response.places);
@@ -275,7 +276,14 @@ export default function SettingPlacesPage() {
                                             <button onClick={() => handleAddPlace(place.id)} className={styles.detailsLink}>
                                                 {t('add')} &rarr;
                                             </button>
+                                            <button onClick={() => setIsModalOpen(prev=> !prev)} className={styles.detailsLink}>
+                                                edit &rarr;
+                                            </button>
                                         </div>
+                                        <PlaceModal
+                                            isOpen={isModalOpen}
+                                            place={place}
+                                            />
                                     </div>
                                 ))}
                             </div>

@@ -35,7 +35,7 @@ const RestaurantCard = ({ restaurant }) => {
         region,
         reviewNumber,
         slugName,
-        tags, //arr enName itName googleName id isVisible
+        tags, //arr
         webSiteURL
     } = restaurant;
 

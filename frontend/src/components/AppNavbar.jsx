@@ -14,7 +14,7 @@ export default function AppNavbar() {
     const { i18n, t } = useTranslation();
     const [navSearchBar, setNavSearchBar] = useState('')
     const navigate = useNavigate();
-    const { logout } = useAuthContext();
+    const { logout, isAuthenticated } = useAuthContext();
     // passare la chiamata api dentro la callback del debounce
     const handleDebouncedSearch = useCallback(
         debounce(() => { navigate(`/Search?city=${navSearchBar}`) }, 300)
@@ -41,8 +41,9 @@ export default function AppNavbar() {
                 <div className={styles["navbar-logo"]}>
                     <a href="/">RestFinder.it</a>
                 </div>
+                <button onClick={() => logout()}>logout</button>
                 <ul className={styles["navbar-links"]}>
-                    <li><a href="/addplaces">adplaces</a></li>
+                    {isAuthenticated() && <li><a href="/addplaces">adplaces</a></li>}
                     <li><a href="/login">Login</a></li>
                     <li><a href="/search">{t('search')}</a></li>
                     <li>
@@ -73,11 +74,9 @@ export default function AppNavbar() {
                     <div className={`${styles.overlay} ${styles.active}`} onClick={() => setHamburgerMenuOpen(false)}></div>
                 )}
                 <ul className={`${styles["hamburgerLinks"]} ${hamburgerMenuOpen ? styles.open : ''}`}>
-                    <li><a href="/ristoranti">{t('restaurants')}</a></li>
-                    <li><a href="/regioni">{t('regions')}</a></li>
-                    <li><a href="/blog">{t('blog')}</a></li>
-                    <li><a href="/Search">{t('search')}</a></li>
-                    <li><a href="/detail">Detail</a></li>
+                   {isAuthenticated() && <li><a href="/addplaces">adplaces</a></li>}
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/search">{t('search')}</a></li>
                     <li>
                         <span>Seleziona lingua</span>
                         <div className={styles.languageButtons}>
