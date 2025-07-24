@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 
 const RestaurantCard = ({ restaurant }) => {
-
+    const api = import.meta.env.VITE_API_URL
     const location = useLocation()
     const { i18n } = useTranslation();
 
@@ -48,9 +48,14 @@ const RestaurantCard = ({ restaurant }) => {
     // return null
     return (
         <div className={styles["restaurant-card"]}>
-            {coverImageName ? <div className={styles["restaurant-image-placeholder"]}>
-                <span className={styles["image-text"]}>Ristorante</span>
-            </div> : <img src={coverImageName} />}
+            {restaurant.photos.length > 1 ?
+                <div className={styles["image-container"]}>
+                    <img src={`${api}/photo/filename/${restaurant.photos[0].fileName}`} />
+                </div>
+                : <div className={styles["restaurant-image-placeholder"]}>
+                    <span className={styles["image-text"]}>Ristorante</span>
+                </div>
+            }
             <div className={styles["restaurant-details"]}>
                 <div className={styles["restaurant-header"]}>
                     <h3 className={styles["restaurant-name"]}>{name}</h3>

@@ -56,11 +56,6 @@ export default function HomePage() {
         }
     }
 
-    useEffect(() => {
-        const dataTags = getTags()
-        const dataCategory = getCategory()
-    }, [])
-
     return (
         <div onClick={closeShowLanguageOptions} className={styles["hero-search-section-container"]}>
             {/* Intestazione */}

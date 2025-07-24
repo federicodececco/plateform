@@ -12,6 +12,26 @@
     transform: translateY(-3px);
 }
 
+.image-container {
+    min-width: 250px;
+    min-height: 250px;
+    max-width: 250px;
+    max-height: 250px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
 .restaurant-image-placeholder {
     flex-shrink: 0;
     width: 250px;
@@ -147,6 +167,11 @@
 }
 
 @media (max-width: 768px) {
+
+    .image-container {
+        min-width: 100%;
+    }
+
     .restaurant-card {
         flex-direction: column;
     }

@@ -48,10 +48,9 @@ export default function DetailPage() {
     const getPlace = async () => {
         try {
             const data = await getPlacesDetails(id)
-            setPlaceData(data)
-            // getPlacesPic(data.photos);
+            console.log('data', data.photos);
 
-            // setPlacePhotos(await getPlacesPic(placeData.photos))
+            setPlaceData(data)
         } catch (error) {
             console.error('Error fetching place details:', error);
         }
@@ -74,7 +73,6 @@ export default function DetailPage() {
     };
 
     if (!placeData) {
-        // console.log('placeData vuoto');
         return (
             <div className="loading">
                 {t('loading')}
@@ -90,13 +88,25 @@ export default function DetailPage() {
                     {/* Sezione Sinistra: Dettagli Ristorante e Galleria (Parte precedente) */}
                     <div className={styles.leftSection}>
                         <div className={styles.gallery}>
-                            <div className={styles.mainPhoto}>{t('mainPhoto')}</div>
-                            <div className={styles.thumbnailPhoto}>{t('interiorPhoto')}</div>
-                            <div className={styles.thumbnailPhoto}>{t('dishesPhoto')}</div>
-                            <div className={styles.thumbnailPhoto}>{t('terracePhoto')}</div>
-                            <div className={styles.thumbnailPhoto}>{t('morePhotos')}</div>
+                            {placeData.photos.length > 0 ?
+                                // Mappo solo le prime 5 foto
+                                placeData.photos.slice(0, 5).map((img, index) =>
+                                    <img
+                                        key={index}
+                                        className={`${styles.thumbnailPhoto} ${index === 0 ? styles.mainPhoto : ''}`}
+                                        src={`${api}/photo/filename/${img.fileName}`}
+                                        alt={`Restaurant photo ${index + 1}`} // Buon pratica: aggiungi un alt text
+                                    />)
+                                :
+                                <>
+                                    <div className={styles.mainPhoto}>{t('mainPhoto')}</div>
+                                    <div className={styles.thumbnailPhoto}>{t('interiorPhoto')}</div>
+                                    <div className={styles.thumbnailPhoto}>{t('dishesPhoto')}</div>
+                                    <div className={styles.thumbnailPhoto}>{t('terracePhoto')}</div>
+                                    <div className={styles.thumbnailPhoto}>{t('morePhotos')}</div>
+                                </>
+                            }
                         </div>
-                        {/* <img src={`${api}/photo/file/${placeData.coverImageName}`} alt="aaaaa" /> */}
                         <div className={styles.tagsContainer}>
                             <span className={styles.tag}>{t('seafoodCuisine')}</span>
                             <span className={styles.tag}>{t('terracePhoto')}</span>
