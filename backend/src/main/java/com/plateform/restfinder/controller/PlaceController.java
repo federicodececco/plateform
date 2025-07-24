@@ -12,6 +12,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -41,9 +43,11 @@ import com.plateform.restfinder.services.TagServiceMapping;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,6 +98,11 @@ public class PlaceController {
 
             return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         }
+    }
+
+    @DeleteMapping("/delete")
+    public void setBlackList(String id) {
+        placeService.falseDeleteById(id);
     }
 
     @GetMapping("/google-search-text-debug")
@@ -162,163 +171,192 @@ public class PlaceController {
 
     // database post
     @PostMapping("/save/{id}")
-    public Place addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
+    public Mono<Place> addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
 
-        PlaceResponse googleResponse = googlePlacesService.getPlaceDetails(id, masks).block();
+        return googlePlacesService.getPlaceDetails(id, masks)
+                .flatMap(googleResponse -> {
+                    Place placetoSave = new Place();
+                    placetoSave.setId(googleResponse.getId());
+                    placetoSave.setName(googleResponse.getDisplayName().getText());
 
-        Place placetoSave = new Place();
-        placetoSave.setId(googleResponse.getId());
-        placetoSave.setName(googleResponse.getDisplayName().getText());
+                    Iterator<AdressComponents> iter = googleResponse.getAddressComponents().iterator();
+                    while (iter.hasNext()) {
+                        AdressComponents component = iter.next();
+                        String type = component.getTypes().get(0);
 
-        Iterator<AdressComponents> iter = googleResponse.getAddressComponents().iterator();
-        while (iter.hasNext()) {
-            AdressComponents component = iter.next();
-            String type = component.getTypes().get(0);
-
-            if (type.equals("street_number")) { // numero civico
-                placetoSave.setAdressNumber(component.getLongText());
-            } else if (type.equals("route")) {// strada
-                placetoSave.setAddress(component.getLongText());
-            } else if (type.equals("administrative_area_level_3")) {// città
-                placetoSave.setCity(component.getLongText());
-            } else if (type.equals("administrative_area_level_1")) {// regione
-                placetoSave.setRegion(component.getLongText());
-            } else if (type.equals("country")) {// nazione
-                placetoSave.setNation(component.getLongText());
-            } else if (type.equals("postal_code")) {// cap
-                placetoSave.setCap(Integer.valueOf(component.getLongText()));
-            } else if (type.equals("administrative_area_level_2")) {// provincia
-                placetoSave.setProvince(component.getShortText());
-            }
-        }
-
-        placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
-        placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
-        if (googleResponse.getPrimaryTypeDisplayName() != null) {
-            placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
-        }
-        String namePartial = googleResponse.getPhotos().get(1).getName();
-        String nameFinal = googleResponse.getPhotos().get(1).getName().substring(namePartial.length() - 306,
-                namePartial.length());
-        placetoSave.setCoverImageName(nameFinal);
-
-        placetoSave.setPhoneNumber(googleResponse.getInternationalPhoneNumber());
-        placetoSave.setRating(googleResponse.getRating());
-        placetoSave.setReviewNumber(googleResponse.getUserRatingCount());
-        placetoSave.setGoogleMapsURL(googleResponse.getGoogleMapsUri());
-        if (googleResponse.getWebsiteUri() != null) {
-            placetoSave.setWebSiteURL(googleResponse.getWebsiteUri());
-        } else {
-            placetoSave.setWebSiteURL("");
-        }
-        placetoSave.setPlateformID("");
-        placetoSave.setPlateformURL("");
-        placetoSave.setBlacklist(false);
-        placetoSave.setIsEdited(false);
-
-        placetoSave.setSlugName(slugify(googleResponse.getDisplayName().getText()));
-
-        // setting priceRange
-        if (googleResponse.getPriceLevel() != null) {
-            switch (googleResponse.getPriceLevel()) {
-                case "PRICE_LEVEL_MODERATE":
-                    placetoSave.setPriceRange("moderate");
-                    break;
-                case "PRICE_LEVEL_EXPENSIVE":
-                    placetoSave.setPriceRange("expensive");
-                    break;
-                case "PRICE_LEVEL_INEXPENSIVE":
-                    placetoSave.setPriceRange("inexpensive");
-                    break;
-                case "PRICE_LEVEL_VERY_EXPENSIVE":
-                    placetoSave.setPriceRange("very expensive");
-                    break;
-                case "PRICE_LEVEL_FREE":
-                    placetoSave.setPriceRange("free");
-                    break;
-                default:
-                    placetoSave.setPriceRange(googleResponse.getPriceLevel());
-                    break;
-            }
-        }
-
-        // setting tags
-
-        Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
-
-        placetoSave.setTags(tagsFinal);
-
-        // setting categories
-
-        List<Category> existingCategories = categoryService.findAll();
-        Map<String, Category> categoryMap = new HashMap<>();
-
-        for (Category cat : existingCategories) {
-            categoryMap.put(cat.getGoogleName(), cat);
-        }
-
-        Set<Category> categoryTmp = new HashSet<>();
-
-        for (String googleType : googleResponse.getTypes()) {
-            if (categoryMap.containsKey(googleType)) {
-                categoryTmp.add(categoryMap.get(googleType));
-            } else {
-                Category newCat = new Category();
-                newCat.setGoogleName(googleType);
-                Category saved = categoryService.save(newCat);
-                categoryTmp.add(saved);
-            }
-        }
-        Place savedPlace = placeService.create(placetoSave);
-
-        Set<Photo> photoSet = new HashSet<>();
-        int i = 0;
-        while (i < googleResponse.getPhotos().size() && i < 2) {
-            try {
-
-                String fullPhotoName = googleResponse.getPhotos().get(i).getName();
-
-                String photoReference = fullPhotoName.substring(fullPhotoName.lastIndexOf("/") + 1);
-
-                System.out.println("Nome completo foto: " + fullPhotoName);
-                System.out.println("Photo reference estratto: " + photoReference);
-
-                Optional<Photo> existing = photoService.findByPhotoReference(savedPlace.getId(), photoReference);
-
-                if (!existing.isPresent()) {
-
-                    Photo downloadedPhoto = photoService.downloadAndSavePhoto(
-                            savedPlace.getId(),
-                            photoReference,
-                            500,
-                            500).block();
-
-                    if (downloadedPhoto != null) {
-                        photoSet.add(downloadedPhoto);
-                        System.out.println("Foto scaricata con successo: " + downloadedPhoto.getFileName());
-                    } else {
-                        System.err.println("Errore nel download della foto con reference: " + photoReference);
+                        if (type.equals("street_number")) { // numero civico
+                            placetoSave.setAdressNumber(component.getLongText());
+                        } else if (type.equals("route")) {// strada
+                            placetoSave.setAddress(component.getLongText());
+                        } else if (type.equals("administrative_area_level_3")) {// città
+                            placetoSave.setCity(component.getLongText());
+                        } else if (type.equals("administrative_area_level_1")) {// regione
+                            placetoSave.setRegion(component.getLongText());
+                        } else if (type.equals("country")) {// nazione
+                            placetoSave.setNation(component.getLongText());
+                        } else if (type.equals("postal_code")) {// cap
+                            placetoSave.setCap(Integer.valueOf(component.getLongText()));
+                        } else if (type.equals("administrative_area_level_2")) {// provincia
+                            placetoSave.setProvince(component.getShortText());
+                        }
                     }
-                } else {
 
-                    photoSet.add(existing.get());
-                    System.out.println("Foto già esistente: " + existing.get().getFilePath());
-                }
+                    placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
+                    placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
+                    if (googleResponse.getPrimaryTypeDisplayName() != null) {
+                        placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
+                    }
 
-            } catch (Exception e) {
-                System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
-                e.printStackTrace();
+                    // Gestione sicura delle foto
+                    if (googleResponse.getPhotos() != null && googleResponse.getPhotos().size() > 1) {
+                        String namePartial = googleResponse.getPhotos().get(1).getName();
+                        String nameFinal = googleResponse.getPhotos().get(1).getName().substring(
+                                namePartial.length() - 306,
+                                namePartial.length());
+                        placetoSave.setCoverImageName(nameFinal);
+                    }
 
-            }
-            i++;
+                    placetoSave.setPhoneNumber(googleResponse.getInternationalPhoneNumber());
+                    placetoSave.setRating(googleResponse.getRating());
+                    placetoSave.setReviewNumber(googleResponse.getUserRatingCount());
+                    placetoSave.setGoogleMapsURL(googleResponse.getGoogleMapsUri());
+                    if (googleResponse.getWebsiteUri() != null) {
+                        placetoSave.setWebSiteURL(googleResponse.getWebsiteUri());
+                    } else {
+                        placetoSave.setWebSiteURL("");
+                    }
+                    placetoSave.setPlateformID("");
+                    placetoSave.setPlateformURL("");
+                    placetoSave.setBlacklist(false);
+                    placetoSave.setIsEdited(false);
+
+                    placetoSave.setSlugName(slugify(googleResponse.getDisplayName().getText()));
+
+                    // setting priceRange
+                    if (googleResponse.getPriceLevel() != null) {
+                        switch (googleResponse.getPriceLevel()) {
+                            case "PRICE_LEVEL_MODERATE":
+                                placetoSave.setPriceRange("moderate");
+                                break;
+                            case "PRICE_LEVEL_EXPENSIVE":
+                                placetoSave.setPriceRange("expensive");
+                                break;
+                            case "PRICE_LEVEL_INEXPENSIVE":
+                                placetoSave.setPriceRange("inexpensive");
+                                break;
+                            case "PRICE_LEVEL_VERY_EXPENSIVE":
+                                placetoSave.setPriceRange("very expensive");
+                                break;
+                            case "PRICE_LEVEL_FREE":
+                                placetoSave.setPriceRange("free");
+                                break;
+                            default:
+                                placetoSave.setPriceRange(googleResponse.getPriceLevel());
+                                break;
+                        }
+                    }
+
+                    // setting tags
+                    Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
+                    placetoSave.setTags(tagsFinal);
+
+                    // setting categories
+                    List<Category> existingCategories = categoryService.findAll();
+                    Map<String, Category> categoryMap = new HashMap<>();
+
+                    for (Category cat : existingCategories) {
+                        categoryMap.put(cat.getGoogleName(), cat);
+                    }
+
+                    Set<Category> categoryTmp = new HashSet<>();
+
+                    for (String googleType : googleResponse.getTypes()) {
+                        if (categoryMap.containsKey(googleType)) {
+                            categoryTmp.add(categoryMap.get(googleType));
+                        } else {
+                            Category newCat = new Category();
+                            newCat.setGoogleName(googleType);
+                            Category saved = categoryService.save(newCat);
+                            categoryTmp.add(saved);
+                        }
+                    }
+                    placetoSave.setCategories(categoryTmp);
+                    // Salva il place e poi gestisci le foto
+                    Place savedPlace = placeService.create(placetoSave);
+
+                    return processPhotos(googleResponse, savedPlace);
+                })
+                .onErrorResume(e -> {
+                    System.err.println("Errore durante il salvataggio del place: " + e.getMessage());
+                    e.printStackTrace();
+                    return Mono.error(e);
+                });
+    }
+
+    private Mono<Place> processPhotos(PlaceResponse googleResponse, Place savedPlace) {
+        if (googleResponse.getPhotos() == null || googleResponse.getPhotos().isEmpty()) {
+            return Mono.just(savedPlace);
         }
 
-        if (!photoSet.isEmpty()) {
-            savedPlace.setPhotos(photoSet);
-            savedPlace = placeService.edit(savedPlace);
-        }
+        int maxPhotos = Math.min(googleResponse.getPhotos().size(), 5); // salva solo 5 foto, o tutte se ce n'è sono
+                                                                        // meno
 
-        return savedPlace;
+        return Flux.range(0, maxPhotos)
+                .flatMap(i -> {
+                    try {
+                        String fullPhotoName = googleResponse.getPhotos().get(i).getName();
+                        String photoReference = fullPhotoName.substring(fullPhotoName.lastIndexOf("/") + 1);
+
+                        System.out.println("Nome completo foto: " + fullPhotoName);
+                        System.out.println("Photo reference estratto: " + photoReference);
+
+                        Optional<Photo> existing = photoService.findByPhotoReference(savedPlace.getId(),
+                                photoReference);
+
+                        if (!existing.isPresent()) {
+                            return photoService.downloadAndSavePhoto(
+                                    savedPlace.getId(),
+                                    photoReference,
+                                    500,
+                                    500)
+                                    .doOnSuccess(downloadedPhoto -> {
+                                        if (downloadedPhoto != null) {
+                                            System.out.println(
+                                                    "Foto scaricata con successo: " + downloadedPhoto.getFileName());
+                                        } else {
+                                            System.err.println(
+                                                    "Errore nel download della foto con reference: " + photoReference);
+                                        }
+                                    })
+                                    .onErrorResume(error -> {
+                                        System.err.println("Errore durante il download della foto " + i + ": "
+                                                + error.getMessage());
+                                        error.printStackTrace();
+                                        return Mono.empty(); // Continua anche se una foto fallisce
+                                    });
+                        } else {
+                            System.out.println("Foto già esistente: " + existing.get().getFilePath());
+                            return Mono.just(existing.get());
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
+                        e.printStackTrace();
+                        return Mono.empty(); // Continua anche se una foto fallisce
+                    }
+                })
+                .collectList()
+                .map(photos -> {
+                    // Filtra le foto null e aggiorna il place
+                    Set<Photo> photoSet = photos.stream()
+                            .filter(photo -> photo != null)
+                            .collect(Collectors.toSet());
+
+                    if (!photoSet.isEmpty()) {
+                        savedPlace.setPhotos(photoSet);
+                        return placeService.edit(savedPlace);
+                    }
+                    return savedPlace;
+                });
     }
 
     @Operation(summary = "Ritorna un luogo in base all'ID", description = "Ritorna un luogo specifico posto in base al suo ID")
@@ -328,12 +366,12 @@ public class PlaceController {
 
     })
     @GetMapping("/details/{id}")
-    public ResponseEntity<Place> getPlaceDetails(@PathVariable String id) {
+    public Mono<ResponseEntity<Place>> getPlaceDetails(@PathVariable String id) {
         Optional<Place> optPlace = placeService.findById(id);
         if (optPlace.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
-        return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
+        return Mono.just(new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK));
     }
 
     @GetMapping("/search")
@@ -409,9 +447,9 @@ public class PlaceController {
     }
 
     @GetMapping("/{placeId}/photos")
-    public ResponseEntity<List<Photo>> getDownloadedPhotos(@PathVariable String placeId) {
+    public Mono<ResponseEntity<List<Photo>>> getDownloadedPhotos(@PathVariable String placeId) {
         List<Photo> downloads = photoService.getDownloadsByPlaceId(placeId);
-        return ResponseEntity.ok(downloads);
+        return Mono.just(ResponseEntity.ok(downloads));
     }
 
     @GetMapping("/photo/json/{param}")
@@ -437,7 +475,7 @@ public class PlaceController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         try {
-
+            // Validazioni base
             if (size > 100)
                 size = 100;
             if (size < 1)

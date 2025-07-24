@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.plateform.restfinder.model.Place;
 import com.plateform.restfinder.repository.PlaceRepository;
@@ -26,11 +27,11 @@ public class PlaceService {
     }
 
     public List<Place> findByProvince(String province) {
-        return placeRepository.findPlacesByProvinceEquals(province);
+        return placeRepository.findPlacesByProvinceEqualsNotBlacklisted(province);
     }
 
     public Optional<Place> findById(String id) {
-        return placeRepository.findById(id);
+        return placeRepository.findByIdRelations(id);
     }
 
     public Place create(Place place) {
@@ -41,8 +42,12 @@ public class PlaceService {
         return placeRepository.save(place);
     }
 
-    public void deleteById(String id) {
+    public void trueDeleteById(String id) {
         placeRepository.deleteById(id);
+    }
+
+    public void falseDeleteById(String id) {
+        placeRepository.softDeleteById(id);
     }
 
     public List<Place> findPlacesWithinRadius(Double latitude, Double longitude, Double radiusKm) {
@@ -85,6 +90,7 @@ public class PlaceService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<Place> filter(String category, List<String> tags, String priceRange, Integer rating,
             int page, int size) {
 

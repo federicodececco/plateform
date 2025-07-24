@@ -34,7 +34,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/api/auth/login").permitAll()
-                        .pathMatchers(HttpMethod.GET, "/api/categories/").authenticated()
                         .pathMatchers(HttpMethod.GET, "/api/places/google-search-text").authenticated()
                         .pathMatchers(HttpMethod.GET, "/api/places/google-details/{id}").authenticated()
                         .pathMatchers(HttpMethod.GET, "/**").permitAll()

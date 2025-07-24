@@ -73,13 +73,6 @@ public class Place {
     @Column(name = "cover_image_name", length = 500)
     private String coverImageName;
 
-    /*
-     * String menu link??
-     * 
-     * @Lob
-     * String description???
-     */
-
     @Schema(description = "numero telefonico")
     private String phoneNumber;
 
@@ -117,18 +110,15 @@ public class Place {
     @Schema(description = "Array di oggeti Categoria collegate al luogo")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "category_place", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonIgnore
     private Set<Category> categories;
 
     @Schema(description = "Array di oggetti Tag collegati al luogo")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "place_tag", joinColumns = @JoinColumn(name = "place_id"), inverseJoinColumns = @JoinColumn(name = "tags_id"))
-    @JsonIgnore
     private Set<Tag> tags;
 
     @Schema(description = "Array di oggetti Photo collegati al luogo")
     @OneToMany(mappedBy = "place", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private Set<Photo> photos;
 
     public Place(String id, String name, String address, String city, Integer cap, String province,
