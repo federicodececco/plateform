@@ -17,8 +17,7 @@ export default function usePlace() {
     }
 
     async function getPlacesByRegion(region) {
-        const response = await fetchData(`${api}places/region/${region}`)
-        console.log(response);
+        const response = await fetchData(`${api}/places/region/${region}`)
         return response
     }
 

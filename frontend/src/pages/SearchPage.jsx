@@ -6,19 +6,29 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from '../context/GlobalContext';
 import { debounce } from 'lodash';
 import BreadcrumbsCard from '../components/breadcrumbsCard';
+import { FaSearch, FaSpinner } from 'react-icons/fa';
 
 export default function SearchPage() {
 
     const searchParams = new URLSearchParams(location.search);
 
-    const { t } = useTranslation();
+    const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const [placesData, setPlacesData] = useState([])
+    const [categoryData, setCategoryData] = useState([]);
+    const [servicesData, setServicesData] = useState([]);
     const [searchLocation, setSearchLocation] = useState(searchParams.get('city') || '');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
     const { region } = useParams()
-    const { getPlaces, getPlacesByRegion, closeShowLanguageOptions } = useGlobalContext()
+    const {
+        getPlaces, getPlacesByRegion, closeShowLanguageOptions,
+        getTags, getCategory
+    } = useGlobalContext()
+
+    const priceMap = ["free", "inexpensive", "moderate", "expensive", "very expensive",]
+
+    const isEn = i18n.language === 'en'
 
     const [filter, setFilter] = useState({
         category: searchParams.get('category') || '',
@@ -27,7 +37,6 @@ export default function SearchPage() {
         rating: searchParams.get('rating') || '',
         services: searchParams.get('services') || ''
     })
-
 
     // questa funzione di debounce serve per evitare di fare troppe chiamate API quando l'utente digita nella barra di ricerca
     // il primo parametro: handleSearchRestaurant dice la funzione che chiama, 300 sono i millisecondi di attesa prima di eseguire la funzione
@@ -38,13 +47,11 @@ export default function SearchPage() {
         setPlacesData(response.content)
     }
 
-
     const handleInputChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value })
     }
 
     const handleSort = e => {
-
         const currOrder = e.target.name
 
         if (sortBy === currOrder) {
@@ -56,7 +63,17 @@ export default function SearchPage() {
     }
 
     useEffect(() => {
-        // const dataRegion = getPlacesByRegion(region)
+        (async () => {
+            // DA VEDERE PERCHE NON LI MOSTRA
+            try {
+                const dataRegion = await getPlacesByRegion(region)
+                console.log(dataRegion);
+
+                setPlacesData(dataRegion)
+            } catch (error) {
+                console.error(error);
+            }
+        })();
     }, [region])
 
     useEffect(() => {
@@ -99,6 +116,18 @@ export default function SearchPage() {
 
     }, [searchLocation, filter])
 
+    useEffect(() => {
+        (async () => {
+            try {
+                const tags = await getTags()
+                setServicesData(tags)
+                const categorys = await getCategory()
+                setCategoryData(categorys)
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    }, [])
 
     return (
         <>
@@ -108,8 +137,8 @@ export default function SearchPage() {
 
                 {/* Hero Section / Header */}
                 <div className={styles["hero-section"]}>
-                    <h1>{t('amalfiCoastTitle')}</h1>
-                    <p>{t('amalfiCoastDescription')}</p>
+                    <h1>{t('searchTitle')}</h1>
+                    <p>{t('searchDescription')}</p>
 
                     {/* Search Bar */}
                     <div className={styles["search-bar-container"]}>
@@ -131,22 +160,35 @@ export default function SearchPage() {
                         <span>{t('filtersLabel')}</span>
                         <select aria-label={t('categoryOption')} name='category' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('categoryOption')}</option>
-                            <option value='pizza'>pizza</option>
-                            <option value='pasta'>pasta</option>
+                            {categoryData.length > 0 && categoryData.map(c => {
+                                if (c.isVisible === null || c.isVisible === false) return
+                                return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>
+                            })}
                         </select>
-                        <select aria-label={t('cuisineOption')} name='cuisine' onChange={handleInputChange} className={styles["filter-dropdown"]}>
+                        {/* <select aria-label={t('cuisineOption')} name='cuisine' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('cuisineOption')}</option>
                             <option value='pizza'>pizza</option>
-                        </select>
+                        </select> */}
                         <select aria-label={t('priceRangeOptions')} name='price' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
-                            <option value='pasta'>pasta</option>
+                            {priceMap.map((price) =>
+                                <option key={price} value={price}>{price}</option>
+                            )}
                         </select>
+
+                        {/* XXXXXXXXXXXXXXXXXXXXX */}
+                        {/* AGGIUNGERE OPZIONI PER IL RATING */}
+                        {/* XXXXXXXXXXXXXXXXXXXXX */}
+
                         <select aria-label={t('ratingOption')} name='rating' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
                         </select>
                         <select aria-label={t('services')} name='services' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('services')}</option>
+                            {servicesData.length > 0 && servicesData.map(c => {
+                                if (c.isVisible === null || c.isVisible === false) return
+                                return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>
+                            })}
                         </select>
                     </div>
                     <div className={styles["sort-by"]}>
@@ -155,17 +197,30 @@ export default function SearchPage() {
                         <select aria-label={t('mostPopularOption')} className={styles["sort-dropdown"]} onChange={handleSort}>
                             {/* <option data-value='popular' className={styles.optionPlaceHolder} onChange={handleSort}>{t('mostPopularOption')}</option> */}
                             <option data-value='popular' className={styles.optionPlaceHolder}>{t('mostPopularOption')}</option>
-                            <option data-value='popular' >popasdf</option>
-                            <option data-value='caprone' >capora</option>
+                            <option data-value='popular' >popular</option>
                         </select>
                     </div>
                 </div>
 
                 {/* Lista dei ristoranti */}
                 <div className={styles["restaurant-list-container"]}>
-                    {placesData.map((restaurant, index) => (
-                        <RestaurantCard key={index} restaurant={restaurant} />
-                    ))}
+                    {placesData.length === 0 ? (
+                        <div className='noResults'>
+                            <div className='noResultsIcon'>
+                                <FaSearch />
+                            </div>
+                            <h3 className='noResultsTitle'>
+                                {t('noRestaurantsFound')}
+                            </h3>
+                            <p className='noResultsText'>
+                                {t('noResultsText')}
+                            </p>
+                        </div>
+                    ) :
+                        placesData.map((restaurant, index) => (
+                            <RestaurantCard key={index} restaurant={restaurant} />
+                        ))
+                    }
                 </div>
             </div>
         </>

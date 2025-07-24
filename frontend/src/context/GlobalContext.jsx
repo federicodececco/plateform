@@ -31,20 +31,6 @@ function GlobalProvider({ children }) {
 
     const closeShowLanguageOptions = () => setShowLanguageOptions(false)
 
-    const fetchData = async (url) => {
-
-        // eseguo chiamata API GET
-        const response = await fetch(url)
-
-        //controllo se la risposta è ok
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        // converto la risposta in JSON
-        const json = await response.json()
-        return json
-    }
-
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
         const fullStars = Math.floor(rating);
@@ -64,7 +50,7 @@ function GlobalProvider({ children }) {
 
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
-        renderStars, renderPrice, fetchData,
+        renderStars, renderPrice,
         getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch,
         getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag,
         getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory

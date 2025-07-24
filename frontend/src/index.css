@@ -67,6 +67,33 @@ button {
   color: #000;
 }
 
+/* --- No Results --- */
+.noResults {
+  text-align: center;
+  padding: 4rem 0;
+}
+
+.noResultsIcon {
+  color: #bdbdbd;
+  margin-bottom: 1.5rem;
+  height: 5rem;
+  width: 5rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.noResultsTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333333;
+  margin-bottom: 0.75rem;
+}
+
+.noResultsText {
+  color: #616161;
+  font-size: 1rem;
+}
+
 
 /* Stili per le stelle del rating */
 .star {
@@ -108,47 +135,6 @@ button {
   font-weight: 500;
   white-space: nowrap;
   /* Impedisce che il testo del tag vada a capo */
-}
-
-/* Colori specifici per i tag */
-.tag-cucina-gourmet {
-  background-color: #e0f7fa;
-  color: #00796b;
-}
-
-.tag-cantina-vini {
-  background-color: #e3f2fd;
-  color: #1976d2;
-}
-
-.tag-disponibile {
-  background-color: #e8f5e9;
-  color: #388e3c;
-}
-
-.tag-parcheggio {
-  background-color: #fce4ec;
-  color: #ad1457;
-}
-
-.tag-cucina-tradizionale {
-  background-color: #fff3e0;
-  color: #f57c00;
-}
-
-.tag-bar {
-  background-color: #ede7f6;
-  color: #673ab7;
-}
-
-.tag-spogliatoi {
-  background-color: #f9fbe7;
-  color: #afb42b;
-}
-
-.tag-ombrelloni {
-  background-color: #ffebee;
-  color: #d32f2f;
 }
 
 /* Stili per i bottoni di azione */

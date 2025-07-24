@@ -280,14 +280,14 @@ export default function SettingPlacesPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div className={styles.noResults}>
-                                <div className={styles.noResultsIcon}>
+                            <div className='noResults'>
+                                <div className='noResultsIcon'>
                                     <FaSearch />
                                 </div>
-                                <h3 className={styles.noResultsTitle}>
+                                <h3 className='noResultsTitle'>
                                     {t('noRestaurantsFound')}
                                 </h3>
-                                <p className={styles.noResultsText}>
+                                <p className='noResultsText'>
                                     {t('noResultsText')}
                                 </p>
                             </div>

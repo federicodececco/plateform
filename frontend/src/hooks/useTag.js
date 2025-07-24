@@ -7,8 +7,6 @@ export default function useTag() {
     //index dei tags
     async function getTags() {
         const response = await fetchData(`${api}/tags/`)
-        console.log('tags', response);
-
         return response
     }
 

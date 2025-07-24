@@ -6,8 +6,6 @@ export default function useCategory() {
     //index dei Categorys
     async function getCategory() {
         const response = await fetchData(`${api}/categories/`)
-        console.log('categories', response);
-
         return response
     }
 
