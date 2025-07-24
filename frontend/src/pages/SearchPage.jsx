@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from '../context/GlobalContext';
 import { debounce } from 'lodash';
 import BreadcrumbsCard from '../components/breadcrumbsCard';
-import { FaSearch, FaSpinner } from 'react-icons/fa';
+import { FaSearch, FaSpinner, FaStar } from 'react-icons/fa';
 
 export default function SearchPage() {
 
@@ -32,7 +32,6 @@ export default function SearchPage() {
 
     const [filter, setFilter] = useState({
         category: searchParams.get('category') || '',
-        cuisine: searchParams.get('cuisine') || '',
         price: searchParams.get('price') || '',
         rating: searchParams.get('rating') || '',
         services: searchParams.get('services') || ''
@@ -67,8 +66,6 @@ export default function SearchPage() {
             // DA VEDERE PERCHE NON LI MOSTRA
             try {
                 const dataRegion = await getPlacesByRegion(region)
-                console.log(dataRegion);
-
                 setPlacesData(dataRegion)
             } catch (error) {
                 console.error(error);
@@ -175,13 +172,13 @@ export default function SearchPage() {
                                 <option key={price} value={price}>{price}</option>
                             )}
                         </select>
-
-                        {/* XXXXXXXXXXXXXXXXXXXXX */}
-                        {/* AGGIUNGERE OPZIONI PER IL RATING */}
-                        {/* XXXXXXXXXXXXXXXXXXXXX */}
-
                         <select aria-label={t('ratingOption')} name='rating' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
+                            <option value="1">1 {t('star')}</option>
+                            <option value="2">2 {t('star')}</option>
+                            <option value="3">3 {t('star')}</option>
+                            <option value="4">4 {t('star')}</option>
+                            <option value="5">5 {t('star')}</option>
                         </select>
                         <select aria-label={t('services')} name='services' onChange={handleInputChange} className={styles["filter-dropdown"]}>
                             <option className={styles.optionPlaceHolder}>{t('services')}</option>

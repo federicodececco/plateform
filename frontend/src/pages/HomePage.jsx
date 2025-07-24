@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './HomePage.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
@@ -32,28 +32,34 @@ const regionsData = [
     },
 ];
 
+const formInitialValue = { location: '', date: '', people: '' }
+
 export default function HomePage() {
 
     const { t } = useTranslation();
-    const { closeShowLanguageOptions, getTags, getCategory } = useGlobalContext()
-    const [formData, setFormData] = useState({ location: '', date: '', people: '' })
+    const { closeShowLanguageOptions } = useGlobalContext()
+    const [formData, setFormData] = useState(formInitialValue)
+    const navigate = useNavigate();
 
     const handleFormData = e => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     }
 
-    const handleDebouncedSearchRestaurant = useCallback(debounce(chiamataApi, 300), [])
-
-    function chiamataApi() {
-        console.log("Funzione di stampa chiamata");
-    }
+    const handleDebouncedSearch = useCallback(
+        debounce(() => { navigate(`/Search?city=${formData.location}`) }, 300)
+        , [formData.location])
 
     const handleEnterUp = e => {
         if (e.key === 'Enter') {
-            // effettuare la chiamata api qui
-            handleDebouncedSearchRestaurant();
+            handleDebouncedSearch();
+            setFormData(formInitialValue)
         }
+    }
+
+    const handleSearchClick = e => {
+        handleDebouncedSearch();
+        setFormData(formInitialValue)
     }
 
     return (
@@ -106,7 +112,7 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                <button onClick={handleDebouncedSearchRestaurant} className={styles["search-restaurants-button"]}>{t('searchRestaurants')}</button>
+                <button onClick={handleSearchClick} className={styles["search-restaurants-button"]}>{t('searchRestaurants')}</button>
             </div>
 
             <section className={styles["explore-by-region-section"]}>

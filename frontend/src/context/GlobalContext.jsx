@@ -25,7 +25,7 @@ const GlobalContext = createContext();
 function GlobalProvider({ children }) {
 
     const [showLanguageOptions, setShowLanguageOptions] = useState(false);
-    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch] = usePlace()
+    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered] = usePlace()
     const [getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag] = useTag()
     const [getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory] = useCategory()
 
@@ -51,7 +51,7 @@ function GlobalProvider({ children }) {
     const globalProviderValue = {
         showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
         renderStars, renderPrice,
-        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, getPlacesPic, addPlace, googleSearch,
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered,
         getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag,
         getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory
     };

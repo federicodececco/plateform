@@ -68,10 +68,8 @@ const RestaurantCard = ({ restaurant }) => {
                     <span className={styles["location-icon"]}>📍</span> {address}, {adressNumber} - {cap} {city} {province}
                 </p>
                 <div className={styles["restaurant-tags"]}>
-                    {tags.map((tag, index) => (
-                        // <span key={index} className={styles[`tag tag-${tag.googleName.toLowerCase().replace(/\s/g, '-')}`]}>
+                    {tags.slice(0, 20).map((tag, index) => (
                         <span key={index} className={`${styles.tag} ${styles[`tag-${tag.googleName}`]} ${!tag.isVisible ? styles.hidden : ''}`}>
-                            {/* <span key={index} className={styles["tag", (!tag.isVisible) ? 'hidden' : '']}> */}
                             {i18n.language === 'it' ? `${tag.itName}` : `${tag.enName}`}
                         </span>
                     ))}

@@ -1,13 +1,18 @@
 .mapSection {
     background-color: #fff;
     padding: 12px 24px;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
 }
 
 .sectionHeading {
     font-size: 1.8em;
-    margin-bottom: 15px;
     font-weight: bold;
+    text-align: center;
     color: #333;
+    margin-bottom: 1.5rem;
 }
 
 .mapContainer {
@@ -20,25 +25,6 @@
     border-radius: 8px;
     margin-bottom: 15px;
     font-size: 1em;
-}
-
-.mapSection {
-    margin-top: 2rem;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-}
-
-.sectionHeading {
-    text-align: center;
-    color: #333;
-    margin-bottom: 1.5rem;
-}
-
-.mapContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .mapFrame {

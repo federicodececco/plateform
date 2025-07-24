@@ -562,12 +562,15 @@
         width: 100%;
     }
 
-
     /* Sezione bassa destra mappa e contatti */
-    .detailsSection {
-        flex-direction: column;
+    .mapAndContactSection {
+        width: 100%;
     }
 
+    .detailsSection {
+        flex-direction: column;
+        align-items: center;
+    }
 
     /* Sezione bassa destra mappa e contatti */
     .reviewsContent {

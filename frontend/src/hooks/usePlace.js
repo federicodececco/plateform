@@ -11,6 +11,13 @@ export default function usePlace() {
         return response
     }
 
+    async function getPlacesFiltered({ category, services, price, rating }) {
+        const response = await fetchData(`${api}/places/filter?category=${category}&tags=${services}&priceRange=${price}&rating=${rating}&page=0&size=10`)
+        console.log(response);
+
+        return response
+    }
+
     async function getPlacesByProvince(province) {
         const response = await fetchData(`${api}/places/province/${province}`) //ud
         return response
@@ -24,20 +31,6 @@ export default function usePlace() {
     async function getPlacesDetails(placeId) {
         const response = await fetchData(`${api}/places/details/${placeId}`)
         // console.log('response', response);
-        return response
-    }
-
-    async function getPlacesPic(picArray) {
-        // const promise = await Promise.all(fetchArr)
-        // const fetchArr = picArray.map(photo => fetchData(`${api}/photo/filename/${photo.fileName}`))
-        // return promise
-
-        console.log(picArray[0]);
-        // const response = await fetchData(`${api}/photo/filename/82fc23ceafc2bc73_1752759138559`)
-
-        // const response = await fetch(`${api}/photo/filename/${picArray[0].fileName}`)
-        // const json = await response.json()
-        // return json
         return response
     }
 
@@ -65,21 +58,5 @@ export default function usePlace() {
         return response
     }
 
-
-    async function getCategory() {
-        const response = await fetchData(`${api}/categories/`)
-        console.log('categories', response);
-
-        return response
-    }
-
-    return [
-        getPlaces,
-        getPlacesByProvince,
-        getPlacesByRegion,
-        getPlacesDetails,
-        getPlacesPic,
-        addPlace,
-        googleSearch
-    ]
+    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearch, getPlacesFiltered]
 }

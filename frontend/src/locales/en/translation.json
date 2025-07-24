@@ -113,5 +113,6 @@
     "noResultsText": "Try modifying the search parameters or expanding the search area",
     "price": "Price:",
     "add": "Add",
-    "goBack": "Go Back"
+    "goBack": "Go Back",
+    "star": "Star"
 }

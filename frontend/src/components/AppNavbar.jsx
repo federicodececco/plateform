@@ -24,12 +24,14 @@ export default function AppNavbar() {
         if (e.key === 'Enter') {
             // effettuare la chiamata api qui
             handleDebouncedSearch();
+            setNavSearchBar('')
         }
     }
 
     const handleSearchClick = e => {
         // effettuare la chiamata api qui
         handleDebouncedSearch();
+        setNavSearchBar('')
     }
 
     return (
