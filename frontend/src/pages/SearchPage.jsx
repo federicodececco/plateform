@@ -15,6 +15,7 @@ export default function SearchPage() {
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
     const [placesData, setPlacesData] = useState([])
+    const [regionData, setRegionData] = useState([])
     const [categoryData, setCategoryData] = useState([]);
     const [servicesData, setServicesData] = useState([]);
     const [searchLocation, setSearchLocation] = useState(searchParams.get('city') || '');
@@ -62,15 +63,17 @@ export default function SearchPage() {
     }
 
     useEffect(() => {
-        (async () => {
-            // DA VEDERE PERCHE NON LI MOSTRA
-            try {
-                const dataRegion = await getPlacesByRegion(region)
-                setPlacesData(dataRegion)
-            } catch (error) {
-                console.error(error);
-            }
-        })();
+        if (region !== undefined ) {
+            (async () => {
+                // DA VEDERE PERCHE NON LI MOSTRA
+                try {
+                    const dataRegion = await getPlacesByRegion(region)
+                    setRegionData(dataRegion)
+                } catch (error) {
+                    console.error(error);
+                }
+            })();
+        }
     }, [region])
 
     useEffect(() => {
@@ -80,7 +83,7 @@ export default function SearchPage() {
 
         // inizio popolazione array dei filtri
         if (searchLocation) {
-            filtersArr.push(`city=${searchLocation}`)
+            filtersArr.push(`name=${searchLocation}`)
         }
         if (filter.category) {
             filtersArr.push(`category=${filter.category}`)
@@ -197,11 +200,12 @@ export default function SearchPage() {
                             <option data-value='popular' >popular</option>
                         </select>
                     </div>
+                    <button onClick={() => console.log(placesData)}>aaaaaaaaa</button>
                 </div>
 
                 {/* Lista dei ristoranti */}
                 <div className={styles["restaurant-list-container"]}>
-                    {placesData.length === 0 ? (
+                    {(placesData.length === 0 && regionData.length === 0) ? (
                         <div className='noResults'>
                             <div className='noResultsIcon'>
                                 <FaSearch />
@@ -213,10 +217,13 @@ export default function SearchPage() {
                                 {t('noResultsText')}
                             </p>
                         </div>
-                    ) :
+                    ) : (placesData.length > 0) ? 
                         placesData.map((restaurant, index) => (
                             <RestaurantCard key={index} restaurant={restaurant} />
-                        ))
+                        )) : 
+                        regionData.map((restaurant, index) => (
+                            <RestaurantCard key={index} restaurant={restaurant} />
+                        )) 
                     }
                 </div>
             </div>

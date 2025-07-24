@@ -1,4 +1,4 @@
-import fetchData from "../utilities";
+import {fetchData} from "../utilities";
 
 // queste funzioni sono chiamabili tramite il global context context/GLobalContext.jsx
 export default function usePlace() {
@@ -24,7 +24,7 @@ export default function usePlace() {
     }
 
     async function getPlacesByRegion(region) {
-        const response = await fetchData(`${api}/places/region/${region}`)
+        const response = await fetchData(`${api}/places/region/${region}`)      
         return response
     }
 

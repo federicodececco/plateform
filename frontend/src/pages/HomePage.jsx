@@ -5,32 +5,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
-const regionsData = [
-    {
-        id: 'campania', // Un ID unico è utile in React per le chiavi nelle liste
-        regionName: 'Campania',
-        description: 'Pizza napoletana, cucina mediterranea',
-        restaurantCount: '1,247',
-    },
-    {
-        id: 'toscana',
-        regionName: 'Toscana',
-        description: 'Cucina tradizionale, vini pregiati',
-        restaurantCount: '892',
-    },
-    {
-        id: 'sicilia',
-        regionName: 'Sicilia',
-        description: 'Pesce fresco, arancini, cannoli',
-        restaurantCount: '654',
-    },
-    {
-        id: 'liguria',
-        regionName: 'Liguria',
-        description: 'Pesto, focaccia, cucina marinara',
-        restaurantCount: '423',
-    },
-];
+import {regionsData} from "../utilities";
 
 const formInitialValue = { location: '', date: '', people: '' }
 

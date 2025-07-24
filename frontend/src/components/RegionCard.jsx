@@ -12,7 +12,6 @@ const RegionCard = ({ regionName, description, restaurantCount }) => {
             <div className={styles["card-content"]}>
                 <h3 className={styles["card-title"]}>{regionName}</h3>
                 <p className={styles["card-description"]}>{description}</p>
-                <span className={styles["restaurant-count"]}>{restaurantCount} {t('restaurantsLowercase')}</span>
                 <Link
                     to={`/search/${regionName}`}>
                     link

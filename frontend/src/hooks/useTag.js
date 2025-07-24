@@ -1,4 +1,4 @@
-import fetchData from "../utilities";
+import {fetchData} from "../utilities";
 
 export default function useTag() {
 

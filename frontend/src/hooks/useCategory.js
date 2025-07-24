@@ -1,4 +1,4 @@
-import fetchData from "../utilities";
+import {fetchData} from "../utilities";
 
 export default function useCategory() {
     const api = import.meta.env.VITE_API_URL
