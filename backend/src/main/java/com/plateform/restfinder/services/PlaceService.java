@@ -45,7 +45,6 @@ public class PlaceService {
         return placeRepository.findByIdRelations(id);
     }
 
-    @Transactional(readOnly = true)
     public Place create(Place place) {
         return placeRepository.save(place);
     }
@@ -104,30 +103,25 @@ public class PlaceService {
 
     @Transactional(readOnly = true)
     private Page<Place> searchAndLoadRelations(String searchTerm, Pageable pageable) {
-        // Prima query: ottieni i risultati con ranking
+
         Page<Place> searchResults = placeRepository.searchWithRanking(searchTerm, pageable);
 
-        // Se non ci sono risultati, restituisci pagina vuota
         if (searchResults.getContent().isEmpty()) {
             return searchResults;
         }
 
-        // Estrai gli ID dei Place trovati
         List<String> placeIds = new ArrayList<>();
         for (Place place : searchResults.getContent()) {
             placeIds.add(place.getId());
         }
 
-        // Seconda query: carica i Place con le relazioni
         List<Place> placesWithRelations = placeRepository.findByIdInWithRelations(placeIds);
 
-        // Crea una mappa per accesso rapido
         Map<String, Place> placeMap = new HashMap<>();
         for (Place place : placesWithRelations) {
             placeMap.put(place.getId(), place);
         }
 
-        // Mantieni l'ordine originale del ranking
         List<Place> orderedPlaces = new ArrayList<>();
         for (Place originalPlace : searchResults.getContent()) {
             Place placeWithRelations = placeMap.get(originalPlace.getId());
@@ -136,7 +130,6 @@ public class PlaceService {
             }
         }
 
-        // Crea una nuova Page con i Place ordinati e le relazioni caricate
         return new PageImpl<>(orderedPlaces, pageable, searchResults.getTotalElements());
     }
 

@@ -230,7 +230,6 @@ public class PlaceController {
                         placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
                     }
 
-                    // Gestione sicura delle foto
                     if (googleResponse.getPhotos() != null && googleResponse.getPhotos().size() > 1) {
                         String namePartial = googleResponse.getPhotos().get(1).getName();
                         String nameFinal = googleResponse.getPhotos().get(1).getName().substring(
@@ -304,7 +303,7 @@ public class PlaceController {
                         }
                     }
                     placetoSave.setCategories(categoryTmp);
-                    // Salva il place e poi gestisci le foto
+
                     Place savedPlace = placeService.create(placetoSave);
 
                     return processPhotos(googleResponse, savedPlace);
@@ -355,7 +354,7 @@ public class PlaceController {
                                         System.err.println("Errore durante il download della foto " + i + ": "
                                                 + error.getMessage());
                                         error.printStackTrace();
-                                        return Mono.empty(); // Continua anche se una foto fallisce
+                                        return Mono.empty(); // continua anche se una foto fallisce
                                     });
                         } else {
                             System.out.println("Foto già esistente: " + existing.get().getFilePath());
@@ -364,12 +363,12 @@ public class PlaceController {
                     } catch (Exception e) {
                         System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
                         e.printStackTrace();
-                        return Mono.empty(); // Continua anche se una foto fallisce
+                        return Mono.empty(); // continua anche se una foto fallisce
                     }
                 })
                 .collectList()
                 .map(photos -> {
-                    // Filtra le foto null e aggiorna il place
+
                     Set<Photo> photoSet = photos.stream()
                             .filter(photo -> photo != null)
                             .collect(Collectors.toSet());
