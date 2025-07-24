@@ -84,6 +84,7 @@ public interface PlaceRepository extends JpaRepository<Place, String>, JpaSpecif
     Optional<Place> findByIdRelations(@Param("id") String id);
 
     @EntityGraph(attributePaths = { "categories", "tags", "photos" })
+
     @Transactional
     Page<Place> findAll(Specification<Place> spec, Pageable pageable);
 

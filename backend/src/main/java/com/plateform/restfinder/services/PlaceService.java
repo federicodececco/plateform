@@ -141,6 +141,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
+
     public Page<Place> filter(String category, List<String> tags, String priceRange, Integer rating,
             int page, int size) {
 
