@@ -15,8 +15,8 @@ export default function SettingPlacesPage() {
     });
 
     const { t } = useTranslation();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const { closeShowLanguageOptions, googleSearch, renderPrice, addPlace, googleSearchAuth } = useGlobalContext()
+    const [isModalOpen, setIsModalOpen] = useState({ status: false, id: '' });
+    const { closeShowLanguageOptions, renderPrice, addPlace, googleSearchAuth } = useGlobalContext()
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -83,7 +83,7 @@ export default function SettingPlacesPage() {
     return (
         <>
 
-            <div onClick={closeShowLanguageOptions} className={styles.pageContainer}>
+            <div onClick={closeShowLanguageOptions} className={styles.pageContainer} >
 
                 <div className={styles.mainContent}>
 
@@ -272,20 +272,23 @@ export default function SettingPlacesPage() {
                                                     </div>
                                                 )}
                                             </div>
-
                                             <button onClick={() => handleAddPlace(place.id)} className={styles.detailsLink}>
                                                 {t('add')} &rarr;
                                             </button>
-                                            <button onClick={() => setIsModalOpen(prev=> !prev)} className={styles.detailsLink}>
+                                            <button onClick={() => setIsModalOpen(prev => ({ status: !prev.status, id: place.id }))} className={styles.detailsLink}>
                                                 edit &rarr;
                                             </button>
                                         </div>
-                                        <PlaceModal
-                                            isOpen={isModalOpen}
-                                            place={place}
-                                            />
+
                                     </div>
                                 ))}
+                                <PlaceModal
+                                    isOpen={isModalOpen.status}
+                                    onClose={() => setIsModalOpen(prev => ({ ...prev, status: false }))}
+                                    id={isModalOpen.id}
+                                    addFunction={() => handleAddPlace()}
+                                    addText={t('add')}
+                                />
                             </div>
                         ) : (
                             <div className='noResults'>

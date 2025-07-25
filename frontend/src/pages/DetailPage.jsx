@@ -176,7 +176,9 @@ export default function DetailPage() {
                                 </select>
                             </div>
 
-                            <button type="submit" className={styles.submitButton} disabled={!platformID}>
+                            <button type="submit" className={styles.submitButton}
+                            // disabled={!platformID}
+                            >
                                 {t('reserveNow')}
                             </button>
                         </form>

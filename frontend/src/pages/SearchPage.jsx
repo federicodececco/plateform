@@ -24,7 +24,7 @@ export default function SearchPage() {
     const { region } = useParams()
     const {
         getPlaces, getPlacesByRegion, closeShowLanguageOptions,
-        getTags, getCategory
+        getTags, getCategory, getPlacesFiltered
     } = useGlobalContext()
 
     const priceMap = ["free", "inexpensive", "moderate", "expensive", "very expensive",]
@@ -67,9 +67,8 @@ export default function SearchPage() {
     }
 
     useEffect(() => {
-        if (region !== undefined ) {
+        if (region !== undefined) {
             (async () => {
-                // DA VEDERE PERCHE NON LI MOSTRA
                 try {
                     const dataRegion = await getPlacesByRegion(region)
                     setRegionData(dataRegion)
@@ -116,11 +115,26 @@ export default function SearchPage() {
         }
 
         navigate(url);
-        if (filtersArr.length !== 0) {
-            handleDebouncedSearchRestaurant(searchLocation)
-        }
+
 
     }, [searchLocation, filter])
+
+    useEffect(() => {
+        if (searchLocation.trim() !== '') {
+            handleDebouncedSearchRestaurant(searchLocation)
+        }
+    }, [searchLocation])
+
+    // useEffect(() => {
+    //     (async () => {
+    //         try {
+    //             const filteredData = await getPlacesFiltered(filter)
+    //             setPlacesData(filteredData)
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     })();
+    // }, [filter])
 
     useEffect(() => {
         (async () => {
@@ -197,16 +211,15 @@ export default function SearchPage() {
                             })}
                         </select>
                     </div>
-                    <div className={styles["sort-by"]}>
+                    {/* <div className={styles["sort-by"]}>
                         <span>{t('sortByLabel')}</span>
-                        {/* fare un bottone se resta solo un opzione per l'ordinamento delle card */}
+                        
                         <select aria-label={t('mostPopularOption')} className={styles["sort-dropdown"]} onChange={handleSort}>
-                            {/* <option data-value='popular' className={styles.optionPlaceHolder} onChange={handleSort}>{t('mostPopularOption')}</option> */}
+                        
                             <option data-value='popular' className={styles.optionPlaceHolder}>{t('mostPopularOption')}</option>
                             <option data-value='popular' >popular</option>
                         </select>
-                    </div>
-                    <button onClick={() => console.log(placesData)}>aaaaaaaaa</button>
+                    </div> */}
                 </div>
 
                 {/* Lista dei ristoranti */}
@@ -223,13 +236,13 @@ export default function SearchPage() {
                                 {t('noResultsText')}
                             </p>
                         </div>
-                    ) : (placesData.length > 0) ? 
+                    ) : (placesData.length > 0) ?
                         placesData.map((restaurant, index) => (
                             <RestaurantCard key={index} restaurant={restaurant} />
-                        )) : 
+                        )) :
                         regionData.map((restaurant, index) => (
                             <RestaurantCard key={index} restaurant={restaurant} />
-                        )) 
+                        ))
                     }
                 </div>
             </div>

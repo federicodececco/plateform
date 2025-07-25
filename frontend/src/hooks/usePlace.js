@@ -1,16 +1,16 @@
-import {fetchData} from "../utilities";
+import { fetchData } from "../utilities";
 
 import { useAuthContext } from "../context/AuthContext";
 
 
 // queste funzioni sono chiamabili tramite il global context context/GlobalContext.jsx
 export default function usePlace() {
-    
-    const { token, isAuthenticated, logout, authenticatedFetch  } = useAuthContext()
+
+    const { token, isAuthenticated, logout, authenticatedFetch } = useAuthContext()
     const api = import.meta.env.VITE_API_URL
-    
+
     const fetchDataAuth = async (url) => {
-        
+
         const response = await authenticatedFetch(url)
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
@@ -27,9 +27,9 @@ export default function usePlace() {
 
     async function getPlacesFiltered({ category, services, price, rating }) {
         const response = await fetchData(`${api}/places/filter?category=${category}&tags=${services}&priceRange=${price}&rating=${rating}&page=0&size=10`)
-        console.log(response);
+        console.log('aaaaaaa', response.content);
 
-        return response
+        return response.content
     }
 
     async function getPlacesByProvince(province) {
@@ -38,7 +38,7 @@ export default function usePlace() {
     }
 
     async function getPlacesByRegion(region) {
-        const response = await fetchData(`${api}/places/region/${region}`)      
+        const response = await fetchData(`${api}/places/region/${region}`)
         return response
     }
 
@@ -65,12 +65,18 @@ export default function usePlace() {
 
         return response.status
     }
-    
+
     async function googleSearchAuth({ query, latitude, longitude, radius, maxResults }) {
-        // places/google-search-text?query=&latitude=&longitude=&radius=&maxResults=
         const response = await fetchDataAuth(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
         return response
     }
 
-    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered]
+    async function googleSearchDetailAuth(id) {
+        const response = await fetchDataAuth(`${api}/places/google-details/${id}`)
+        return response
+    }
+
+
+
+    return [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered, googleSearchDetailAuth]
 }
