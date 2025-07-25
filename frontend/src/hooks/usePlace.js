@@ -9,71 +9,93 @@ export default function usePlace() {
     const { token, isAuthenticated, logout, authenticatedFetch } = useAuthContext()
     const api = import.meta.env.VITE_API_URL
 
-    const fetchDataAuth = async (url) => {
-
-        const response = await authenticatedFetch(url)
+    const fetchDataAuth = async (url, options = {}) => {
+        const response = await authenticatedFetch(url, options);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const json = await response.json()
-        return json
-    }
+        return await response.json();
+    };
 
     //esempio di chiamata API GET
     async function getPlaces(value) {
-        const response = await fetchData(`${api}/places/search?name=${value}`)
-        return response
+        try {
+            const response = await fetchData(`${api}/places/search?name=${value}`)
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     async function getPlacesFiltered({ category, services, price, rating }) {
-        const response = await fetchData(`${api}/places/filter?category=${category}&tags=${services}&priceRange=${price}&rating=${rating}&page=0&size=10`)
-        console.log('aaaaaaa', response.content);
-
-        return response.content
+        try {
+            const response = await fetchData(`${api}/places/filter?category=${category}&tags=${services}&priceRange=${price}&rating=${rating}&page=0&size=10`)
+            return response.content
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     async function getPlacesByProvince(province) {
-        const response = await fetchData(`${api}/places/province/${province}`) //ud
-        return response
+        try {
+            const response = await fetchData(`${api}/places/province/${province}`) //ud
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     async function getPlacesByRegion(region) {
-        const response = await fetchData(`${api}/places/region/${region}`)
-        return response
+        try {
+            const response = await fetchData(`${api}/places/region/${region}`)
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     async function getPlacesDetails(placeId) {
-        const response = await fetchData(`${api}/places/details/${placeId}`)
-        // console.log('response', response);
-        return response
+        try {
+            const response = await fetchData(`${api}/places/details/${placeId}`)
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     //esempio di chiamata API POST dove quando la richiami devi passare l'oggetto data con già tutti i campi compilati
     async function addPlace(id) {
-        const response = await fetchDataAuth(`${api}/places/save/${id}`, {
-            //dichiaro il metodo della richiesta
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(id),
-        });
-        //controllo se la risposta è ok
-        if (!response.ok) {
-            throw new Error("Network response was not ok", response.messageS);
-        }
+        try {
+            const response = await fetchDataAuth(`${api}/places/save/${id}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-        return response.status
+            return response;
+        } catch (error) {
+            console.error("Errore nell'aggiunta del place:", error);
+            throw error;
+        }
     }
 
     async function googleSearchAuth({ query, latitude, longitude, radius, maxResults }) {
-        const response = await fetchDataAuth(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
-        return response
+        try {
+            const response = await fetchDataAuth(`${api}/places/google-search-text?query=${query}&latitude=${latitude}&longitude=${longitude}&radius=${radius}&maxResults=${maxResults}`)
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
     async function googleSearchDetailAuth(id) {
-        const response = await fetchDataAuth(`${api}/places/google-details/${id}`)
-        return response
+        try {
+            const response = await fetchDataAuth(`${api}/places/google-details/${id}`)
+            return response
+        } catch (error) {
+            throw new Error(error)
+        }
     }
 
 

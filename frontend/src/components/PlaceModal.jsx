@@ -2,22 +2,20 @@
 import React, { useEffect, useState } from 'react';
 import styles from './PlaceModal.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useTranslation } from 'react-i18next';
 
-// Sposta la costante API_URL fuori dal componente se non cambia mai
-const API_URL = import.meta.env.VITE_API_URL;
+export default function PlaceModal({ isOpen, onClose, id, addFunction, addText, resultMessage }) {
 
-export default function PlaceModal({ isOpen, onClose, id }) {
-  // TUTTI I HOOKS DEVONO ESSERE DICHIARATI QUI AL TOP LEVEL
-  // PRIMA DI QUALSIASI RITORNO CONDIZIONALE.
+  const { t } = useTranslation();
   const { renderStars, googleSearchDetailAuth } = useGlobalContext();
   const [placeDetail, setPlaceDetail] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // La funzione fetchPlaceDetail può rimanere qui o essere spostata dentro useEffect se preferisci
+
   const fetchPlaceDetail = async () => {
-    setIsLoading(true); // Inizia il caricamento
-    setError(null);    // Resetta eventuali errori precedenti
+    setIsLoading(true);
+    setError(null);
     try {
       const result = await googleSearchDetailAuth(id);
       setPlaceDetail(result);
@@ -25,33 +23,29 @@ export default function PlaceModal({ isOpen, onClose, id }) {
       console.error("Errore nel recupero dettagli del luogo:", err);
       setError("Impossibile caricare i dettagli del luogo. Riprova più tardi.");
     } finally {
-      setIsLoading(false); // Termina il caricamento
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    // Solo se la modale è aperta e l'ID è valido, esegui il fetching
+
     if (isOpen && id) {
       fetchPlaceDetail();
     } else {
-      // Quando la modale è chiusa o l'id non è valido, resetta lo stato
+
       setPlaceDetail(null);
       setIsLoading(false);
       setError(null);
     }
-  }, [isOpen, id, googleSearchDetailAuth]); // Aggiungi isOpen e googleSearchDetailAuth come dipendenze
+  }, [isOpen, id, googleSearchDetailAuth]);
 
-  // Ora, dopo che tutti i Hooks sono stati chiamati, puoi avere i tuoi return condizionali
+  if (!isOpen) return null;
 
-  if (!isOpen) return null; // Solo se la modale non deve essere visibile
-
-  // Gestione degli stati di caricamento ed errore
   if (isLoading) {
     return (
       <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-          <p>Caricamento dettagli...</p>
-          {/* Potresti aggiungere qui uno spinner */}
+          <p>{t('loading')}</p>
         </div>
       </div>
     );
@@ -70,14 +64,11 @@ export default function PlaceModal({ isOpen, onClose, id }) {
     );
   }
 
-  // Se placeDetail è null qui, significa che non c'è errore, non è in caricamento,
-  // ma forse l'ID era valido ma la ricerca non ha restituito nulla.
-  // In questo caso, puoi decidere se mostrare un messaggio "non trovato" o semplicemente null.
   if (!placeDetail) {
     return (
       <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-          <p>Dettagli del luogo non trovati.</p>
+          <p>{t('noRestaurantsFound')}</p>
           <button className={styles.closeButton} onClick={onClose}>
             &times;
           </button>
@@ -119,18 +110,18 @@ export default function PlaceModal({ isOpen, onClose, id }) {
           </div> */}
 
           <div className={styles.detailsSection}>
-            <h3>Indirizzo:</h3>
+            <h3>{t('address')}:</h3>
             <p>{placeDetail.formattedAddress}</p>
             {placeDetail.internationalPhoneNumber && (
               <>
-                <h3>Numero: </h3>
+                <h3>{t('phoneNumber')}: </h3>
                 <p>{placeDetail.internationalPhoneNumber}</p>
               </>
             )}
 
             {placeDetail.types && placeDetail.types.length > 0 && (
               <>
-                <h3>Tags:</h3>
+                <h3>{t('tags')}:</h3>
                 <div className={styles.tagsContainer}>
                   {placeDetail.types.map((tag, index) => (
                     <span key={tag + index} className={styles.tag}>{tag}</span>
@@ -141,26 +132,34 @@ export default function PlaceModal({ isOpen, onClose, id }) {
 
             {placeDetail.websiteUri && (
               <>
-                <h3>Sito Web:</h3>
+                <h3>{t('webSite')}:</h3>
                 <p>
                   <a href={placeDetail.websiteUri} target="_blank" rel="noopener noreferrer">
-                    Link al sito
+                    {t('linkWebSite')}
                   </a>
                 </p>
               </>
             )}
             {placeDetail.googleMapsUri && (
               <>
-                <h3>Mappa: </h3>
+                <h3>{t('mapHeading')}: </h3>
                 <p>
                   <a href={placeDetail.googleMapsUri} target="_blank" rel="noopener noreferrer">
-                    Visita su Google Maps
+                    {t('vistGMaps')}
                   </a>
                 </p>
               </>
             )}
           </div>
         </div>
+        {resultMessage && (
+          <div className={`message ${resultMessage.type === 'success' ? 'success' : 'error'}`}>
+            {resultMessage.text}
+          </div>
+        )}
+        <button onClick={() => addFunction(placeDetail.id)} className={styles.detailsLink}>
+          {addText} &rarr;
+        </button>
       </div>
     </div>
   );

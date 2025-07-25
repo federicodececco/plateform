@@ -219,11 +219,6 @@ export default function SettingPlacesPage() {
                             </div>
                         ) : searchResults.length > 0 ? (
                             <div className={styles.searchResultsList}>
-                                {message && (
-                                    <div className={`message ${message.type === 'success' ? 'success' : 'error'}`}>
-                                        {message.text}
-                                    </div>
-                                )}
                                 {searchResults.map((place) => (
                                     <div
                                         key={place.id}
@@ -272,11 +267,11 @@ export default function SettingPlacesPage() {
                                                     </div>
                                                 )}
                                             </div>
-                                            <button onClick={() => handleAddPlace(place.id)} className={styles.detailsLink}>
+                                            {/* <button onClick={() => handleAddPlace(place.id)} className={styles.detailsLink}>
                                                 {t('add')} &rarr;
-                                            </button>
+                                            </button> */}
                                             <button onClick={() => setIsModalOpen(prev => ({ status: !prev.status, id: place.id }))} className={styles.detailsLink}>
-                                                edit &rarr;
+                                                {t('edit')} &rarr;
                                             </button>
                                         </div>
 
@@ -286,8 +281,9 @@ export default function SettingPlacesPage() {
                                     isOpen={isModalOpen.status}
                                     onClose={() => setIsModalOpen(prev => ({ ...prev, status: false }))}
                                     id={isModalOpen.id}
-                                    addFunction={() => handleAddPlace()}
+                                    addFunction={handleAddPlace}
                                     addText={t('add')}
+                                    resultMessage={message}
                                 />
                             </div>
                         ) : (

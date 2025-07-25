@@ -114,5 +114,12 @@
     "price": "Prezzo:",
     "add": "Aggiungi",
     "goBack": "Torna indietro",
-    "star": "Stella"
+    "star": "Stella",
+    "edit": "Modifica",
+    "address": "Indirizzo",
+    "phoneNumber": "Numero",
+    "tags": "Tags",
+    "webSite": "Sito Web",
+    "linkWebSite": "Link al sito",
+    "vistGMaps": "Visita su Google Maps"
 }

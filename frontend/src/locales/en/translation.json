@@ -114,5 +114,12 @@
     "price": "Price:",
     "add": "Add",
     "goBack": "Go Back",
-    "star": "Star"
+    "star": "Star",
+    "edit": "Edit",
+    "address": "Address",
+    "phoneNumber": "Phone Number",
+    "tags": "Tags",
+    "webSite": "Web Site",
+    "linkWebSite": "Link to website",
+    "vistGMaps": "View on Google Maps"
 }
