@@ -10,7 +10,7 @@ import { FaSearch, FaSpinner, FaStar } from 'react-icons/fa';
 
 export default function SearchPage() {
 
-    const searchParams = new URLSearchParams(location.search);
+    const initialSearchParams = useMemo(() => new URLSearchParams(location.search), []);
 
     const { i18n, t } = useTranslation();
     const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function SearchPage() {
     const [regionData, setRegionData] = useState([])
     const [categoryData, setCategoryData] = useState([]);
     const [servicesData, setServicesData] = useState([]);
-    const [searchLocation, setSearchLocation] = useState(searchParams.get('city') || '');
+    const [searchLocation, setSearchLocation] = useState(initialSearchParams.get('name') || '');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
     const { region } = useParams()
@@ -32,39 +32,39 @@ export default function SearchPage() {
     const isEn = i18n.language === 'en'
 
     const [filter, setFilter] = useState({
-        category: searchParams.get('category') || '',
-        price: searchParams.get('price') || '',
-        rating: searchParams.get('rating') || '',
-        services: searchParams.get('services') || ''
-    })
+        category: initialSearchParams.get('category') || '',
+        price: initialSearchParams.get('price') || '',
+        rating: initialSearchParams.get('rating') || '',
+        services: initialSearchParams.get('services') || ''
+    });
 
     // questa funzione di debounce serve per evitare di fare troppe chiamate API quando l'utente digita nella barra di ricerca
     // il primo parametro: handleSearchRestaurant dice la funzione che chiama, 300 sono i millisecondi di attesa prima di eseguire la funzione
     const handleDebouncedSearchRestaurant = useCallback(debounce(handleSearchRestaurant, 300), [])
 
-    async function handleSearchRestaurant(location) {
+    async function handleSearchRestaurant(data) {
         try {
-            const response = await getPlaces(location)
-            setPlacesData(response.content)
+            const response = await getPlacesFiltered(data)
+            setPlacesData(response)
         } catch (error) {
             console.error(error);
         }
     }
 
     const handleInputChange = (e) => {
-        setFilter({ ...filter, [e.target.name]: e.target.value })
-    }
+        setFilter(prevFilter => ({ ...prevFilter, [e.target.name]: e.target.value === '' ? '' : e.target.value }));
+    };
 
-    const handleSort = e => {
-        const currOrder = e.target.name
+    // const handleSort = e => {
+    //     const currOrder = e.target.name
 
-        if (sortBy === currOrder) {
-            setSortOrder(prev => prev * -1);
-        } else {
-            setSortBy(currOrder);
-            setSortOrder(1);
-        }
-    }
+    //     if (sortBy === currOrder) {
+    //         setSortOrder(prev => prev * -1);
+    //     } else {
+    //         setSortBy(currOrder);
+    //         setSortOrder(1);
+    //     }
+    // }
 
     useEffect(() => {
         if (region !== undefined) {
@@ -91,9 +91,6 @@ export default function SearchPage() {
         if (filter.category) {
             filtersArr.push(`category=${filter.category}`)
         }
-        if (filter.cuisine) {
-            filtersArr.push(`cuisine=${filter.cuisine}`)
-        }
         if (filter.price) {
             filtersArr.push(`price=${filter.price}`)
         }
@@ -103,8 +100,7 @@ export default function SearchPage() {
         if (filter.services) {
             filtersArr.push(`services=${filter.services}`)
         }
-        // fine popolazione array dei filtri
-        // controllo se ci sono dei filtri ne caso concateno il punto interrogativo all'url per permettere di metter i parametri
+
         if (searchLocation !== '' || filter.category !== '' || filter.cuisine !== '' || filter.price !== '' || filter.rating !== '' || filter.services !== '') {
             url += '?'
         }
@@ -115,26 +111,10 @@ export default function SearchPage() {
         }
 
         navigate(url);
+        handleDebouncedSearchRestaurant({ searchLocation, filter })
 
 
     }, [searchLocation, filter])
-
-    useEffect(() => {
-        if (searchLocation.trim() !== '') {
-            handleDebouncedSearchRestaurant(searchLocation)
-        }
-    }, [searchLocation])
-
-    // useEffect(() => {
-    //     (async () => {
-    //         try {
-    //             const filteredData = await getPlacesFiltered(filter)
-    //             setPlacesData(filteredData)
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     })();
-    // }, [filter])
 
     useEffect(() => {
         (async () => {
@@ -151,9 +131,9 @@ export default function SearchPage() {
 
     return (
         <>
+            {/* Breadcrumbs */}
             <BreadcrumbsCard region={region} />
             <div onClick={closeShowLanguageOptions} className={styles["search-page"]}>
-                {/* Breadcrumbs */}
 
                 {/* Hero Section / Header */}
                 <div className={styles["hero-section"]}>
@@ -171,15 +151,20 @@ export default function SearchPage() {
                                 className={styles["location-input"]} />
                             <span className={styles["location-icon"]}>📍</span>
                         </div>
-                        <button onClick={() => handleDebouncedSearchRestaurant(searchLocation)} className={styles["search-button"]}>{t('searchRestaurants')}</button>
+                        <button className={styles["search-button"]}>{t('searchRestaurants')}</button>
                     </div>
                 </div>
 
                 <div className={styles["filters-sort-section"]}>
                     <div className={styles["filters"]}>
                         <span>{t('filtersLabel')}</span>
-                        <select aria-label={t('categoryOption')} name='category' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                            <option className={styles.optionPlaceHolder}>{t('categoryOption')}</option>
+                        <select
+                            aria-label={t('categoryOption')}
+                            name='category'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.category}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('categoryOption')}</option>
                             {categoryData.length > 0 && categoryData.map(c => {
                                 if (c.isVisible === null || c.isVisible === false) return
                                 return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>
@@ -189,22 +174,37 @@ export default function SearchPage() {
                             <option className={styles.optionPlaceHolder}>{t('cuisineOption')}</option>
                             <option value='pizza'>pizza</option>
                         </select> */}
-                        <select aria-label={t('priceRangeOptions')} name='price' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                            <option className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
+                        <select
+                            aria-label={t('priceRangeOptions')}
+                            name='price'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.price}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
                             {priceMap.map((price) =>
                                 <option key={price} value={price}>{price}</option>
                             )}
                         </select>
-                        <select aria-label={t('ratingOption')} name='rating' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                            <option className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
+                        <select
+                            aria-label={t('ratingOption')}
+                            name='rating'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.rating}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
                             <option value="1">1 {t('star')}</option>
                             <option value="2">2 {t('star')}</option>
                             <option value="3">3 {t('star')}</option>
                             <option value="4">4 {t('star')}</option>
                             <option value="5">5 {t('star')}</option>
                         </select>
-                        <select aria-label={t('services')} name='services' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                            <option className={styles.optionPlaceHolder}>{t('services')}</option>
+                        <select
+                            aria-label={t('services')}
+                            name='services'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.services}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('services')}</option>
                             {servicesData.length > 0 && servicesData.map(c => {
                                 if (c.isVisible === null || c.isVisible === false) return
                                 return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>

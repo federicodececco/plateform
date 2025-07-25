@@ -5,7 +5,7 @@ import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
-import {regionsData} from "../utilities";
+import { regionsData } from "../utilities";
 
 const formInitialValue = { location: '', date: '', people: '' }
 
@@ -22,7 +22,7 @@ export default function HomePage() {
     }
 
     const handleDebouncedSearch = useCallback(
-        debounce(() => { navigate(`/Search?city=${formData.location}`) }, 300)
+        debounce(() => { navigate(`/search?name=${formData.location}`) }, 300)
         , [formData.location])
 
     const handleEnterUp = e => {

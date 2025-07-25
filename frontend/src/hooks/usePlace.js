@@ -27,12 +27,43 @@ export default function usePlace() {
         }
     }
 
-    async function getPlacesFiltered({ category, services, price, rating }) {
+    async function getPlacesFiltered({ searchLocation, filter }) {
+        const filtersArr = [];
+        let url = `${api}/places/filter`;
+
+        if (searchLocation && searchLocation !== '') {
+            filtersArr.push(`query=${searchLocation}`);
+        }
+        if (filter.category) {
+            filtersArr.push(`category=${filter.category}`);
+        }
+        if (filter.price) {
+            filtersArr.push(`priceRange=${filter.price}`);
+        }
+        if (filter.rating) {
+            filtersArr.push(`rating=${filter.rating}`);
+        }
+        if (filter.services) {
+            filtersArr.push(`tags=${filter.services}`);
+        }
+        filtersArr.push(`page=0`);
+        filtersArr.push(`size=10`);
+
+        const queryString = filtersArr.join('&');
+
+        if (queryString) {
+            url += `?${queryString}`;
+        }
+
+        console.log("Final API URL:", url);
+
         try {
-            const response = await fetchData(`${api}/places/filter?category=${category}&tags=${services}&priceRange=${price}&rating=${rating}&page=0&size=10`)
-            return response.content
+            const response = await fetchData(url);
+            console.log('response filtered', response.content);
+            return response.content;
         } catch (error) {
-            throw new Error(error)
+            console.error("Error fetching filtered places:", error);
+            throw new Error(error);
         }
     }
 

@@ -17,7 +17,7 @@ export default function AppNavbar() {
     const { logout, isAuthenticated } = useAuthContext();
     // passare la chiamata api dentro la callback del debounce
     const handleDebouncedSearch = useCallback(
-        debounce(() => { navigate(`/Search?city=${navSearchBar}`) }, 300)
+        debounce(() => { navigate(`/search?name=${navSearchBar}`) }, 300)
         , [navSearchBar])
 
     const handleEnterUp = e => {
@@ -74,7 +74,7 @@ export default function AppNavbar() {
                     <div className={`${styles.overlay} ${styles.active}`} onClick={() => setHamburgerMenuOpen(false)}></div>
                 )}
                 <ul className={`${styles["hamburgerLinks"]} ${hamburgerMenuOpen ? styles.open : ''}`}>
-                   {isAuthenticated() && <li><a href="/addplaces">adplaces</a></li>}
+                    {isAuthenticated() && <li><a href="/addplaces">adplaces</a></li>}
                     <li><a href="/login">Login</a></li>
                     <li><a href="/search">{t('search')}</a></li>
                     <li>
