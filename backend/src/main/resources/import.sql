@@ -163,7 +163,7 @@ INSERT INTO roles (name) VALUES ('ADMIN');
 INSERT INTO roles (name) VALUES ('USER');
 
 -- Inserisci l'utente admin
-INSERT INTO users (username, password) VALUES ('admin', '{noop}admin123');
+INSERT INTO users (username, password) VALUES ('admin', 'admin123');
 
 -- Collega l'utente al ruolo (usando le query per essere sicuri degli ID)
 INSERT INTO role_user (user_id, role_id) SELECT u.id, r.id FROM users u, roles r WHERE u.username = 'admin' AND r.name = 'ADMIN';

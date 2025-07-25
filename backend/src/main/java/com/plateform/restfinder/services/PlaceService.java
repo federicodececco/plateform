@@ -134,17 +134,22 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-
-    public Page<Place> filter(String category, List<String> tags, String priceRange, Integer rating,
-            int page, int size) {
+    public Page<Place> filter(String query, String category, List<String> tags, String priceRange,
+            Integer rating, int page, int size) {
 
         Specification<Place> spec = PlaceSpecifications.buildFilterSpecification(
-                category, tags, priceRange, rating);
+                query, category, tags, priceRange, rating);
 
         Pageable pageable = PageRequest.of(page, size,
                 Sort.by("rating").descending().and(Sort.by("name")));
 
         return placeRepository.findAll(spec, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Place> filter(String category, List<String> tags, String priceRange, Integer rating,
+            int page, int size) {
+        return filter(null, category, tags, priceRange, rating, page, size);
     }
 
     public Page<Place> search(String query, int page) {

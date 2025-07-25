@@ -13,16 +13,20 @@ import com.plateform.restfinder.model.Category;
 
 public class PlaceSpecifications {
 
+    /*
+     * ritorna una Sprecificatin per creare query dinamiche con jparepository
+     */
     public static Specification<Place> hasCategory(String category) {
         return (root, query, criteriaBuilder) -> {
             if (category == null || category.trim().isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
 
+            // evita duplicazione dei risultai
             query.distinct(true);
-
+            // inner join di sql tra category e place
             Join<Place, Category> categoryJoin = root.join("categories", JoinType.INNER);
-
+            // where di sql
             return criteriaBuilder.equal(
                     criteriaBuilder.lower(categoryJoin.get("googleName")),
                     category.toLowerCase());
@@ -71,10 +75,37 @@ public class PlaceSpecifications {
                 criteriaBuilder.isNull(root.get("blacklist")));
     }
 
+    public static Specification<Place> hasTextSearch(String query) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (query == null || query.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            // contentente in sql " %query% "
+            String searchTerm = "%" + query.toLowerCase() + "%";
+
+            // like di sql
+            var namePredicate = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("name")), searchTerm);
+
+            var cityPredicate = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("city")), searchTerm);
+
+            var addressPredicate = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("address")), searchTerm);
+
+            var categoryPredicate = criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get("mainCategory")), searchTerm);
+            // ritorna tutti i luoghi che rispettino alemno un like
+            return criteriaBuilder.or(namePredicate, cityPredicate, addressPredicate, categoryPredicate);
+        };
+    }
+
+    // builder della query
     public static Specification<Place> buildFilterSpecification(
-            String category, List<String> tags, String priceRange, Integer rating) {
+            String query, String category, List<String> tags, String priceRange, Integer rating) {
 
         return Specification.where(notBlacklisted())
+                .and(hasTextSearch(query))
                 .and(hasCategory(category))
                 .and(hasTags(tags))
                 .and(hasPriceRange(priceRange))
