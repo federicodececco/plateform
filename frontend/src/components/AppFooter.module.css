@@ -1,23 +1,16 @@
-/* footer.module.css */
-
 .footer {
     background-color: #1a1a1a;
-    /* Colore di sfondo scuro */
     color: #f0f0f0;
-    /* Colore del testo chiaro */
     padding: 40px 20px;
     font-family: Arial, sans-serif;
-    /* O il tuo font preferito */
 }
 
 .footer-content {
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
-    /* Per gestire i layout su schermi più piccoli */
     max-width: 1200px;
     margin: 0 auto 30px;
-    /* Centra il contenuto e aggiunge spazio sotto */
     border-bottom: 1px solid #333;
     /* Linea divisoria */
     padding-bottom: 30px;
@@ -27,6 +20,7 @@
     flex: 1;
     /* Permette alle colonne di crescere */
     min-width: 180px;
+    max-width: 300px;
     /* Larghezza minima per le colonne */
     margin: 15px;
 }
@@ -117,7 +111,6 @@
     color: #fff;
 }
 
-/* Media Queries per schermi più piccoli */
 @media (max-width: 768px) {
     .footer-content {
         flex-direction: column;

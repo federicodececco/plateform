@@ -50,7 +50,7 @@ const RestaurantCard = ({ restaurant }) => {
         <div className={styles["restaurant-card"]}>
             {restaurant.photos.length > 1 ?
                 <div className={styles["image-container"]}>
-                    <img src={`${api}/photo/filename/${restaurant.photos[0].fileName}`} />
+                    <img src={`${api}/photo/filename/${restaurant.photos[0].fileName}`} alt={`photo ${name}`} />
                 </div>
                 : <div className={styles["restaurant-image-placeholder"]}>
                     <span className={styles["image-text"]}>Ristorante</span>

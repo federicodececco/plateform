@@ -41,7 +41,7 @@ export default function AppNavbar() {
                 <div className={styles["navbar-logo"]}>
                     <a href="/">RestFinder.it</a>
                 </div>
-                <button onClick={() => logout()}>logout</button>
+                {/* <button onClick={() => logout()}>logout</button> */}
                 <ul className={styles["navbar-links"]}>
                     {isAuthenticated() && <li><a href="/addplaces">{t('add')} {t('place')}</a></li>}
                     <li><a href="/login">Login</a></li>

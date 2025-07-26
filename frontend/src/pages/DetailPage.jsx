@@ -206,7 +206,7 @@ export default function DetailPage() {
 
                         <div className={styles.contactInfo}>
                             <span>{t('phone')}</span>
-                            <span className={styles.contactValue}>{placeData.phoneNumber}</span>
+                            <a href={`tel:${placeData.phoneNumber}`} className={styles.contactValue}>{placeData.phoneNumber}</a>
                         </div>
 
                         <div className={styles.contactInfo}>
@@ -284,12 +284,8 @@ export default function DetailPage() {
                                 <h2 className={styles.sectionHeading}>{t('contacts')}</h2>
                                 <div className={styles.contactItem}>
                                     <FaPhoneAlt className={styles.contactIcon} />
-                                    <a href={placeData.phoneNumber} className={styles.contactLink}>{placeData.phoneNumber}</a>
+                                    <a href={`tel:${placeData.phoneNumber}`} className={styles.contactLink}>{placeData.phoneNumber}</a>
                                 </div>
-                                {/* <div className={styles.contactItem}>
-                                <FaEnvelope className={styles.contactIcon} />
-                                <a href="mailto:info@osteriadelporto.it" className={styles.contactLink}>{t('emailContact')}</a>
-                            </div> */}
                                 <div className={styles.contactItem}>
                                     <FaGlobe className={styles.contactIcon} />
                                     <a href={placeData.webSiteURL} target="_blank" rel="noopener noreferrer" className={styles.contactLink}>Vai al Sito</a>
@@ -297,7 +293,6 @@ export default function DetailPage() {
                                 <div className={styles.contactItem}>
                                     <FaFacebookF className={styles.contactIcon} />
                                     <FaInstagram className={styles.contactIcon} />
-                                    {/* <FaTripadvisor className={styles.contactIcon} /> */}
                                 </div>
                             </div>
                         </div>
