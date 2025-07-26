@@ -55,11 +55,8 @@ export default function usePlace() {
             url += `?${queryString}`;
         }
 
-        console.log("Final API URL:", url);
-
         try {
             const response = await fetchData(url);
-            console.log('response filtered', response.content);
             return response.content;
         } catch (error) {
             console.error("Error fetching filtered places:", error);

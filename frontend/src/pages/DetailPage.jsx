@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useGlobalContext } from '../context/GlobalContext';
 import styles from './DetailPage.module.css';
 import AppGoogleMap from '../components/AppGoogleMap';
@@ -38,11 +38,10 @@ const reviewsData = [
 export default function DetailPage() {
 
     const api = import.meta.env.VITE_API_URL
-    const { t } = useTranslation();
+    const { i18n, t } = useTranslation();
     const { renderStars, renderPrice, getPlacesDetails, getPlacesPic, closeShowLanguageOptions } = useGlobalContext()
     const [formData, setFormData] = useState({ date: '', time: '19:30', people: '2 persone' })
     const [placeData, setPlaceData] = useState(null)
-    const [placePhotos, setPlacePhotos] = useState(null)
     const { id } = useParams()
 
     const getPlace = async () => {
@@ -92,7 +91,7 @@ export default function DetailPage() {
                                 placeData.photos.slice(0, 5).map((img, index) =>
                                     <img
                                         key={index}
-                                        className={`${styles.thumbnailPhoto} ${index === 0 ? styles.mainPhoto : ''}`}
+                                        className={index === 0 ? styles.mainPhoto : styles.thumbnailPhoto}
                                         src={`${api}/photo/filename/${img.fileName}`}
                                         alt={`Restaurant photo ${index + 1}`} // Buon pratica: aggiungi un alt text
                                     />)
@@ -176,11 +175,28 @@ export default function DetailPage() {
                                 </select>
                             </div>
 
-                            <button type="submit" className={styles.submitButton}
-                            // disabled={!platformID}
+                            {/* <button type='submit' className={styles.submitButton}
+                                disabled={!placeData.plateformURL}
                             >
                                 {t('reserveNow')}
-                            </button>
+                            </button> */}
+                            {placeData.plateformURL ? (
+                                <a
+                                    href={placeData.plateformURL}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.submitButton}
+                                >
+                                    {t('reserveNow')}
+                                </a>
+                            ) : (
+                                <button
+                                    className={styles.submitButton}
+                                    disabled
+                                >
+                                    {t('notReserved')}
+                                </button>
+                            )}
                         </form>
 
                         <div className={styles.priceInfo}>
@@ -205,7 +221,7 @@ export default function DetailPage() {
                     {/* Nuova Sezione: Descrizione, Orari e Servizi */}
                     <div className={styles.detailsSection}>
                         <div className={styles.descriptionSection}>
-                            <div className={styles.descriptionSectionHeading}>
+                            {/* <div className={styles.descriptionSectionHeading}>
                                 <h2 className={styles.sectionHeading}>{t('descriptionHeading')}</h2>
                                 <p className={styles.descriptionParagraph}>
                                     {t('descriptionParagraph1')}
@@ -213,9 +229,9 @@ export default function DetailPage() {
                                 <p className={styles.descriptionParagraph}>
                                     {t('descriptionParagraph2')}
                                 </p>
-                            </div>
+                            </div> */}
 
-                            <div className={styles.openingHoursSection}>
+                            {/* <div className={styles.openingHoursSection}>
                                 <h2 className={styles.sectionHeading}>{t('openingHoursHeading')}</h2>
                                 <ul className={styles.openingHoursList}>
                                     <li className={styles.openingHourItem}>
@@ -231,17 +247,26 @@ export default function DetailPage() {
                                         <span className={styles.openingTime}>12:30 - 15:00, 19:00 - 23:30</span>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> */}
 
                             <div className={styles.servicesSection}>
                                 <h2 className={styles.sectionHeading}>{t('services')}</h2>
                                 <div className={styles.servicesGrid}>
-                                    <div className={styles.serviceItem}><FaWifi className={styles.serviceIcon} /> {t('freeWifi')}</div>
-                                    <div className={styles.serviceItem}><FaParking className={styles.serviceIcon} /> {t('parking')}</div>
-                                    <div className={styles.serviceItem}><FaWheelchair className={styles.serviceIcon} /> {t('accessible')}</div>
-                                    <div className={styles.serviceItem}><FaCreditCard className={styles.serviceIcon} /> {t('creditCards')}</div>
-                                    <div className={styles.serviceItem}><FaWineGlassAlt className={styles.serviceIcon} /> {t('terraceService')}</div>
-                                    <div className={styles.serviceItem}><FaWineGlassAlt className={styles.serviceIcon} /> {t('wineList')}</div>
+                                    {placeData.categories.slice(0, 20).map((category, index) => (
+                                        <span key={index} className={`${styles.category} ${!category.isVisible ? styles.hidden : ''}`}>
+                                            {i18n.language === 'it' ? `${category.itName}` : `${category.enName}`}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className={styles.servicesSection}>
+                                <h2 className={styles.sectionHeading}>{t('services')}</h2>
+                                <div className={styles.servicesGrid}>
+                                    {placeData.tags.slice(0, 20).map((tag, index) => (
+                                        <span key={index} className={`${styles.tag} ${!tag.isVisible ? styles.hidden : ''}`}>
+                                            {i18n.language === 'it' ? `${tag.itName}` : `${tag.enName}`}
+                                        </span>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -272,14 +297,14 @@ export default function DetailPage() {
                                 <div className={styles.contactItem}>
                                     <FaFacebookF className={styles.contactIcon} />
                                     <FaInstagram className={styles.contactIcon} />
-                                    <FaTripadvisor className={styles.contactIcon} />
+                                    {/* <FaTripadvisor className={styles.contactIcon} /> */}
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     {/* Nuova Sezione: Recensioni */}
-                    <div className={styles.reviewsSection}>
+                    {/* <div className={styles.reviewsSection}>
                         <div className={styles.reviewsHeader}>
                             <h2 className={styles.reviewsCountText}>{t('reviewCountText')}</h2>
                             <button className={styles.writeReviewButton}>{t('writeReviewButton')}</button>
@@ -307,7 +332,7 @@ export default function DetailPage() {
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </section>
             </div>
         </>

@@ -8,7 +8,7 @@
     flex-direction: column;
     gap: 30px;
     /* Spazio tra la sezione sinistra e destra */
-    padding: 40px;
+    padding: 0 40px;
     max-width: 1200px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
@@ -88,6 +88,15 @@
 }
 
 .tag {
+    background-color: #e6f7ed;
+    color: var(--tag-color);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.category {
     background-color: #e6f7ed;
     color: var(--tag-color);
     padding: 5px 10px;
@@ -222,6 +231,7 @@
 }
 
 .submitButton {
+    /* Stili base per il bottone */
     width: 100%;
     padding: 12px;
     background-color: var(--primary-color);
@@ -233,10 +243,19 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
 }
 
 .submitButton:hover {
-    background-color: var(--primary-color-hover)
+    background-color: var(--primary-color-hover);
+}
+
+.submitButton:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
 .priceInfo {
@@ -335,26 +354,20 @@
 }
 
 .servicesGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* Due colonne */
-    gap: 15px;
-}
-
-.serviceItem {
     display: flex;
-    align-items: center;
-    font-size: 0.95em;
-    color: #555;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
 }
 
-.serviceIcon {
+.tag {
+    background-color: #e6f7ed;
     color: var(--tag-color);
-    /* Colore verde per le icone dei servizi */
-    margin-right: 8px;
-    font-size: 1.1em;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
 }
-
 
 /* Sezione Mappa e Contatti (lato destro, sotto il modulo di prenotazione) */
 .mapAndContactSection {
@@ -525,9 +538,13 @@
     background-color: #fcece7;
 }
 
+.hidden {
+    display: none;
+}
+
 @media screen and (max-width: 950px) {
     .pageContainer {
-        padding: 20px 0;
+        padding: 0;
     }
 }
 

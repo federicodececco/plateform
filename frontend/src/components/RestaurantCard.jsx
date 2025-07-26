@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 const RestaurantCard = ({ restaurant }) => {
     const api = import.meta.env.VITE_API_URL
     const location = useLocation()
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
 
     const {
         address,
@@ -81,7 +81,7 @@ const RestaurantCard = ({ restaurant }) => {
                         to={`/detail/${id}`}
                         state={{ from: location.pathname }} // Passa il percorso attuale
                         className={`${styles["detail-button"]} ${styles[`detail-button-${(plateformID !== '') ? 'prenota' : 'visualizza'}`]}`}>
-                        {(plateformID !== '') ? 'Prenota' : 'Visualizza'}
+                        {t('detail')}
                     </Link>
                 </div>
             </div>

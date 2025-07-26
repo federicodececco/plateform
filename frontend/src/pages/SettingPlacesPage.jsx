@@ -110,7 +110,7 @@ export default function SettingPlacesPage() {
                                         value={formData.query}
                                         onChange={handleInputChange}
                                         onKeyUp={handleEnterUp}
-                                        placeholder={t('exampleSearchPlaceholder')}
+                                        placeholder={t('searchByNamePlaceholder')}
                                         className={styles.formInput}
                                     />
                                 </div>

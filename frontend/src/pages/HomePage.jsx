@@ -48,12 +48,12 @@ export default function HomePage() {
                 <div className={styles["search-field"]}>
                     <label htmlFor="location">{t('locationLabel')}</label>
                     <div className={styles["input-with-icon"]}>
-                        <input name='location' onKeyUp={handleEnterUp} value={formData.location} onChange={handleFormData} type="text" id="location" placeholder={t('locationPlaceholder')} />
+                        <input name='location' onKeyUp={handleEnterUp} value={formData.location} onChange={handleFormData} type="text" id="location" placeholder={t('searchByLocationPlaceholder')} />
                         <span className={styles["icon"]}>📍</span>
                     </div>
                 </div>
 
-                <div className={styles["search-field"]}>
+                {/* <div className={styles["search-field"]}>
                     <label htmlFor="date">{t('date')}</label>
                     <div className={styles["input-with-icon"]}>
                         <input
@@ -64,7 +64,7 @@ export default function HomePage() {
                             value={formData.date}
                             onChange={handleFormData}
                         />
-                        <span className={styles["icon"]}>🗓️</span> {/* Icona a fianco */}
+                        <span className={styles["icon"]}>🗓️</span>
                     </div>
                 </div>
 
@@ -85,7 +85,7 @@ export default function HomePage() {
                         </select>
                         <span className={styles["select-arrow"]}></span>
                     </div>
-                </div>
+                </div> */}
 
                 <button onClick={handleSearchClick} className={styles["search-restaurants-button"]}>{t('searchRestaurants')}</button>
             </div>

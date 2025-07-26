@@ -22,8 +22,7 @@ export default function SearchPage() {
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
     const { region } = useParams()
-    const {
-        getPlaces, getPlacesByRegion, closeShowLanguageOptions,
+    const { getPlacesByRegion, closeShowLanguageOptions,
         getTags, getCategory, getPlacesFiltered
     } = useGlobalContext()
 
@@ -71,6 +70,8 @@ export default function SearchPage() {
             (async () => {
                 try {
                     const dataRegion = await getPlacesByRegion(region)
+                    console.log('dataRegion', dataRegion);
+
                     setRegionData(dataRegion)
                 } catch (error) {
                     console.error(error);
@@ -111,9 +112,9 @@ export default function SearchPage() {
         }
 
         navigate(url);
-        handleDebouncedSearchRestaurant({ searchLocation, filter })
-
-
+        if (searchLocation !== '' || filter.category || filter.cuisine || filter.price || filter.rating || filter.services) {
+            handleDebouncedSearchRestaurant({ searchLocation, filter })
+        }
     }, [searchLocation, filter])
 
     useEffect(() => {
