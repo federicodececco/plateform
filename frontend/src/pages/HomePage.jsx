@@ -1,63 +1,44 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import styles from './HomePage.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
 import RegionCard from '../components/RegionCard';
 import debounce from 'lodash/debounce';
 import { useTranslation } from 'react-i18next';
+import { regionsData } from "../utilities";
 
-const regionsData = [
-    {
-        id: 'campania', // Un ID unico è utile in React per le chiavi nelle liste
-        regionName: 'Campania',
-        description: 'Pizza napoletana, cucina mediterranea',
-        restaurantCount: '1,247',
-    },
-    {
-        id: 'toscana',
-        regionName: 'Toscana',
-        description: 'Cucina tradizionale, vini pregiati',
-        restaurantCount: '892',
-    },
-    {
-        id: 'sicilia',
-        regionName: 'Sicilia',
-        description: 'Pesce fresco, arancini, cannoli',
-        restaurantCount: '654',
-    },
-    {
-        id: 'liguria',
-        regionName: 'Liguria',
-        description: 'Pesto, focaccia, cucina marinara',
-        restaurantCount: '423',
-    },
-];
+const formInitialValue = { location: '', date: '', people: '' }
 
 export default function HomePage() {
+
     const { t } = useTranslation();
-    const { navSearchBar, setNavSearchBar } = useGlobalContext()
-    const [formData, setFormData] = useState({ location: '', date: '', people: '' })
+    const { closeShowLanguageOptions } = useGlobalContext()
+    const [formData, setFormData] = useState(formInitialValue)
+    const navigate = useNavigate();
 
     const handleFormData = e => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     }
 
-    const handleDebouncedSearchRestaurant = useCallback(debounce(chiamataApi, 300), [])
-
-    function chiamataApi() {
-        console.log("Funzione di stampa chiamata");
-    }
+    const handleDebouncedSearch = useCallback(
+        debounce(() => { navigate(`/search?name=${formData.location}`) }, 300)
+        , [formData.location])
 
     const handleEnterUp = e => {
         if (e.key === 'Enter') {
-            // effettuare la chiamata api qui
-            handleDebouncedSearchRestaurant();
+            handleDebouncedSearch();
+            setFormData(formInitialValue)
         }
     }
 
+    const handleSearchClick = e => {
+        handleDebouncedSearch();
+        setFormData(formInitialValue)
+    }
+
     return (
-        <div className={styles["hero-search-section-container"]}>
+        <div onClick={closeShowLanguageOptions} className={styles["hero-search-section-container"]}>
             {/* Intestazione */}
             <h1 className={styles["hero-title"]}>{t('heroTitle')}</h1>
             <p className={styles["hero-description"]}>{t('heroDescription')}</p>
@@ -67,12 +48,12 @@ export default function HomePage() {
                 <div className={styles["search-field"]}>
                     <label htmlFor="location">{t('locationLabel')}</label>
                     <div className={styles["input-with-icon"]}>
-                        <input name='location' onKeyUp={handleEnterUp} value={formData.location} onChange={handleFormData} type="text" id="location" placeholder={t('locationPlaceholder')} />
+                        <input name='location' onKeyUp={handleEnterUp} value={formData.location} onChange={handleFormData} type="text" id="location" placeholder={t('searchByLocationPlaceholder')} />
                         <span className={styles["icon"]}>📍</span>
                     </div>
                 </div>
 
-                <div className={styles["search-field"]}>
+                {/* <div className={styles["search-field"]}>
                     <label htmlFor="date">{t('date')}</label>
                     <div className={styles["input-with-icon"]}>
                         <input
@@ -83,7 +64,7 @@ export default function HomePage() {
                             value={formData.date}
                             onChange={handleFormData}
                         />
-                        <span className={styles["icon"]}>🗓️</span> {/* Icona a fianco */}
+                        <span className={styles["icon"]}>🗓️</span>
                     </div>
                 </div>
 
@@ -104,9 +85,9 @@ export default function HomePage() {
                         </select>
                         <span className={styles["select-arrow"]}></span>
                     </div>
-                </div>
+                </div> */}
 
-                <button onClick={handleDebouncedSearchRestaurant} className={styles["search-restaurants-button"]}>{t('searchRestaurants')}</button>
+                <button onClick={handleSearchClick} className={styles["search-restaurants-button"]}>{t('searchRestaurants')}</button>
             </div>
 
             <section className={styles["explore-by-region-section"]}>

@@ -1,25 +1,42 @@
 import React from 'react';
 import styles from './RestaurantCard.module.css';
 import { useGlobalContext } from '../context/GlobalContext';
+import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from 'react-router-dom';
 
 const RestaurantCard = ({ restaurant }) => {
+    const api = import.meta.env.VITE_API_URL
+    const location = useLocation()
+    const { i18n, t } = useTranslation();
+
     const {
-        name,
-        mainCategory,
-        coverImageName = 'false',
         address,
         adressNumber,
-        city,
+        blacklist,
         cap,
+        categories, //arr
+        city,
+        coverImageName,
+        googleMapsURL,
+        id,
+        isEdited,
+        latitude,
+        longitude,
+        mainCategory,
+        name,
+        nation,
+        phoneNumber,
+        photos, //arr
+        plateformID,
+        plateformURL,
+        priceRange,
         province,
-        description, //non è presente
-        tags, //non è presente
-        price,
         rating,
+        region,
         reviewNumber,
-        actionText, //non è presente
-        actionType, // e.g., 'book' or 'details' to determine button color/style
-        blacklist, // stabilisce se è visibile o meno
+        slugName,
+        tags, //arr
+        webSiteURL
     } = restaurant;
 
     const { renderStars, renderPrice } = useGlobalContext()
@@ -28,11 +45,17 @@ const RestaurantCard = ({ restaurant }) => {
         return null
     }
 
+    // return null
     return (
         <div className={styles["restaurant-card"]}>
-            {coverImageName ? <div className={styles["restaurant-image-placeholder"]}>
-                <span className={styles["image-text"]}>Ristorante</span>
-            </div> : <img src={coverImageName} />}
+            {restaurant.photos.length > 1 ?
+                <div className={styles["image-container"]}>
+                    <img src={`${api}/photo/filename/${restaurant.photos[0].fileName}`} alt={`photo ${name}`} />
+                </div>
+                : <div className={styles["restaurant-image-placeholder"]}>
+                    <span className={styles["image-text"]}>Ristorante</span>
+                </div>
+            }
             <div className={styles["restaurant-details"]}>
                 <div className={styles["restaurant-header"]}>
                     <h3 className={styles["restaurant-name"]}>{name}</h3>
@@ -45,20 +68,24 @@ const RestaurantCard = ({ restaurant }) => {
                     <span className={styles["location-icon"]}>📍</span> {address}, {adressNumber} - {cap} {city} {province}
                 </p>
                 <div className={styles["restaurant-tags"]}>
-                    {tags.map((tag, index) => (
-                        <span key={index} className={styles[`tag tag-${tag.toLowerCase().replace(/\s/g, '-')}`]}>
-                            {tag}
+                    {tags.slice(0, 20).map((tag, index) => (
+                        <span key={index} className={`${styles.tag} ${styles[`tag-${tag.googleName}`]} ${!tag.isVisible ? styles.hidden : ''}`}>
+                            {i18n.language === 'it' ? `${tag.itName}` : `${tag.enName}`}
                         </span>
                     ))}
                 </div>
                 <div className={styles["restaurant-footer"]}>
-                    <span className={styles["restaurant-price"]}>{renderPrice(price)}</span>
-                    <button className={styles[`action-button action-button-${actionType}`]}>
-                        {actionText}
-                    </button>
+                    <span className={styles["restaurant-price"]}>{renderPrice(priceRange)}</span>
+
+                    <Link
+                        to={`/detail/${id}`}
+                        state={{ from: location.pathname }} // Passa il percorso attuale
+                        className={`${styles["detail-button"]} ${styles[`detail-button-${(plateformID !== '') ? 'prenota' : 'visualizza'}`]}`}>
+                        {t('detail')}
+                    </Link>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

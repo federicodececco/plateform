@@ -1,71 +1,65 @@
 .search-page {
-    font-family: Arial, sans-serif;
-    color: #333;
-    padding: 0 20px;
-    /* Un po' di padding laterale per i contenuti */
-    background-color: #f8f8f8;
-    /* Sfondo generale della pagina, leggermente grigio */
+    font-family: 'Inter', sans-serif;
+    color: #343a40;
+    padding: 0 1.5rem;
+    background-color: #f8f9fa;
 }
 
-/* Breadcrumbs */
+/* --- Breadcrumbs --- */
 .breadcrumbs {
-    padding: 15px 0;
-    font-size: 14px;
-    color: #666;
+    padding: 1rem 0;
+    font-size: 0.9rem;
+    color: #6c757d;
 }
 
 .breadcrumbs a {
     text-decoration: none;
-    color: #666;
+    color: #6c757d;
+    transition: color 150ms ease-in-out;
 }
 
 .breadcrumbs a:hover {
+    color: var(--primary-color);
     text-decoration: underline;
 }
 
 .breadcrumbs span {
-    font-weight: bold;
-    color: #333;
-    /* Il testo dell'ultima voce è più scuro */
+    font-weight: 600;
+    color: #343a40;
 }
 
-/* Hero Section */
+/* --- Hero Section --- */
 .hero-section {
     text-align: center;
-    padding: 40px 0 60px;
-    /* Spazio sopra e sotto il contenuto principale */
-    background-color: #fff;
-    /* Sfondo bianco per questa sezione */
-    border-radius: 8px;
-    /* Angoli leggermente arrotondati */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    /* Ombra leggera */
-    margin-bottom: 30px;
-    /* Spazio sotto questa sezione */
+    padding: 2.5rem 0 3.5rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
 }
 
 .hero-section h1 {
-    font-size: 36px;
-    margin-bottom: 15px;
-    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #212529;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .hero-section p {
-    font-size: 18px;
-    color: #555;
-    max-width: 700px;
-    margin: 0 auto 30px;
-    /* Centra il paragrafo e aggiunge spazio sotto */
-    line-height: 1.5;
+    font-size: 1.15rem;
+    color: #495057;
+    max-width: 45rem;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
 }
 
-/* Search Bar Container */
+/* --- Search Bar Container --- */
 .search-bar-container {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    /* Spazio tra input e bottone */
-    margin-top: 30px;
+    gap: 0.75rem;
+    margin-top: 2rem;
 }
 
 .location-input-wrapper {
@@ -73,141 +67,138 @@
     display: flex;
     align-items: center;
     flex-grow: 1;
-    /* Permette all'input di occupare spazio */
-    max-width: 400px;
-    /* Larghezza massima per l'input */
+    max-width: 28rem;
 }
 
 .location-input {
     width: 100%;
-    padding: 12px 40px 12px 15px;
-    /* Spazio per testo e icona */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 0.85rem 2.5rem 0.85rem 1rem;
+    border: 1px solid #ced4da;
+    /* Retaining original border for consistency */
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    /* Colore del testo digitato: bianco per alta leggibilità su sfondo scuro */
+    color: #ffffff;
+    /* Sfondo del campo input: un grigio scuro */
+    background-color: #495057;
+    /* A dark gray for good contrast with white text */
     outline: none;
-    /* Rimuove il contorno blu al focus */
+    transition: all 200ms ease-in-out;
+}
+
+/* Placeholder text: light gray for good visibility on dark background */
+.location-input::placeholder {
+    color: #cccccc;
+    /* A light gray, clearly visible but distinct from typed text */
 }
 
 .location-input:focus {
-    border-color: #e64a19;
-    /* Bordo arancione al focus */
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(226, 78, 41, 0.25);
 }
 
 .location-icon {
     position: absolute;
-    right: 15px;
-    color: #999;
-    font-size: 20px;
+    right: 1rem;
+    /* Colore dell'icona: bianco per visibilità su sfondo scuro */
+    color: #ffffff;
+    font-size: 1.25rem;
 }
 
 .search-button {
     background-color: var(--primary-color);
-    /* Arancione del bottone */
-    color: #fff;
-    padding: 12px 25px;
+    color: #ffffff;
+    padding: 0.85rem 1.75rem;
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
     white-space: nowrap;
-    /* Impedisce al testo di andare a capo */
 }
 
 .search-button:hover {
     background-color: var(--primary-color-hover);
+    box-shadow: 0 4px 10px rgba(226, 78, 41, 0.2);
 }
 
-/* Filters and Sort Section */
+/* --- Filters and Sort Section --- */
 .filters-sort-section {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 0;
-    margin-bottom: 20px;
-    /* Spazio sotto questa sezione */
-    border-bottom: 1px solid #eee;
-    /* Bordo inferiore leggero */
+    padding: 1rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #dee2e6;
     flex-wrap: wrap;
-    /* Permette agli elementi di andare a capo su schermi piccoli */
-    gap: 15px;
-    /* Spazio tra i blocchi filtri/ordina */
+    gap: 1rem;
 }
 
 .filters,
 .sort-by {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
 }
 
 .filters span,
 .sort-by span {
-    font-size: 15px;
-    color: #555;
+    font-size: 0.95rem;
+    color: #495057;
     font-weight: 600;
-    /* Leggermente in grassetto */
 }
 
 .filter-dropdown,
 .sort-dropdown {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 15px;
-    color: #333;
-    -webkit-appearance: none;
-    /* Rimuove lo stile predefinito delle select su Chrome/Safari */
-    -moz-appearance: none;
-    /* Rimuove lo stile predefinito delle select su Firefox */
+    padding: 0.6rem 2.2rem 0.6rem 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.4rem;
+    background-color: #ffffff;
+    font-size: 0.95rem;
+    color: #343a40;
     appearance: none;
-    /* Rimuove lo stile predefinito delle select */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23666'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-    /* Freccetta personalizzata */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236c757d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 12px;
+    background-position: right 0.75rem center;
+    background-size: 0.75rem;
     cursor: pointer;
+    transition: all 200ms ease-in-out;
 }
 
 .filter-dropdown:focus,
 .sort-dropdown:focus {
     outline: none;
-    border-color: #e64a19;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(226, 78, 41, 0.25);
 }
 
 .optionPlaceHolder {
-    /* Per mostrare di cosa si tratta il select ma nascondendo l'opzione */
     display: none;
 }
 
-/* Media Queries per responsività */
+/* --- Media Queries --- */
+
 @media (max-width: 768px) {
     .hero-section h1 {
-        font-size: 28px;
+        font-size: 2rem;
     }
 
     .hero-section p {
-        font-size: 16px;
-        padding: 0 15px;
+        font-size: 1rem;
+        padding: 0 1rem;
     }
 
     .search-bar-container {
         flex-direction: column;
-        /* Impila input e bottone */
         align-items: center;
-        padding: 0 15px;
+        padding: 0 1rem;
     }
 
     .location-input-wrapper {
         width: 100%;
         max-width: none;
-        /* Rimuove la larghezza massima per schermi piccoli */
-        margin-bottom: 10px;
-        /* Spazio tra input e bottone */
+        margin-bottom: 0.75rem;
     }
 
     .search-button {
@@ -217,7 +208,7 @@
     .filters-sort-section {
         flex-direction: column;
         align-items: flex-start;
-        padding: 15px 15px 0;
+        padding: 1rem 1rem 0;
     }
 
     .filters,
@@ -225,22 +216,22 @@
         flex-direction: column;
         align-items: flex-start;
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 1rem;
     }
 
     .filter-dropdown,
     .sort-dropdown {
         width: 100%;
-        margin-top: 5px;
+        margin-top: 0.5rem;
     }
 }
 
 @media (max-width: 480px) {
     .hero-section h1 {
-        font-size: 24px;
+        font-size: 1.75rem;
     }
 
     .hero-section p {
-        font-size: 14px;
+        font-size: 0.9rem;
     }
 }

@@ -4,20 +4,32 @@ import {
     FaStar,
     FaRegStar
 } from 'react-icons/fa';
+import useTag from "../hooks/useTag";
+import useCategory from "../hooks/useCategory";
 
 const priceMap = {
+    "": "",
     "free": "free",
+    "PRICE_LEVEL_INEXPENSIVE": "€",
     "inexpensive": "€",
+    "PRICE_LEVEL_MODERATE": "€€",
     "moderate": "€€",
+    "PRICE_LEVEL_EXPENSIVE": "€€€",
     "expensive": "€€€",
+    "PRICE_LEVEL_VERY_EXPENSIVE": "€€€€",
     "very expensive": "€€€€",
 }
 
 const GlobalContext = createContext();
 
 function GlobalProvider({ children }) {
-    const [navSearchBar, setNavSearchBar] = useState('');
-    const [getPlace, addPlace] = usePlace()
+
+    const [showLanguageOptions, setShowLanguageOptions] = useState(false);
+    const [getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered, googleSearchDetailAuth] = usePlace()
+    const [getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag] = useTag()
+    const [getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory] = useCategory()
+
+    const closeShowLanguageOptions = () => setShowLanguageOptions(false)
 
     const renderStars = (rating, size = '1.2em') => {
         const totalStars = 5;
@@ -34,12 +46,14 @@ function GlobalProvider({ children }) {
         );
     };
 
-    const renderPrice = price => priceMap[price.toLowerCase()];
+    const renderPrice = price => price ? priceMap[price] : "N.D.";
 
     const globalProviderValue = {
-        navSearchBar, setNavSearchBar,
+        showLanguageOptions, setShowLanguageOptions, closeShowLanguageOptions,
         renderStars, renderPrice,
-        getPlace, addPlace
+        getPlaces, getPlacesByProvince, getPlacesByRegion, getPlacesDetails, addPlace, googleSearchAuth, getPlacesFiltered, googleSearchDetailAuth,
+        getTags, getTagDetailById, getTagDetailByGoogleName, createTag, editTag, deleteTag,
+        getCategory, getCategoryDetailById, getCategoryDetailByGoogleName, createCategory, editCategory, deleteCategory
     };
 
     return (

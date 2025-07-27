@@ -1,74 +1,96 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import RestaurantCard from '../components/RestaurantCard';
 import styles from './SearchPage.module.css';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from "react-router-dom";
-
-const restaurantsData = [
-    {
-        name: "Osteria del Mare Amalfi",
-        address: "Via dei Pescatori",
-        description: "Elegante osteria ad Amalfi con cucina gourmet. Perfetto per una cena romantica con specialità di mare e vini pregiati.",
-        tags: ["Cucina Gourmet", "Cantina Vini", "Disponibile", "Parcheggio"],
-        price: "moderate",
-        rating: 4.8,
-        actionText: "Prenota Tavolo",
-        actionType: "book",
-        "adressNumber": "12",
-        "city": "Napoli",
-        "cap": 80100,
-        "province": "NA",
-    },
-    {
-        name: "Trattoria Nonna Rosa Ravello",
-        address: "Via della Repubblica Marinara",
-        description: "Storico stabilimento balneare di Ravello con tradizione familiare. Offre un'esperienza autentica della Costiera Amalfitana.",
-        tags: ["Cucina Tradizionale", "Bar", "Spogliatoi", "Ombrelloni"],
-        price: "very expensive",
-        rating: 3.0,
-        actionText: "Vedi Dettagli",
-        actionType: "details",
-        "adressNumber": "12",
-        "city": "Napoli",
-        "cap": 80100,
-        "province": "NA",
-    }
-    // Aggiungi altri ristoranti qui
-];
+import { useNavigate, useParams } from "react-router-dom";
+import { useGlobalContext } from '../context/GlobalContext';
+import { debounce } from 'lodash';
+import BreadcrumbsCard from '../components/breadcrumbsCard';
+import { FaSearch, FaSpinner, FaStar } from 'react-icons/fa';
 
 export default function SearchPage() {
 
-    const searchParams = new URLSearchParams(location.search);
+    const initialSearchParams = useMemo(() => new URLSearchParams(location.search), []);
 
-    const { t } = useTranslation();
+    const { i18n, t } = useTranslation();
     const navigate = useNavigate();
-    const [placesData, setPlacesData] = useState(restaurantsData)
-    const [searchLocation, setSearchLocation] = useState(searchParams.get('city') || '');
+    const [placesData, setPlacesData] = useState([])
+    const [regionData, setRegionData] = useState([])
+    const [categoryData, setCategoryData] = useState([]);
+    const [servicesData, setServicesData] = useState([]);
+    const [searchLocation, setSearchLocation] = useState(initialSearchParams.get('name') || '');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState(1);
-    const [filter, setFilter] = useState({
-        category: searchParams.get('category') || '',
-        cuisine: searchParams.get('cuisine') || '',
-        price: searchParams.get('price') || '',
-        rating: searchParams.get('rating') || '',
-        services: searchParams.get('services') || ''
-    })
+    const { region } = useParams()
+    const { getPlacesByRegion, closeShowLanguageOptions,
+        getTags, getCategory, getPlacesFiltered
+    } = useGlobalContext()
 
+    const priceMap = ["free", "inexpensive", "moderate", "expensive", "very expensive",]
+
+    const isEn = i18n.language === 'en'
+
+    const [filter, setFilter] = useState({
+        category: initialSearchParams.get('category') || '',
+        price: initialSearchParams.get('price') || '',
+        rating: initialSearchParams.get('rating') || '',
+        services: initialSearchParams.get('services') || ''
+    });
+
+    // questa funzione di debounce serve per evitare di fare troppe chiamate API quando l'utente digita nella barra di ricerca
+    // il primo parametro: handleSearchRestaurant dice la funzione che chiama, 300 sono i millisecondi di attesa prima di eseguire la funzione
+    const handleDebouncedSearchRestaurant = useCallback(debounce(handleSearchRestaurant, 300), [])
+
+    async function handleSearchRestaurant(data) {
+        try {
+            const response = await getPlacesFiltered(data)
+            setPlacesData(response)
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    const handleInputChange = (e) => {
+        setFilter(prevFilter => ({ ...prevFilter, [e.target.name]: e.target.value === '' ? '' : e.target.value }));
+    };
+
+    // const handleSort = e => {
+    //     const currOrder = e.target.name
+
+    //     if (sortBy === currOrder) {
+    //         setSortOrder(prev => prev * -1);
+    //     } else {
+    //         setSortBy(currOrder);
+    //         setSortOrder(1);
+    //     }
+    // }
+
+    useEffect(() => {
+        if (region !== undefined) {
+            (async () => {
+                try {
+                    const dataRegion = await getPlacesByRegion(region)
+                    console.log('dataRegion', dataRegion);
+
+                    setRegionData(dataRegion)
+                } catch (error) {
+                    console.error(error);
+                }
+            })();
+        }
+    }, [region])
 
     useEffect(() => {
 
         const filtersArr = []
-        let url = `/Search`;
+        let url = region ? `/search/${region}` : `/search`;
 
         // inizio popolazione array dei filtri
-        if (searchLocation) {
-            filtersArr.push(`city=${searchLocation}`)
+        if (searchLocation !== '') {
+            filtersArr.push(`name=${searchLocation}`)
         }
         if (filter.category) {
             filtersArr.push(`category=${filter.category}`)
-        }
-        if (filter.cuisine) {
-            filtersArr.push(`cuisine=${filter.cuisine}`)
         }
         if (filter.price) {
             filtersArr.push(`price=${filter.price}`)
@@ -79,8 +101,7 @@ export default function SearchPage() {
         if (filter.services) {
             filtersArr.push(`services=${filter.services}`)
         }
-        // fine popolazione array dei filtri
-        // controllo se ci sono dei filtri ne caso concateno il punto interrogativo all'url per permettere di metter i parametri
+
         if (searchLocation !== '' || filter.category !== '' || filter.cuisine !== '' || filter.price !== '' || filter.rating !== '' || filter.services !== '') {
             url += '?'
         }
@@ -91,105 +112,141 @@ export default function SearchPage() {
         }
 
         navigate(url);
-
-        return
+        if (searchLocation !== '' || filter.category || filter.cuisine || filter.price || filter.rating || filter.services) {
+            handleDebouncedSearchRestaurant({ searchLocation, filter })
+        }
     }, [searchLocation, filter])
 
-    const handleInputChange = (e) => {
-        setFilter({ ...filter, [e.target.name]: e.target.value })
-    }
-
-    const handleSort = e => {
-
-        const currOrder = e.target.name
-
-        if (sortBy === currOrder) {
-            setSortOrder(prev => prev * -1);
-        } else {
-            setSortBy(currOrder);
-            setSortOrder(1);
-        }
-    }
-
-    const orderedPlacesData = useMemo(() => {
-        let result = [...placesData]
-        return result.sort((a, b) =>
-            sortOrder === 1
-                ? a.name.localeCompare(b.name)
-                : b.name.localeCompare(a.name)
-        );
-    }, [placesData, sortBy, sortOrder])
+    useEffect(() => {
+        (async () => {
+            try {
+                const tags = await getTags()
+                setServicesData(tags)
+                const categorys = await getCategory()
+                setCategoryData(categorys)
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    }, [])
 
     return (
-        <div className={styles["search-page"]}>
+        <>
             {/* Breadcrumbs */}
+            <BreadcrumbsCard region={region} />
+            <div onClick={closeShowLanguageOptions} className={styles["search-page"]}>
 
-            {/* Da riprodurre dinamicamente con i link delle pagine precedenti */}
-            <div className={styles["breadcrumbs"]}>
-                <a href="/">{t('homeBreadcrumb')}</a> &gt; <a href="/ristoranti">{t('restaurants')}</a> &gt; <span>{t('amalfiCoastTitle').split(' ')[1]}</span>
-            </div>
+                {/* Hero Section / Header */}
+                <div className={styles["hero-section"]}>
+                    <h1>{t('searchTitle')}</h1>
+                    <p>{t('searchDescription')}</p>
 
-            {/* Hero Section / Header */}
-            <div className={styles["hero-section"]}>
-                <h1>{t('amalfiCoastTitle')}</h1>
-                <p>{t('amalfiCoastDescription')}</p>
-
-                {/* Search Bar */}
-                <div className={styles["search-bar-container"]}>
-                    <div className={styles["location-input-wrapper"]}>
-                        <input
-                            onChange={(e) => setSearchLocation(e.target.value)}
-                            value={searchLocation}
-                            type="text"
-                            placeholder={t('searchByLocationPlaceholder')}
-                            className={styles["location-input"]} />
-                        <span className={styles["location-icon"]}>📍</span>
+                    {/* Search Bar */}
+                    <div className={styles["search-bar-container"]}>
+                        <div className={styles["location-input-wrapper"]}>
+                            <input
+                                onChange={(e) => setSearchLocation(e.target.value)}
+                                value={searchLocation}
+                                type="text"
+                                placeholder={t('searchByLocationPlaceholder')}
+                                className={styles["location-input"]} />
+                            <span className={styles["location-icon"]}>📍</span>
+                        </div>
+                        <button className={styles["search-button"]}>{t('searchRestaurants')}</button>
                     </div>
-                    <button onClick={() => console.log(filter)} className={styles["search-button"]}>{t('searchRestaurants')}</button>
                 </div>
-            </div>
 
-            <div className={styles["filters-sort-section"]}>
-                <div className={styles["filters"]}>
-                    <span>{t('filtersLabel')}</span>
-                    <select aria-label={t('categoryOption')} name='category' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                        <option className={styles.optionPlaceHolder}>{t('categoryOption')}</option>
-                        <option value='pizza'>pizza</option>
-                        <option value='pasta'>pasta</option>
-                    </select>
-                    <select aria-label={t('cuisineOption')} name='cuisine' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                        <option className={styles.optionPlaceHolder}>{t('cuisineOption')}</option>
-                        <option value='pizza'>pizza</option>
-                    </select>
-                    <select aria-label={t('priceRangeOptions')} name='price' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                        <option className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
-                        <option value='pasta'>pasta</option>
-                    </select>
-                    <select aria-label={t('ratingOption')} name='rating' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                        <option className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
-                    </select>
-                    <select aria-label={t('services')} name='services' onChange={handleInputChange} className={styles["filter-dropdown"]}>
-                        <option className={styles.optionPlaceHolder}>{t('services')}</option>
-                    </select>
+                <div className={styles["filters-sort-section"]}>
+                    <div className={styles["filters"]}>
+                        <span>{t('filtersLabel')}</span>
+                        <select
+                            aria-label={t('categoryOption')}
+                            name='category'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.category}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('categoryOption')}</option>
+                            {categoryData.length > 0 && categoryData.map(c => {
+                                if (c.isVisible === null || c.isVisible === false) return
+                                return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>
+                            })}
+                        </select>
+                        {/* <select aria-label={t('cuisineOption')} name='cuisine' onChange={handleInputChange} className={styles["filter-dropdown"]}>
+                            <option className={styles.optionPlaceHolder}>{t('cuisineOption')}</option>
+                            <option value='pizza'>pizza</option>
+                        </select> */}
+                        <select
+                            aria-label={t('priceRangeOptions')}
+                            name='price'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.price}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('priceRangeOption')}</option>
+                            {priceMap.map((price) =>
+                                <option key={price} value={price}>{price}</option>
+                            )}
+                        </select>
+                        <select
+                            aria-label={t('ratingOption')}
+                            name='rating'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.rating}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('ratingOption')}</option>
+                            <option value="1">1 {t('star')}</option>
+                            <option value="2">2 {t('star')}</option>
+                            <option value="3">3 {t('star')}</option>
+                            <option value="4">4 {t('star')}</option>
+                            <option value="5">5 {t('star')}</option>
+                        </select>
+                        <select
+                            aria-label={t('services')}
+                            name='services'
+                            onChange={handleInputChange}
+                            className={styles["filter-dropdown"]}
+                            value={filter.services}>
+                            <option value='' className={styles.optionPlaceHolder}>{t('services')}</option>
+                            {servicesData.length > 0 && servicesData.map(c => {
+                                if (c.isVisible === null || c.isVisible === false) return
+                                return <option key={c.id} value={c.googleName}>{isEn ? c.enName : c.itName}</option>
+                            })}
+                        </select>
+                    </div>
+                    {/* <div className={styles["sort-by"]}>
+                        <span>{t('sortByLabel')}</span>
+                        
+                        <select aria-label={t('mostPopularOption')} className={styles["sort-dropdown"]} onChange={handleSort}>
+                        
+                            <option data-value='popular' className={styles.optionPlaceHolder}>{t('mostPopularOption')}</option>
+                            <option data-value='popular' >popular</option>
+                        </select>
+                    </div> */}
                 </div>
-                <div className={styles["sort-by"]}>
-                    <span>{t('sortByLabel')}</span>
-                    {/* fare un bottone se resta solo un opzione per l'ordinamento delle card */}
-                    <select aria-label={t('mostPopularOption')} className={styles["sort-dropdown"]} onChange={handleSort}>
-                        {/* <option data-value='popular' className={styles.optionPlaceHolder} onChange={handleSort}>{t('mostPopularOption')}</option> */}
-                        <option data-value='popular' className={styles.optionPlaceHolder}>{t('mostPopularOption')}</option>
-                        <option data-value='popular' >popasdf</option>
-                        <option data-value='caprone' >capora</option>
-                    </select>
-                </div>
-            </div>
 
-            {/* Lista dei ristoranti */}
-            <div className={styles["restaurant-list-container"]}>
-                {orderedPlacesData.map((restaurant, index) => (
-                    <RestaurantCard key={index} restaurant={restaurant} />
-                ))}
+                {/* Lista dei ristoranti */}
+                <div className={styles["restaurant-list-container"]}>
+                    {(placesData.length === 0 && regionData.length === 0) ? (
+                        <div className='noResults'>
+                            <div className='noResultsIcon'>
+                                <FaSearch />
+                            </div>
+                            <h3 className='noResultsTitle'>
+                                {t('noRestaurantsFound')}
+                            </h3>
+                            <p className='noResultsText'>
+                                {t('noResultsText')}
+                            </p>
+                        </div>
+                    ) : (placesData.length > 0) ?
+                        placesData.map((restaurant, index) => (
+                            <RestaurantCard key={index} restaurant={restaurant} />
+                        )) :
+                        regionData.map((restaurant, index) => (
+                            <RestaurantCard key={index} restaurant={restaurant} />
+                        ))
+                    }
+                </div>
             </div>
-        </div>
+        </>
     );
 };

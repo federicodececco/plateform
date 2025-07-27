@@ -1,0 +1,230 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.modalContent {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 750px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.95);
+    animation: slideIn 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2.2rem;
+    cursor: pointer;
+    color: #888;
+    padding: 5px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.closeButton:hover {
+    color: #333;
+    transform: rotate(90deg);
+}
+
+/* Header della Modale */
+.modalHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 20px;
+}
+
+.modalHeader h1 {
+    margin: 0;
+    color: #222;
+    font-size: 2.5em;
+    line-height: 1.2;
+}
+
+.modalHeader h2 {
+    margin: 8px 0 10px 0;
+    color: #555;
+    font-size: 1.5em;
+    font-weight: 400;
+}
+
+/* Rating e Stelle */
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffc107;
+    font-size: 1.2em;
+}
+
+.ratingNumber {
+    font-weight: 600;
+    color: #444;
+}
+
+/* Sezione Dettagli */
+.detailsSection h3 {
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 1.4em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+    font-weight: 600;
+}
+
+.detailsSection p {
+    margin-bottom: 12px;
+    line-height: 1.7;
+    color: #666;
+}
+
+/* Contenitori per Tag e Categorie */
+.tagsContainer,
+.categoriesContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tag,
+.category {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    padding: 8px 15px;
+    border-radius: 25px;
+    font-size: 0.95em;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.tag:hover,
+.category:hover {
+    background-color: #bbdefb;
+}
+
+.category {
+    background-color: #fff3e0;
+    color: var(--primary-color);
+}
+
+.category:hover {
+    background-color: #ffe0b2;
+}
+
+.detailsSection a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.detailsSection a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modalContent {
+        width: 95%;
+        padding: 25px;
+    }
+
+    .modalHeader h1 {
+        font-size: 2em;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.3em;
+    }
+
+    .imageGallery {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 10px;
+    }
+
+    .imageGallery img {
+        height: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalContent {
+        padding: 20px;
+    }
+
+    .modalHeader {
+        align-items: center;
+        text-align: center;
+    }
+
+    .modalHeader h1 {
+        font-size: 1.8em;
+    }
+
+    .modalHeader h2 {
+        font-size: 1.1em;
+    }
+
+    .imageGallery {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .imageGallery img {
+        max-width: 100%;
+        height: 180px;
+    }
+
+    .tag,
+    .category {
+        font-size: 0.85em;
+        padding: 6px 10px;
+    }
+}
