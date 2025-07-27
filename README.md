@@ -34,6 +34,8 @@ Installazione e Configurazione
    Crea un file .env contenente:
    VITE_CHIAVE_API_GOOGLE= chiave di google maps
    VITE_API_URL= indirizzo backend(http://localhost:8080 di default)
+   VITE_GA_MODE= modalità con cui GA opera, debug o prod
+   VITE_GA_ID= id di google analytics
 3. Configurazione backend
    Crea un database MySQL e configura le credenziali nel file application.properties:
    spring.datasource.url=jdbc:mysql://localhost:3306/restfinder
