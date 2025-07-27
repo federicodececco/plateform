@@ -1,33 +1,108 @@
 RestFinder
 
-Caratteristiche Principali
+--Caratteristiche Principali
+
+Ricerca e Scoperta
 
 Ricerca Luoghi: Ricerca testuale con supporto per coordinate geografiche e raggio
 Integrazione Google Places: Accesso completo ai dati di Google Places API
-Gestione Foto: Download e storage automatico delle foto dei luoghi
-Sistema di Categorizzazione: Gestione di categorie e tag per i luoghi
 Ricerca Avanzata: Filtri per categoria, tag, fascia di prezzo e valutazione
 Ricerca di Prossimità: Trova luoghi entro un raggio specificato
+Ricerca per Regione/Provincia: Esplorazione geografica organizzata
+Full-Text Search: Ricerca ottimizzata con ranking e relevance
+
+Gestione Contenuti
+
+Gestione Foto: Download e storage automatico delle foto dei luoghi
+Sistema di Categorizzazione: Gestione di categorie e tag per i luoghi
+Gallerie Responsive: Visualizzazione ottimizzata delle immagini dei luoghi
+Blacklist Management: Sistema di moderazione per escludere luoghi
+
+Interfaccia Utente
+
+Interfaccia Web Responsive: Design ottimizzato per desktop, tablet e mobile
+Internazionalizzazione: Supporto completo Italiano/Inglese
+Mappe Interattive: Integrazione Google Maps con markers e indicazioni stradali
+Navigation Breadcrumbs: Navigazione contestuale user-friendly
+
+Esperienza Utente
+
+Valutazioni e Recensioni: Visualizzazione rating con stelle
+Informazioni Dettagliate: Orari, contatti, servizi disponibili, prezzi
+
+Amministrazione
+
+Panel Admin: Interfaccia per aggiungere nuovi luoghi tramite Google Places
+Gestione Tags e Categorie: CRUD completo
 Autenticazione JWT: Sistema di autenticazione sicuro
+Route Protette: Controllo accessi basato su autenticazione
+
+Architettura e Performance
+
 API RESTful: Architettura completamente reattiva con Spring WebFlux
+Debouncing: Ottimizzazione chiamate API per ricerche real-time
+Error Handling: Gestione robusta degli errori con fallback graceful
 
-Tecnologie Utilizzate
+Integrazione e Storage
+Database Spaziale: Query geografiche ottimizzate con MySQL spatial functions
+File Management: Sistema organizzato per storage foto con naming sicuro
+URL Slug Generation: URL SEO-friendly per i luoghi
 
-Backend: Spring Boot 3.x con Spring WebFlux (Reactive)
+--Tecnologie Utilizzate:
+
+Backend
+
+Spring Boot 3.x con Spring WebFlux (Reactive)
 Database: JPA/Hibernate con supporto MySQL
 Sicurezza: Spring Security con JWT
 API Esterne: Google Places API
 Build Tool: Maven
-Documentazione API: Swagger/OpenAPI 3
+Validazione: Jakarta Validation
+Utility: Lombok
+Slugify: Generazione URL-friendly slugs
 
-Prerequisiti
+Frontend
+
+Framework: React 18 con Functional Components e Hooks
+Build Tool: Vite
+Routing: React Router v6
+Styling: CSS Modules
+State Management: Context API con Custom Hooks
+Internazionalizzazione: React i18next
+Mappe: Google Maps React API (@react-google-maps/api)
+Icone: React Icons (Font Awesome)
+Utility: Lodash (per debouncing e utility functions)
+
+Database
+
+MySQL 8.0+
+Spatial Data: Supporto per query geografiche con ST_Distance_Sphere
+Full-Text Search: Indicizzazione FULLTEXT per ricerca ottimizzata
+
+Sicurezza e Autenticazione
+
+JWT: JSON Web Tokens per autenticazione stateless
+CORS: Configurazione per chiamate cross-origin
+Password Encoding: Spring Security (attualmente NoOpPasswordEncoder per sviluppo)
+
+API e Integrazione
+
+Google Places API: Ricerca e dettagli luoghi
+Google Maps JavaScript API: Visualizzazione mappe interattive
+RESTful API: Architettura REST per comunicazione frontend-backend
+
+--Prerequisiti
 
 Java 17+
 MySQL 8.0+
-Chiave API di Google Places
 Maven 3.6+
+Node.js 18+
+npm 8+
+Chiave API di Google Places
+Chiave Maps JavaScript API
+ID Google Anlytics
 
-Installazione e Configurazione
+--Installazione e Configurazione
 
 1. Clona il Repository
 2. Configurazione frontend
