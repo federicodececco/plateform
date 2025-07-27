@@ -9,6 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.plateform.restfinder.model.User;
 
+/* 
+ * enitità temporanea che viene creata da AuthManager per il login
+ */
 public class UserPrincipal implements UserDetails {
 
     private User user;

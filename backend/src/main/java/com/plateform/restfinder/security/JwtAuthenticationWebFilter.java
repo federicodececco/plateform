@@ -21,6 +21,11 @@ public class JwtAuthenticationWebFilter implements WebFilter {
     @Autowired
     private ReactiveUserDetailsService userDetailsService;
 
+    /*
+     * filtro di autenticazione reatttivo
+     * che intercetta ogni chiamata
+     * e ne verifica l'autorizzazione
+     */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();

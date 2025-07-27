@@ -28,6 +28,15 @@ public class SecurityConfig {
     @Autowired
     private ReactiveUserDetailsService userDetailsService;
 
+    /*
+     * logica di protezione dell'applicazione,
+     * tutte le chiamate GET, fatta eccezione per quelle google places,
+     * sono aperte, le altre richiedono autenticazione, questa situzione non
+     * dovrebbe
+     * mai verificarsi, in quanto anche il client è protetto, ma a differenza del
+     * server, è soggetto a possibili
+     * interferenze malevole da parte di utenti
+     */
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -42,8 +51,11 @@ public class SecurityConfig {
                 .build();
     }
 
+    /*
+     * autentication manager per la gestione del token, impostato senza password, in
+     * quanto, per ora la password admin è salvata in db in plain text
+     */
     @Bean
-
     public ReactiveAuthenticationManager reactiveAuthenticationManager() {
         UserDetailsRepositoryReactiveAuthenticationManager authManager = new UserDetailsRepositoryReactiveAuthenticationManager(
                 userDetailsService);
@@ -51,6 +63,10 @@ public class SecurityConfig {
         return authManager;
     }
 
+    /*
+     * configurazione di default del cors, da modificare quando deployata
+     * ora in numerosi campi sovrascritta dai singoli controller
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
