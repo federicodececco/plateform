@@ -1,11 +1,11 @@
 import ReactGA from "react-ga4"
 
-const MEASUREMENT_ID = process.env.VITE_GA_ID;
+const MEASUREMENT_ID = import.meta.env.VITE_GA_ID
 
 
 export const initGA = () => {
   ReactGA.initialize(MEASUREMENT_ID, {
-    debug: process.env.VITE_GA_MODE === 'debug', // da utilizzare per il debug in sviluppo
+    debug: import.meta.env.VITE_GA_MODE === 'debug', // da utilizzare per il debug in sviluppo
   });
 };
 /* traccia le views di una pagina */

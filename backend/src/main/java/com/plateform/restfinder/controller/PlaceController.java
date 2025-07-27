@@ -12,10 +12,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import com.ibm.icu.text.Transliterator;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,17 +40,19 @@ import com.plateform.restfinder.services.PlaceService;
 
 import com.plateform.restfinder.services.TagServiceMapping;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/places")
 public class PlaceController {
 
@@ -67,8 +71,13 @@ public class PlaceController {
     @Autowired
     private PhotoService photoService;
 
-    // frontend view
-
+    /*
+     * funzione basilare che utilizza l'api di google places per una ricerca in base
+     * al testo, con lo scopo di salvataggio di una nuova entiotà in database
+     * Fornisce la possibilità di fornire anche coordinate e raggio di ricerca per
+     * restringere la stessa,
+     * non è mai stato ancora necessario utilizzarle
+     */
     @GetMapping("/google-search-text")
     public Mono<ResponseEntity<PlacesResponseList>> searchText(@RequestParam String query,
             @RequestParam(required = false) Double latitude,
@@ -76,6 +85,8 @@ public class PlaceController {
             @RequestParam(required = false) Integer maxResults) {
 
         try {
+
+            // validazione dei paramteri
             if (query == null || query.trim().isEmpty()) {
                 return Mono.just(ResponseEntity.badRequest().build());
             }
@@ -94,14 +105,10 @@ public class PlaceController {
         }
     }
 
-    @GetMapping("/google-search-text-debug")
-    public Mono<String> searchTextDebug(@RequestParam String query,
-            @RequestParam(required = false) Double latitude,
-            @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
-            @RequestParam(required = false) Integer maxResults) {
-        return googlePlacesService.searchTextDebug(query, latitude, longitude, radius, maxResults);
-    }
-
+    /*
+     * chiamta che ritorna i dettagli di un luogo attraverso l'api di google places
+     * in base all'id
+     */
     @GetMapping("/google-details/{id}")
     public Mono<ResponseEntity<PlaceResponse>> getDetails(@PathVariable String id,
             @RequestParam(required = false) List<String> masks) {
@@ -119,6 +126,20 @@ public class PlaceController {
         }
     }
 
+    /*
+     * chiamta di debug utile solo allo sviluppo
+     */
+    @GetMapping("/google-search-text-debug")
+    public Mono<String> searchTextDebug(@RequestParam String query,
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude, @RequestParam(required = false) Double radius,
+            @RequestParam(required = false) Integer maxResults) {
+        return googlePlacesService.searchTextDebug(query, latitude, longitude, radius, maxResults);
+    }
+
+    /*
+     * chiamta di debug utile solo allo sviluppo
+     */
     @GetMapping("/google-details-debug/{id}")
     public Mono<String> getDetailsDebug(@PathVariable String id,
             @RequestParam(required = false) List<String> masks) {
@@ -126,6 +147,23 @@ public class PlaceController {
         return googlePlacesService.getPlaceDetailsDebug(id, masks);
     }
 
+    /*
+     * soft delete di un'entità, blacklisting di un'entità senza davvero rimuoverla
+     * dal database
+     */
+    @DeleteMapping("/delete/{id}")
+    public Mono<ResponseEntity<Place>> setBlackList(@PathVariable String id) {
+        Optional<Place> optPlace = placeService.findById(id);
+        if (!optPlace.isPresent()) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        placeService.falseDeleteById(id);
+        return Mono.just(new ResponseEntity<>(HttpStatus.OK));
+    }
+
+    /*
+     * chiamata che effettua una ricerca in base alle cooridinate di un punto
+     */
     @GetMapping("/proximity")
     public Mono<ResponseEntity<List<Place>>> searchPlacesInRadius(
             @RequestParam Double latitude,
@@ -148,6 +186,24 @@ public class PlaceController {
         return Mono.just(new ResponseEntity<>(places, HttpStatus.OK));
     }
 
+    /*
+     * chiamata che ritorna i risultati filtrati in base alla regione di
+     * appartenenza
+     */
+    @GetMapping("/region/{region}")
+    public Mono<ResponseEntity<List<Place>>> findByRegion(@PathVariable String region) {
+        try {
+            return Mono.just(new ResponseEntity<>(placeService.findByRegion(region), HttpStatus.OK));
+        } catch (Exception e) {
+            System.err.print(e);
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    /*
+     * chiamata che ritorna i risultati filtrati in base alla provincia di
+     * appartenenza
+     */
     @GetMapping("/province/{province}")
     public Mono<ResponseEntity<List<Place>>> findByProvince(@PathVariable String province) {
         try {
@@ -158,189 +214,269 @@ public class PlaceController {
         }
     }
 
-    // database post
+    /*
+     * Salva un place in base all'id google, aggiungendo i tag non presenti in
+     * database, scaricando le prime 5 foto
+     */
     @PostMapping("/save/{id}")
-    public Place addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
+    public Mono<Place> addPlace(@PathVariable String id, @RequestParam(required = false) List<String> masks) {
 
-        PlaceResponse googleResponse = googlePlacesService.getPlaceDetails(id, masks).block();
+        return googlePlacesService.getPlaceDetails(id, masks)
+                .flatMap(googleResponse -> {
+                    Place placetoSave = new Place();
+                    placetoSave.setId(googleResponse.getId());
+                    placetoSave.setName(googleResponse.getDisplayName().getText());
 
-        Place placetoSave = new Place();
-        placetoSave.setId(googleResponse.getId());
-        placetoSave.setName(googleResponse.getDisplayName().getText());
+                    Iterator<AdressComponents> iter = googleResponse.getAddressComponents().iterator();
+                    while (iter.hasNext()) {
+                        AdressComponents component = iter.next();
+                        String type = component.getTypes().get(0);
 
-        Iterator<AdressComponents> iter = googleResponse.getAddressComponents().iterator();
-        while (iter.hasNext()) {
-            AdressComponents component = iter.next();
-            String type = component.getTypes().get(0);
-
-            if (type.equals("street_number")) { // numero civico
-                placetoSave.setAdressNumber(component.getLongText());
-            } else if (type.equals("route")) {// strada
-                placetoSave.setAddress(component.getLongText());
-            } else if (type.equals("administrative_area_level_3")) {// città
-                placetoSave.setCity(component.getLongText());
-            } else if (type.equals("administrative_area_level_1")) {// regione
-                placetoSave.setRegion(component.getLongText());
-            } else if (type.equals("country")) {// nazione
-                placetoSave.setNation(component.getLongText());
-            } else if (type.equals("postal_code")) {// cap
-                placetoSave.setCap(Integer.valueOf(component.getLongText()));
-            } else if (type.equals("administrative_area_level_2")) {// provincia
-                placetoSave.setProvince(component.getShortText());
-            }
-        }
-        // placetoSave.setAddress(googleResponse.getAddressComponents().get(1).getLongText());
-        // placetoSave.setAdressNumber(googleResponse.getAddressComponents().get(0).getLongText());
-        // placetoSave.setCity(googleResponse.getAddressComponents().get(2).getShortText());
-        // placetoSave.setCap(Integer.valueOf(googleResponse.getAddressComponents().get(7).getLongText()));
-        // placetoSave.setProvince(googleResponse.getAddressComponents().get(4).getShortText());
-        // placetoSave.setRegion(googleResponse.getAddressComponents().get(5).getShortText());
-        // placetoSave.setNation(googleResponse.getAddressComponents().get(6).getLongText());
-        placetoSave.setLatitude(googleResponse.getLocation().getLatitude());
-        placetoSave.setLongitude(googleResponse.getLocation().getLongitude());
-        if (googleResponse.getPrimaryTypeDisplayName() != null) {
-            placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
-        }
-        String namePartial = googleResponse.getPhotos().get(1).getName();
-        String nameFinal = googleResponse.getPhotos().get(1).getName().substring(namePartial.length() - 306,
-                namePartial.length());
-        placetoSave.setCoverImageName(nameFinal);
-
-        placetoSave.setPhoneNumber(googleResponse.getInternationalPhoneNumber());
-        placetoSave.setRating(googleResponse.getRating());
-        placetoSave.setReviewNumber(googleResponse.getUserRatingCount());
-        placetoSave.setGoogleMapsURL(googleResponse.getGoogleMapsUri());
-        if (googleResponse.getWebsiteUri() != null) {
-            placetoSave.setWebSiteURL(googleResponse.getWebsiteUri());
-        } else {
-            placetoSave.setWebSiteURL("");
-        }
-        placetoSave.setPlateformID("");
-        placetoSave.setPlateformURL("");
-        placetoSave.setBlacklist(false);
-        placetoSave.setIsEdited(false);
-
-        placetoSave.setSlugName(slugify(googleResponse.getDisplayName().getText()));
-
-        // setting priceRange
-        if (googleResponse.getPriceLevel() != null) {
-            switch (googleResponse.getPriceLevel()) {
-                case "PRICE_LEVEL_MODERATE":
-                    placetoSave.setPriceRange("moderate");
-                    break;
-                case "PRICE_LEVEL_EXPENSIVE":
-                    placetoSave.setPriceRange("expensive");
-                    break;
-                case "PRICE_LEVEL_INEXPENSIVE":
-                    placetoSave.setPriceRange("inexpensive");
-                    break;
-                case "PRICE_LEVEL_VERY_EXPENSIVE":
-                    placetoSave.setPriceRange("very expensive");
-                    break;
-                case "PRICE_LEVEL_FREE":
-                    placetoSave.setPriceRange("free");
-                    break;
-                default:
-                    placetoSave.setPriceRange(googleResponse.getPriceLevel());
-                    break;
-            }
-        }
-
-        // setting tags
-
-        Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
-
-        placetoSave.setTags(tagsFinal);
-
-        // setting categories
-
-        List<Category> existingCategories = categoryService.findAll();
-        Map<String, Category> categoryMap = new HashMap<>();
-
-        for (Category cat : existingCategories) {
-            categoryMap.put(cat.getGoogleName(), cat);
-        }
-
-        Set<Category> categoryTmp = new HashSet<>();
-
-        for (String googleType : googleResponse.getTypes()) {
-            if (categoryMap.containsKey(googleType)) {
-                categoryTmp.add(categoryMap.get(googleType));
-            } else {
-                Category newCat = new Category();
-                newCat.setGoogleName(googleType);
-                Category saved = categoryService.create(newCat);
-                categoryTmp.add(saved);
-            }
-        }
-        Place savedPlace = placeService.create(placetoSave);
-
-        Set<Photo> photoSet = new HashSet<>();
-        int i = 0;
-        while (i < googleResponse.getPhotos().size() && i < 2) {
-            try {
-
-                String fullPhotoName = googleResponse.getPhotos().get(i).getName();
-
-                String photoReference = fullPhotoName.substring(fullPhotoName.lastIndexOf("/") + 1);
-
-                System.out.println("Nome completo foto: " + fullPhotoName);
-                System.out.println("Photo reference estratto: " + photoReference);
-
-                Optional<Photo> existing = photoService.findByPhotoReference(savedPlace.getId(), photoReference);
-
-                if (!existing.isPresent()) {
-
-                    Photo downloadedPhoto = photoService.downloadAndSavePhoto(
-                            savedPlace.getId(),
-                            photoReference,
-                            500,
-                            500).block();
-
-                    if (downloadedPhoto != null) {
-                        photoSet.add(downloadedPhoto);
-                        System.out.println("Foto scaricata con successo: " + downloadedPhoto.getFileName());
-                    } else {
-                        System.err.println("Errore nel download della foto con reference: " + photoReference);
+                        if (type.equals("street_number")) { // numero civico
+                            placetoSave.setAdressNumber(component.getLongText());
+                        } else if (type.equals("route")) {// strada
+                            placetoSave.setAddress(component.getLongText());
+                        } else if (type.equals("administrative_area_level_3")) {// città
+                            placetoSave.setCity(component.getLongText());
+                        } else if (type.equals("administrative_area_level_1")) {// regione
+                            placetoSave.setRegion(component.getLongText());
+                        } else if (type.equals("country")) {// nazione
+                            placetoSave.setNation(component.getLongText());
+                        } else if (type.equals("postal_code")) {// cap
+                            placetoSave.setCap(Integer.valueOf(component.getLongText()));
+                        } else if (type.equals("administrative_area_level_2")) {// provincia
+                            placetoSave.setProvince(component.getShortText());
+                        }
                     }
-                } else {
 
-                    photoSet.add(existing.get());
-                    System.out.println("Foto già esistente: " + existing.get().getFilePath());
-                }
+                    placetoSave.setLatitude(googleResponse.getLocation().getLatitude());// latitudine
+                    placetoSave.setLongitude(googleResponse.getLocation().getLongitude());// longitudine
+                    /* se ha una categoria principale la salva */
+                    if (googleResponse.getPrimaryTypeDisplayName() != null) {
+                        placetoSave.setMainCategory(googleResponse.getPrimaryTypeDisplayName().getText());
+                    }
+                    /* salva l'immagine di copertina */
+                    if (googleResponse.getPhotos() != null && googleResponse.getPhotos().size() > 1) {
+                        String namePartial = googleResponse.getPhotos().get(1).getName();
+                        String nameFinal = googleResponse.getPhotos().get(1).getName().substring(
+                                namePartial.length() - 306,
+                                namePartial.length());
+                        placetoSave.setCoverImageName(nameFinal);
+                    }
+                    /* salva il numero di telefono */
+                    placetoSave.setPhoneNumber(googleResponse.getInternationalPhoneNumber());
+                    /* salva il rating */
+                    placetoSave.setRating(googleResponse.getRating());
+                    /* salva il numero di recensioni */
+                    placetoSave.setReviewNumber(googleResponse.getUserRatingCount());
+                    /* salva l'indirizzo url di googlemaps, */
+                    placetoSave.setGoogleMapsURL(googleResponse.getGoogleMapsUri());
+                    /* salva l'url del sito, se eiste */
+                    if (googleResponse.getWebsiteUri() != null) {
+                        placetoSave.setWebSiteURL(googleResponse.getWebsiteUri());
+                    } else {
+                        placetoSave.setWebSiteURL("");
+                    }
+                    /* genera il campo id di plateform, possibilmente da rimouvere */
+                    placetoSave.setPlateformID("");
+                    /* genera il campo url di plateform */
+                    placetoSave.setPlateformURL("");
+                    /* imposta la blacklist=false */
+                    placetoSave.setBlacklist(false);
+                    /* imposta la l'edit=false */
+                    placetoSave.setIsEdited(false);
+                    /* genere il nome slug attraverso la funzione slugify */
+                    placetoSave.setSlugName(slugify(googleResponse.getDisplayName().getText()));
 
-            } catch (Exception e) {
-                System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
-                e.printStackTrace();
+                    // setta il priceRange
+                    if (googleResponse.getPriceLevel() != null) {
+                        switch (googleResponse.getPriceLevel()) {
+                            case "PRICE_LEVEL_MODERATE":
+                                placetoSave.setPriceRange("moderate");
+                                break;
+                            case "PRICE_LEVEL_EXPENSIVE":
+                                placetoSave.setPriceRange("expensive");
+                                break;
+                            case "PRICE_LEVEL_INEXPENSIVE":
+                                placetoSave.setPriceRange("inexpensive");
+                                break;
+                            case "PRICE_LEVEL_VERY_EXPENSIVE":
+                                placetoSave.setPriceRange("very expensive");
+                                break;
+                            case "PRICE_LEVEL_FREE":
+                                placetoSave.setPriceRange("free");
+                                break;
+                            default:
+                                placetoSave.setPriceRange(googleResponse.getPriceLevel());
+                                break;
+                        }
+                    }
 
-            }
-            i++;
-        }
+                    // imposta i tags attraverso la funzione extractTagsFromGoogleResponse, per
+                    // verificare l'seistenza di nuovi tags
+                    Set<Tag> tagsFinal = tagServiceMapping.extractTagsFromGoogleResponse(googleResponse);
+                    placetoSave.setTags(tagsFinal);
 
-        if (!photoSet.isEmpty()) {
-            savedPlace.setPhotos(photoSet);
-            savedPlace = placeService.edit(savedPlace);
-        }
+                    // imposta le categorie, verificando anche qui l'esistenza di nuove
+                    List<Category> existingCategories = categoryService.findAll();
+                    Map<String, Category> categoryMap = new HashMap<>();
 
-        return savedPlace;
+                    for (Category cat : existingCategories) {
+                        categoryMap.put(cat.getGoogleName(), cat);
+                    }
+
+                    Set<Category> categoryTmp = new HashSet<>();
+
+                    for (String googleType : googleResponse.getTypes()) {
+                        if (categoryMap.containsKey(googleType)) {
+                            categoryTmp.add(categoryMap.get(googleType));
+                        } else {
+                            Category newCat = new Category();
+                            newCat.setGoogleName(googleType);
+                            Category saved = categoryService.save(newCat);
+                            categoryTmp.add(saved);
+                        }
+                    }
+                    placetoSave.setCategories(categoryTmp);
+
+                    Place savedPlace = placeService.create(placetoSave);
+                    /*
+                     * scarica, verifica e associa le foto in base alla risposta con la funzione
+                     * processPhotos
+                     */
+                    return processPhotos(googleResponse, savedPlace);
+                })
+                .onErrorResume(e -> {
+                    System.err.println("Errore durante il salvataggio del place: " + e.getMessage());
+                    e.printStackTrace();
+                    return Mono.error(e);
+                });
     }
 
-    @Operation(summary = "Ritorna un luogo in base all'ID", description = "Ritorna un luogo specifico posto in base al suo ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Posto trovato"),
-            @ApiResponse(responseCode = "404", description = "Posto non trovato")
-
-    })
+    /*
+     * funzione che ritorna i dettagli di un luogo in base all'id di google places
+     */
     @GetMapping("/details/{id}")
-    public ResponseEntity<Place> getPlaceDetails(@PathVariable String id) {
+    public Mono<ResponseEntity<Place>> getPlaceDetails(@PathVariable String id) {
         Optional<Place> optPlace = placeService.findById(id);
         if (optPlace.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
-        return new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK);
+        return Mono.just(new ResponseEntity<Place>(optPlace.get(), HttpStatus.OK));
     }
 
-    // download photo by reference and place id
+    /*
+     * funzione che utilizza il metodo search per operare una ricerca con rank in
+     * base al nome passato
+     * si può passare anche page, per indicare il numero di pagina e size, per
+     * indicare quanti elementi per pagina
+     * questi parametri non sono tuttavia obbligatori
+     */
+    @GetMapping("/search")
+    public Mono<ResponseEntity<Page<Place>>> searchPlaces(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        /*
+         * controllo dei parametri passati, se viene richiesto size "invalido", viene
+         * invece defaultata a 100
+         */
+        try {
+            if (size > 100)
+                size = 100;
+            if (size < 1)
+                size = 10;
+            /* ricerca effettiva che ritorna una paginazione di risultati */
+            Page<Place> results = placeService.search(name, page, size);
+
+            return Mono.just(ResponseEntity.ok(results));
+        } catch (Exception e) {
+            System.err.print(e);
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    /*
+     * funzione che controlla l'esistenza di foto e le salva, tutto in base ad una
+     * PlaceResponse
+     * creata per essere utilizzata in tandem con la funzione addPlace()
+     */
+    private Mono<Place> processPhotos(PlaceResponse googleResponse, Place savedPlace) {
+        if (googleResponse.getPhotos() == null || googleResponse.getPhotos().isEmpty()) {
+            return Mono.just(savedPlace);
+        }
+        /*
+         * salva solo le prime 5 foto di google o meno, nel caso ce ne siano meno di 5
+         */
+        int maxPhotos = Math.min(googleResponse.getPhotos().size(), 5);
+
+        /*
+         * metodo che processa in paralleo le foto grazie a flatMap, facendo in modo che
+         * degli su di una non blocchino le altre e rendendo
+         * il tutto più veloce
+         */
+        return Flux.range(0, maxPhotos)
+                .flatMap(i -> {
+                    try {
+                        String fullPhotoName = googleResponse.getPhotos().get(i).getName();
+                        String photoReference = fullPhotoName.substring(fullPhotoName.lastIndexOf("/") + 1);
+
+                        System.out.println("Nome completo foto: " + fullPhotoName);
+                        System.out.println("Photo reference estratto: " + photoReference);
+
+                        /* controlla se la foto esiste già */
+                        Optional<Photo> existing = photoService.findByPhotoReference(savedPlace.getId(),
+                                photoReference);
+
+                        if (!existing.isPresent()) {
+                            return photoService.downloadAndSavePhoto(
+                                    savedPlace.getId(),
+                                    photoReference,
+                                    500,
+                                    500)
+                                    .doOnSuccess(downloadedPhoto -> {
+                                        if (downloadedPhoto != null) {
+                                            System.out.println(
+                                                    "Foto scaricata con successo: " + downloadedPhoto.getFileName());
+                                        } else {
+                                            System.err.println(
+                                                    "Errore nel download della foto con reference: " + photoReference);
+                                        }
+                                    })
+                                    .onErrorResume(error -> {
+                                        System.err.println("Errore durante il download della foto " + i + ": "
+                                                + error.getMessage());
+                                        error.printStackTrace();
+                                        return Mono.empty(); // continua anche se una foto fallisce
+                                    });
+                        } else {
+                            System.out.println("Foto già esistente: " + existing.get().getFilePath());
+                            return Mono.just(existing.get());
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Errore durante il download della foto " + i + ": " + e.getMessage());
+                        e.printStackTrace();
+                        return Mono.empty(); // continua anche se una foto fallisce
+                    }
+                })
+                .collectList()
+                .map(photos -> {
+                    /* rimuove null dal set di foto nel caso ci siano stati errori */
+                    Set<Photo> photoSet = photos.stream()
+                            .filter(photo -> photo != null)
+                            .collect(Collectors.toSet());
+                    /* setta le foto */
+                    if (!photoSet.isEmpty()) {
+                        savedPlace.setPhotos(photoSet);
+                        return placeService.edit(savedPlace);
+                    }
+                    return savedPlace;
+                });
+    }
+
+    /*
+     * funzione che scarica foto in base al luogo e loro reference
+     */
     @GetMapping("/{placeId}/photos/{photoReference}")
     public Mono<ResponseEntity<String>> downloadPlacePhoto(
             @PathVariable String photoReference,
@@ -355,7 +491,7 @@ public class PlaceController {
         int height = 500;
 
         try {
-            // Check if already downloaded
+            /* controlla se sia già stata scaricata */
             Optional<Photo> existing = photoService.findByPhotoReference(placeId, photoReference);
             if (existing.isPresent()) {
                 return Mono.just(ResponseEntity.ok("Foto già scaricata: " + existing.get().getFilePath()));
@@ -392,12 +528,30 @@ public class PlaceController {
         }
     }
 
+    /*
+     * funzione che prende le immagini in formtato Photo in base all'id del luogo
+     */
     @GetMapping("/{placeId}/photos")
-    public ResponseEntity<List<Photo>> getDownloadedPhotos(@PathVariable String placeId) {
+    public Mono<ResponseEntity<List<Photo>>> getDownloadedPhotos(@PathVariable String placeId) {
         List<Photo> downloads = photoService.getDownloadsByPlaceId(placeId);
-        return ResponseEntity.ok(downloads);
+        return Mono.just(ResponseEntity.ok(downloads));
     }
 
+    @PostMapping("/{placeId}/edit")
+    public Mono<ResponseEntity<Place>> postMethodName(@RequestBody Place place, @PathVariable String id) {
+        Optional<Place> optPlace = placeService.findById(id);
+        if (!optPlace.isPresent()) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        place.setIsEdited(true);
+        placeService.edit(place);
+        return Mono.just(new ResponseEntity<>(HttpStatus.OK));
+    }
+
+    /*
+     * funzione di debug che ritorna il json di una particolare immagine in base al
+     * suo filename
+     */
     @GetMapping("/photo/json/{param}")
     public Mono<ResponseEntity<Photo>> getPhotoJson(@PathVariable String param) {
         try {
@@ -412,7 +566,54 @@ public class PlaceController {
         }
     }
 
-    // get photo by name
+    /*
+     * funzione che opera una ricerca con filtri: categoria, tag, query,priceRange,
+     * rating
+     * prvedendo anche paginazione e size
+     */
+    @GetMapping("/filter")
+    public Mono<ResponseEntity<Page<Place>>> filter(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) List<String> tags,
+            @RequestParam(required = false) String priceRange,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            // validazione di size, raitng e pricerange
+            if (size > 100)
+                size = 100;
+            if (size < 1)
+                size = 10;
+            if (page < 0)
+                page = 0;
+
+            if (rating != null && (rating < 0 || rating > 5)) {
+                return Mono.just(ResponseEntity.badRequest().build());
+            }
+
+            if (priceRange != null && !priceRange.trim().isEmpty()) {
+                Set<String> validPriceRanges = Set.of("free", "inexpensive", "moderate", "expensive", "very expensive");
+                if (!validPriceRanges.contains(priceRange.toLowerCase())) {
+                    return Mono.just(ResponseEntity.badRequest().build());
+                }
+            }
+            // ricerca effettiva
+            Page<Place> results = placeService.filter(query, category, tags, priceRange, rating, page, size);
+
+            return Mono.just(ResponseEntity.ok(results));
+
+        } catch (Exception e) {
+            System.err.println("Error in filter method: " + e.getMessage());
+            e.printStackTrace();
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    /*
+     * funzione che ritorna la foto effettiva per la visualizzazione da frontend
+     */
     @GetMapping("/photo/file/{filename}")
     public Mono<ResponseEntity<Resource>> getPhotoFile(@PathVariable String filename) {
         return Mono.fromCallable(() -> {
@@ -446,8 +647,15 @@ public class PlaceController {
         });
     }
 
+    /*
+     * build di slugger per la creazione di slug in alfabeto latino, onde evitare
+     * incompatibilità con database e/o altri pezzi del programma
+     */
     private static final Slugify slugger = Slugify.builder().transliterator(true).locale(Locale.ITALIAN).build();
 
+    /*
+     * funzione che crea effettivamente lo slug
+     */
     private String slugify(String name) {
 
         return slugger.slugify(name).toLowerCase();

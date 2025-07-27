@@ -44,7 +44,8 @@ export default function AppNavbar() {
                 {/* <button onClick={() => logout()}>logout</button> */}
                 <ul className={styles["navbar-links"]}>
                     {isAuthenticated() && <li><a href="/addplaces">{t('add')} {t('place')}</a></li>}
-                    <li><a href="/login">Login</a></li>
+                   {isAuthenticated() && <li onClick={logout}><a href="">Logout</a></li>}
+                    {!isAuthenticated() && <li><a href="/login">Login</a></li>}
                     <li><a href="/search">{t('search')}</a></li>
                     <li>
                         <button onClick={() => setShowLanguageOptions(prev => !prev)}>
@@ -75,7 +76,8 @@ export default function AppNavbar() {
                 )}
                 <ul className={`${styles["hamburgerLinks"]} ${hamburgerMenuOpen ? styles.open : ''}`}>
                     {isAuthenticated() && <li><a href="/addplaces">{t('add')} {t('place')}</a></li>}
-                    <li><a href="/login">Login</a></li>
+                     {isAuthenticated() && <li onClick={logout}><a href="">Logout</a></li>}
+                    {!isAuthenticated() && <li><a href="/login">Login</a></li>}
                     <li><a href="/search">{t('search')}</a></li>
                     <li>
                         <span>{t("selectLanguage")}</span>

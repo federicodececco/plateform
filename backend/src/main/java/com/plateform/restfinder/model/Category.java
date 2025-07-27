@@ -4,7 +4,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -27,24 +26,18 @@ import lombok.ToString;
 
 public class Category {
 
-    @Schema(description = "id della categoria")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Schema(description = "nome dato da google alla categoria")
     private String googleName;
 
-    @Schema(description = "nome in inglese della categoria")
     private String enName;
 
-    @Schema(description = "nome in italiano della categoria")
     private String itName;
 
-    @Schema(description = "valore booelano che controlla se la categoria va fatta vedere all'utente")
     private Boolean isVisible;
 
-    @Schema(description = "array di locali collegati alla categoria")
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
     @JsonBackReference
     private Set<Place> places;

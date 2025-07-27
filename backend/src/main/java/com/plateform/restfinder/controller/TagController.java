@@ -14,12 +14,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/tags")
 public class TagController {
 
@@ -60,18 +62,23 @@ public class TagController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Tag> create() {
-        return new ResponseEntity<>(null);
+    public Mono<ResponseEntity<Tag>> create() {
+
+        try {
+            return Mono.just(new ResponseEntity<>(null));
+        } catch (Error e) {
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        }
     }
 
     @PostMapping("/edit")
-    public String postMethodName(@RequestBody String entity) {
+    public Mono<ResponseEntity<Tag>> edit(@RequestBody Tag tag) {
 
-        return entity;
+        return Mono.just(new ResponseEntity<>(tagService.save(tag), HttpStatus.OK));
     }
 
     @PostMapping("/delete/{id}")
-    public ResponseEntity<Tag> deleteById(@PathVariable Integer id) {
+    public Mono<ResponseEntity<Tag>> deleteById(@PathVariable Integer id) {
         try {
 
             if (!tagService.findById(id).isEmpty()) {
@@ -79,11 +86,11 @@ public class TagController {
                 new ResponseEntity<>(HttpStatus.OK);
             }
 
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return Mono.just(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         } catch (Exception e) {
             System.err.print(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
         }
 
     }

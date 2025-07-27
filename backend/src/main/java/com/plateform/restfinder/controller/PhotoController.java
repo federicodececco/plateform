@@ -78,10 +78,10 @@ public class PhotoController {
         return Mono.fromCallable(() -> {
             try {
 
-                Path filePath = Paths.get("backend/downloaded/photos/" + filename + ".jpg");
+                Path filePath = Paths.get("plateform/backend/downloaded/photos/" + filename + ".jpg");
 
                 if (!Files.exists(filePath)) {
-                    filePath = Paths.get("backend/downloaded/photos/" + filename + ".png");
+                    filePath = Paths.get("plateform/backend/downloaded/photos/" + filename + ".png");
                 }
 
                 if (!Files.exists(filePath)) {

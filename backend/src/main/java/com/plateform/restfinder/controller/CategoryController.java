@@ -14,6 +14,7 @@ import com.plateform.restfinder.services.CategoryService;
 
 import reactor.core.publisher.Mono;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/categories")
 public class CategoryController {
 
@@ -50,7 +52,7 @@ public class CategoryController {
     @PostMapping("/create")
     public Mono<ResponseEntity<Category>> create(@RequestBody Category category) {
         try {
-            return Mono.just(new ResponseEntity<Category>(categoryService.create(category), HttpStatus.OK));
+            return Mono.just(new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK));
 
         } catch (Exception e) {
             System.err.print(e);
@@ -62,7 +64,7 @@ public class CategoryController {
     public Mono<ResponseEntity<Category>> edit(@PathVariable Integer id, @RequestBody Category category) {
         try {
             category.setId(id);
-            return Mono.just(new ResponseEntity<Category>(categoryService.create(category), HttpStatus.OK));
+            return Mono.just(new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK));
         } catch (Exception e) {
             System.err.print(e);
             return Mono.just(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
