@@ -34,19 +34,22 @@ Installazione e Configurazione
    Crea un file .env contenente:
    VITE_CHIAVE_API_GOOGLE= chiave di google maps
    VITE_API_URL= indirizzo backend(http://localhost:8080 di default)
-3. Configurazione Database
+3. Configurazione backend
    Crea un database MySQL e configura le credenziali nel file application.properties:
    spring.datasource.url=jdbc:mysql://localhost:3306/restfinder
    spring.datasource.username=your_username
    spring.datasource.password=your_password
    spring.jpa.hibernate.ddl-auto=update
-4. Configurazione Google Places API
+4. Configurazione Secret Key jwt
+   Aggiungi la tua chiave segreta ad application.properties
+   jwt.secret=your_secret_key -- deve aver + di 32 caratteri, altrimenti ci sarà un eccezzione nella creazione dei token
+5. Configurazione Google Places API
    Aggiungi la tua chiave API di Google Places ad application.properties:
    MAPS_API_KEY=your_google_places_api_key
-5. Build e Avvio
+6. Build e Avvio
    installa i pacchetti contenuti nel pom.xml attraverso Maven, procedi poi ad avviare il servizio backend
    installa i pacchetti contenuti in package.json attraverso npm, procedi poi ad avviare il servizio frontend
-   Il Backend sarà esposto su http://localhost:8080
+   Il backend sarà esposto su http://localhost:8080
    L'applicazione sarà disponibile su http://localhost:5173
    Struttura del Progetto
    src/main/java/com/plateform/restfinder/
@@ -105,7 +108,7 @@ GET /api/places/{placeId}/photos/{photoReference} - Download foto
 GET /api/places/{placeId}/photos - Lista foto di un luogo
 GET /api/places/photo/file/{filename} - Visualizza file foto
 
-🗄️ Modello Dati
+Modello Dati
 Place (Luogo)
 
 ID, nome, indirizzo completo
@@ -183,7 +186,7 @@ Controlla che il database esista
 
 Errori 401
 
-Assicurati che la chiave sia valida, a causa della generazione dinamica della secret key, ogni volta che il server viene spento le chiavi vengono rese obsolete
+Assicurati che il JWT sia valido
 
 Foto non si caricano
 
@@ -191,5 +194,5 @@ Verifica i permessi della cartella backend/downloaded/photos/
 
 Autori
 
-Federico De Cecco - Sviluppatore
 Marco Mechini - Sviluppatore
+Federico De Cecco - Sviluppatore
