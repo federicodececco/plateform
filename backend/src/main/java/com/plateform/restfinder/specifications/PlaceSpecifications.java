@@ -104,11 +104,12 @@ public class PlaceSpecifications {
     public static Specification<Place> buildFilterSpecification(
             String query, String category, List<String> tags, String priceRange, Integer rating) {
 
-        return Specification.where(notBlacklisted())
-                .and(hasTextSearch(query))
-                .and(hasCategory(category))
-                .and(hasTags(tags))
-                .and(hasPriceRange(priceRange))
-                .and(hasMinRating(rating));
+        return Specification.allOf(
+                notBlacklisted(),
+                hasTextSearch(query),
+                hasCategory(category),
+                hasTags(tags),
+                hasPriceRange(priceRange),
+                hasMinRating(rating));
     }
 }
