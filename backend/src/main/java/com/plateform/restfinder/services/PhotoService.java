@@ -61,7 +61,7 @@ public class PhotoService {
         }
 
         String safeFilename = createSafeFilename(photoReference);
-        String basePath = "plateform/backend/downloaded/photos/" + safeFilename;
+        String basePath = "/downloaded/photos/" + safeFilename;
 
         Photo photo = new Photo();
         photo.setPlace(place);
