@@ -1,3 +1,11 @@
+!!!!!!!!!IMPORTANTE!!!!!
+Senza dover necessariamente creare un nuovo ambiente per l'app,
+il sito hostato attraverso vercel e cloudflare, è disponibile a questo indirizzo per qulache giorno:
+https://vite-react-six-mu-78.vercel.app/
+Per il login le credenziali sono
+username:admin
+password:admin123
+
 RestFinder
 
 --Caratteristiche Principali
